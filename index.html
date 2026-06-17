@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Re:Self</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--tg-theme-hint-color, #ccc);
+        }
+        .header h1 { font-size: 20px; font-weight: 600; }
+        .header .user-info { font-size: 14px; color: var(--tg-theme-hint-color, #888); }
+        .card {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .card-title { font-weight: 600; font-size: 16px; margin-bottom: 8px; }
+        .question-text { font-size: 18px; line-height: 1.5; margin-bottom: 12px; }
+        .visibility-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .visibility-buttons button {
+            padding: 6px 12px;
+            border: 1px solid var(--tg-theme-button-color, #2481cc);
+            background: transparent;
+            color: var(--tg-theme-text-color, #000);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .visibility-buttons button.active {
+            background: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #fff);
+        }
+        .answer-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            border: 1px solid var(--tg-theme-hint-color, #ccc);
+            border-radius: 8px;
+            background: var(--tg-theme-bg-color, #fff);
+            color: var(--tg-theme-text-color, #000);
+            font-size: 16px;
+            resize: vertical;
+            margin-bottom: 12px;
+        }
+        .btn-primary {
+            background: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #fff);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-primary:active { opacity: 0.7; }
+        .btn-secondary {
+            background: transparent;
+            color: var(--tg-theme-button-color, #2481cc);
+            border: 1px solid var(--tg-theme-button-color, #2481cc);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 8px;
+            width: 100%;
+        }
+        .list-item { padding: 8px 0; border-bottom: 1px solid var(--tg-theme-hint-color, #ddd); }
+        .list-item:last-child { border-bottom: none; }
+        .list-item .question { font-weight: 500; }
+        .list-item .answer { color: var(--tg-theme-hint-color, #666); margin-top: 4px; }
+        .list-item .meta { font-size: 12px; color: var(--tg-theme-hint-color, #888); margin-top: 4px; }
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--tg-theme-bg-color, #fff);
+            border-top: 1px solid var(--tg-theme-hint-color, #ddd);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 100;
+        }
+        .tab-item {
+            text-align: center;
+            font-size: 12px;
+            color: var(--tg-theme-hint-color, #888);
+            cursor: pointer;
+            padding: 4px 8px;
+            border: none;
+            background: transparent;
+        }
+        .tab-item.active { color: var(--tg-theme-button-color, #2481cc); font-weight: 500; }
+        .tab-item .tab-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .empty-state { text-align: center; color: var(--tg-theme-hint-color, #888); padding: 30px 0; }
+        .score-badge {
+            display: inline-block;
+            background: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #fff);
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .p2p-item { margin-bottom: 12px; }
+        .p2p-item .question-text { font-weight: 500; }
+        .p2p-item .type { font-size: 12px; color: var(--tg-theme-hint-color, #888); }
+        .p2p-item .answers-count { font-size: 12px; }
+        .p2p-item .answer-btn { margin-top: 6px; }
+        .p2p-answers { margin-top: 8px; padding-left: 12px; border-left: 2px solid var(--tg-theme-hint-color, #ccc); }
+        .p2p-answers .answer-item { padding: 4px 0; font-size: 14px; }
+        .p2p-answers .answer-item .author { font-weight: 500; }
+        .p2p-answers .answer-item .best { color: gold; font-weight: 500; }
+        .loading { text-align: center; padding: 20px; color: var(--tg-theme-hint-color, #888); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Re:Self</h1>
+            <span class="user-info" id="userInfo">Загрузка...</span>
+        </div>
+
+        <div class="tab-bar">
+            <button class="tab-item active" data-page="page-question">
+                <span class="tab-icon">🧠</span> Вопрос
+            </button>
+            <button class="tab-item" data-page="page-history">
+                <span class="tab-icon">📜</span> История
+            </button>
+            <button class="tab-item" data-page="page-stats">
+                <span class="tab-icon">📊</span> Статистика
+            </button>
+            <button class="tab-item" data-page="page-p2p">
+                <span class="tab-icon">💬</span> Вопросы
+            </button>
+        </div>
+
+        <div id="page-question" class="page active">
+            <div class="card">
+                <div class="card-title">⏰ Вопрос часа</div>
+                <div id="questionDisplay" class="question-text">Загрузка...</div>
+                <div class="visibility-buttons" id="visibilityButtons">
+                    <button data-visibility="0" class="active">🕵️ Анонимно</button>
+                    <button data-visibility="1">🎭 Под маской</button>
+                    <button data-visibility="2">👤 Открыто</button>
+                </div>
+                <textarea class="answer-input" id="answerInput" placeholder="Напишите ваш ответ..."></textarea>
+                <button class="btn-primary" id="submitAnswerBtn">Отправить ответ</button>
+            </div>
+            <div class="card">
+                <div class="card-title">📌 Быстрые действия</div>
+                <button class="btn-secondary" id="refreshQuestionBtn">🔄 Новый вопрос</button>
+                <button class="btn-secondary" id="askP2PBtn">❓ Задать свой вопрос</button>
+            </div>
+        </div>
+
+        <div id="page-history" class="page">
+            <div class="card">
+                <div class="card-title">📜 Последние ответы</div>
+                <div id="historyList"><div class="loading">Загрузка...</div></div>
+            </div>
+        </div>
+
+        <div id="page-stats" class="page">
+            <div class="card">
+                <div class="card-title">📊 Твоя статистика</div>
+                <div id="statsDisplay"><div class="loading">Загрузка...</div></div>
+            </div>
+            <div class="card">
+                <div class="card-title">🏆 Топ-10</div>
+                <div id="topList"><div class="loading">Загрузка...</div></div>
+            </div>
+        </div>
+
+        <div id="page-p2p" class="page">
+            <div class="card">
+                <div class="card-title">💬 Активные вопросы сообщества</div>
+                <div id="p2pList"><div class="loading">Загрузка...</div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== Инициализация ==========
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        const user = tg.initDataUnsafe?.user || {};
+        const userId = user.id || 'неизвестно';
+        const firstName = user.first_name || 'Пользователь';
+        document.getElementById('userInfo').textContent = firstName;
+
+        // Глобальное состояние
+        let currentVisibility = 0;
+        let currentQuestion = null;
+
+        // ========== Отправка данных в бот ==========
+        function sendToBot(action, data = {}) {
+            return new Promise((resolve) => {
+                const payload = JSON.stringify({ action, ...data });
+                tg.sendData(payload);
+                // Ответ бота приходит через событие 'message'
+                // Мы используем глобальный обработчик (устанавливаем ниже)
+                window._pendingResolve = resolve;
+                // Таймаут на случай, если бот не ответит
+                setTimeout(() => {
+                    if (window._pendingResolve) {
+                        window._pendingResolve(null);
+                        window._pendingResolve = null;
+                    }
+                }, 5000);
+            });
+        }
+
+        // Обработчик входящих сообщений от бота (через WebApp)
+        tg.onEvent('message', (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                if (window._pendingResolve) {
+                    window._pendingResolve(data);
+                    window._pendingResolve = null;
+                }
+            } catch (e) {
+                console.error('Ошибка парсинга ответа от бота:', e);
+            }
+        });
+
+        // ========== Загрузка данных при открытии ==========
+        async function loadData() {
+            // Запрашиваем текущий вопрос
+            const questionData = await sendToBot('get_question');
+            if (questionData && questionData.question) {
+                currentQuestion = questionData.question;
+                document.getElementById('questionDisplay').textContent = questionData.question;
+            }
+
+            // Запрашиваем историю
+            const historyData = await sendToBot('get_history');
+            if (historyData && historyData.history) {
+                renderHistory(historyData.history);
+            }
+
+            // Запрашиваем статистику
+            const statsData = await sendToBot('get_stats');
+            if (statsData && statsData.stats) {
+                renderStats(statsData.stats);
+            }
+
+            // Запрашиваем топ
+            const topData = await sendToBot('get_top');
+            if (topData && topData.top) {
+                renderTop(topData.top);
+            }
+
+            // Запрашиваем P2P вопросы
+            const p2pData = await sendToBot('get_p2p');
+            if (p2pData && p2pData.questions) {
+                renderP2P(p2pData.questions);
+            }
+        }
+
+        // ========== Рендеринг ==========
+        function renderHistory(history) {
+            const container = document.getElementById('historyList');
+            if (!history || history.length === 0) {
+                container.innerHTML = '<div class="empty-state">Пока нет ответов</div>';
+                return;
+            }
+            let html = '';
+            history.forEach(item => {
+                html += `
+                    <div class="list-item">
+                        <div class="question">${escapeHtml(item.question)}</div>
+                        <div class="answer">${escapeHtml(item.answer)}</div>
+                        <div class="meta">Очки: ${item.score} · ${new Date(item.timestamp * 1000).toLocaleString()}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderStats(stats) {
+            const container = document.getElementById('statsDisplay');
+            if (!stats) {
+                container.innerHTML = '<div class="empty-state">Нет данных</div>';
+                return;
+            }
+            container.innerHTML = `
+                <p>📝 Всего ответов: ${stats.total_answers}</p>
+                <p>⭐ Всего очков: ${stats.total_score}</p>
+                <p>📏 Средняя длина: ${stats.avg_length} символов</p>
+            `;
+        }
+
+        function renderTop(top) {
+            const container = document.getElementById('topList');
+            if (!top || top.length === 0) {
+                container.innerHTML = '<div class="empty-state">Пока нет участников</div>';
+                return;
+            }
+            let html = '';
+            top.forEach((item, index) => {
+                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index+1}.`;
+                html += `
+                    <div class="list-item">
+                        <span>${medal} ${escapeHtml(item.name)} — ${item.score} очков</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderP2P(questions) {
+            const container = document.getElementById('p2pList');
+            if (!questions || questions.length === 0) {
+                container.innerHTML = '<div class="empty-state">Нет активных вопросов</div>';
+                return;
+            }
+            let html = '';
+            questions.forEach(q => {
+                html += `
+                    <div class="p2p-item card">
+                        <div class="question-text">${escapeHtml(q.text)}</div>
+                        <div class="type">Тип: ${q.type} · Ответов: ${q.answers_count || 0}</div>
+                        <button class="btn-secondary answer-btn" data-question-id="${q.id}">Ответить</button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            // Вешаем обработчики на кнопки "Ответить"
+            container.querySelectorAll('.answer-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const qId = this.dataset.questionId;
+                    // Отправляем команду ответить на P2P вопрос
+                    sendToBot('answer_p2p', { question_id: qId });
+                });
+            });
+        }
+
+        // ========== Вспомогательные функции ==========
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ========== Обработчики UI ==========
+        // Переключение вкладок
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const pageId = this.dataset.page;
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(pageId).classList.add('active');
+            });
+        });
+
+        // Выбор видимости
+        document.querySelectorAll('#visibilityButtons button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#visibilityButtons button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentVisibility = parseInt(this.dataset.visibility);
+            });
+        });
+
+        // Отправка ответа
+        document.getElementById('submitAnswerBtn').addEventListener('click', async function() {
+            const answer = document.getElementById('answerInput').value.trim();
+            if (!answer) {
+                tg.showAlert('Напишите ответ!');
+                return;
+            }
+            if (!currentQuestion) {
+                tg.showAlert('Нет активного вопроса. Нажмите "Новый вопрос".');
+                return;
+            }
+            this.disabled = true;
+            this.textContent = 'Отправка...';
+            try {
+                const result = await sendToBot('submit_answer', {
+                    question: currentQuestion,
+                    answer: answer,
+                    visibility: currentVisibility
+                });
+                if (result && result.success) {
+                    tg.showAlert(`✅ Ответ сохранён! Вы получили ${result.score || 0} очков.`);
+                    document.getElementById('answerInput').value = '';
+                    // Обновляем статистику
+                    loadData();
+                } else {
+                    tg.showAlert('Ошибка при сохранении ответа.');
+                }
+            } catch (e) {
+                tg.showAlert('Ошибка связи с ботом.');
+            }
+            this.disabled = false;
+            this.textContent = 'Отправить ответ';
+        });
+
+        // Новый вопрос
+        document.getElementById('refreshQuestionBtn').addEventListener('click', async function() {
+            const data = await sendToBot('get_question');
+            if (data && data.question) {
+                currentQuestion = data.question;
+                document.getElementById('questionDisplay').textContent = data.question;
+                document.getElementById('answerInput').value = '';
+            } else {
+                tg.showAlert('Не удалось получить вопрос.');
+            }
+        });
+
+        // Задать свой вопрос (P2P)
+        document.getElementById('askP2PBtn').addEventListener('click', function() {
+            tg.showAlert('Напишите в чат с ботом команду /ask, чтобы задать вопрос.');
+        });
+
+        // ========== Загрузка при старте ==========
+        loadData();
+    </script>
+</body>
+</html>
