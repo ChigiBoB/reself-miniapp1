@@ -6,92 +6,177 @@
     <title>Re:Self</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: var(--tg-theme-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #000000);
-            padding: 16px;
-            padding-bottom: 80px;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        .container { max-width: 600px; margin: 0 auto; }
         .header {
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--tg-theme-hint-color, #ddd);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--tg-theme-hint-color, #ccc);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
-        .header h1 { font-size: 20px; font-weight: 600; }
-        .header .user-info { font-size: 14px; color: var(--tg-theme-hint-color, #888); }
+
+         .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--tg-theme-button-color, #2481cc);
+            margin: 0;
+        }
+        .header .user-info {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--tg-theme-hint-color, #888);
+            background: var(--tg-theme-bg-color, #fff);
+            padding: 6px 14px;
+            border-radius: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .container {
+            flex: 1;
+            padding: 16px 20px 80px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
         .card {
-            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 12px;
-            padding: 16px;
+            background: var(--tg-theme-secondary-bg-color, #f8f9fa);
+            border-radius: 16px;
+            padding: 20px;
             margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: box-shadow 0.2s;
         }
-        .card-title { font-weight: 600; font-size: 16px; margin-bottom: 8px; }
-        .question-text { font-size: 18px; line-height: 1.5; margin-bottom: 12px; }
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--tg-theme-hint-color, #555);
+            letter-spacing: 0.3px;
+        }
+        .question-text {
+            font-size: 20px;
+            line-height: 1.6;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: var(--tg-theme-text-color, #000);
+        }
         .visibility-buttons {
             display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
+            gap: 10px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
         }
         .visibility-buttons button {
-            padding: 6px 12px;
-            border: 1px solid var(--tg-theme-button-color, #2481cc);
+            padding: 8px 16px;
+            border: 1.5px solid var(--tg-theme-button-color, #2481cc);
             background: transparent;
             color: var(--tg-theme-text-color, #000);
-            border-radius: 20px;
+            border-radius: 30px;
             cursor: pointer;
             font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 80px;
         }
         .visibility-buttons button.active {
             background: var(--tg-theme-button-color, #2481cc);
             color: var(--tg-theme-button-text-color, #fff);
+            border-color: var(--tg-theme-button-color, #2481cc);
+        }
+        .visibility-buttons button:active {
+            transform: scale(0.96);
         }
         .answer-input {
             width: 100%;
-            min-height: 80px;
-            padding: 10px;
-            border: 1px solid var(--tg-theme-hint-color, #ccc);
-            border-radius: 8px;
+            min-height: 100px;
+            padding: 14px;
+            border: 1.5px solid var(--tg-theme-hint-color, #ddd);
+            border-radius: 12px;
             background: var(--tg-theme-bg-color, #fff);
             color: var(--tg-theme-text-color, #000);
             font-size: 16px;
+            font-family: inherit;
             resize: vertical;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+        .answer-input:focus {
+            outline: none;
+            border-color: var(--tg-theme-button-color, #2481cc);
         }
         .btn-primary {
             background: var(--tg-theme-button-color, #2481cc);
             color: var(--tg-theme-button-text-color, #fff);
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 14px;
+            border-radius: 12px;
             font-size: 16px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             width: 100%;
+            transition: opacity 0.2s;
         }
-        .btn-primary:active { opacity: 0.7; }
+        .btn-primary:active {
+            opacity: 0.7;
+        }
         .btn-secondary {
             background: transparent;
             color: var(--tg-theme-button-color, #2481cc);
-            border: 1px solid var(--tg-theme-button-color, #2481cc);
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
+            border: 1.5px solid var(--tg-theme-button-color, #2481cc);
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
             cursor: pointer;
-            margin-top: 8px;
             width: 100%;
+            margin-top: 8px;
+            transition: background 0.2s;
         }
-        .list-item { padding: 8px 0; border-bottom: 1px solid var(--tg-theme-hint-color, #ddd); }
-        .list-item:last-child { border-bottom: none; }
-        .list-item .question { font-weight: 500; }
-        .list-item .answer { color: var(--tg-theme-hint-color, #666); margin-top: 4px; }
-        .list-item .meta { font-size: 12px; color: var(--tg-theme-hint-color, #888); margin-top: 4px; }
+        .btn-secondary:active {
+            background: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #fff);
+        }
+        .list-item {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--tg-theme-hint-color, #eee);
+        }
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        .list-item .question {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .list-item .answer {
+            color: var(--tg-theme-hint-color, #666);
+            margin-top: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .list-item .meta {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color, #999);
+            margin-top: 6px;
+        }
         .tab-bar {
             position: fixed;
             bottom: 0;
@@ -104,64 +189,153 @@
             padding: 8px 0;
             padding-bottom: env(safe-area-inset-bottom);
             z-index: 100;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
         .tab-item {
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--tg-theme-hint-color, #888);
             cursor: pointer;
-            padding: 4px 8px;
+            padding: 4px 12px;
             border: none;
             background: transparent;
+            transition: color 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .tab-item.active { color: var(--tg-theme-button-color, #2481cc); font-weight: 500; }
-        .tab-item .tab-icon { font-size: 20px; display: block; margin-bottom: 2px; }
-        .page { display: none; }
-        .page.active { display: block; }
-        .empty-state { text-align: center; color: var(--tg-theme-hint-color, #888); padding: 30px 0; }
+        .tab-item .tab-icon {
+            font-size: 22px;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .tab-item.active {
+            color: var(--tg-theme-button-color, #2481cc);
+            font-weight: 600;
+        }
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .empty-state {
+            text-align: center;
+            color: var(--tg-theme-hint-color, #888);
+            padding: 30px 0;
+            font-size: 15px;
+        }
+        .loading {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--tg-theme-hint-color, #888);
+        }
+        .p2p-item {
+            padding: 0;
+        }
+        .p2p-item .question-text {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .p2p-item .type {
+            font-size: 13px;
+            color: var(--tg-theme-hint-color, #777);
+            margin-top: 4px;
+        }
+        .p2p-item .answers-count {
+            font-size: 13px;
+            color: var(--tg-theme-hint-color, #777);
+            margin-top: 2px;
+        }
+        .p2p-item .answer-btn {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 14px;
+        }
         .score-badge {
             display: inline-block;
             background: var(--tg-theme-button-color, #2481cc);
             color: var(--tg-theme-button-text-color, #fff);
-            border-radius: 20px;
-            padding: 2px 10px;
+            border-radius: 30px;
+            padding: 4px 14px;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
         }
-        .p2p-item { margin-bottom: 12px; }
-        .p2p-item .question-text { font-weight: 500; }
-        .p2p-item .type { font-size: 12px; color: var(--tg-theme-hint-color, #888); }
-        .p2p-item .answers-count { font-size: 12px; }
-        .p2p-item .answer-btn { margin-top: 6px; }
-        .p2p-answers { margin-top: 8px; padding-left: 12px; border-left: 2px solid var(--tg-theme-hint-color, #ccc); }
-        .p2p-answers .answer-item { padding: 4px 0; font-size: 14px; }
-        .p2p-answers .answer-item .author { font-weight: 500; }
-        .p2p-answers .answer-item .best { color: gold; font-weight: 500; }
-        .loading { text-align: center; padding: 20px; color: var(--tg-theme-hint-color, #888); }
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 15px;
+        }
+        .stat-item .label {
+            color: var(--tg-theme-hint-color, #666);
+        }
+        .stat-item .value {
+            font-weight: 600;
+        }
+        .top-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--tg-theme-hint-color, #eee);
+        }
+        .top-item:last-child {
+            border-bottom: none;
+        }
+        .top-item .medal {
+            font-size: 20px;
+            width: 32px;
+            text-align: center;
+        }
+        .top-item .name {
+            flex: 1;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+        .top-item .score {
+            font-weight: 600;
+            color: var(--tg-theme-button-color, #2481cc);
+        }
+        @media (max-width: 480px) {
+            .header h1 { font-size: 18px; }
+            .question-text { font-size: 18px; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Re:Self</h1>
-            <span class="user-info" id="userInfo">Загрузка...</span>
-        </div>
+    <div class="header">
+        <h1>✦ Re:Self</h1>
+        <span class="user-info" id="userInfo">Загрузка...</span>
+    </div>
 
+    <div class="container">
+        <!-- Вкладки -->
         <div class="tab-bar">
             <button class="tab-item active" data-page="page-question">
-                <span class="tab-icon">🧠</span> Вопрос
+                <span class="tab-icon">🧠</span>
+                Вопрос
             </button>
             <button class="tab-item" data-page="page-history">
-                <span class="tab-icon">📜</span> История
+                <span class="tab-icon">📜</span>
+                История
             </button>
             <button class="tab-item" data-page="page-stats">
-                <span class="tab-icon">📊</span> Статистика
+                <span class="tab-icon">📊</span>
+                Статистика
             </button>
             <button class="tab-item" data-page="page-p2p">
-                <span class="tab-icon">💬</span> Вопросы
+                <span class="tab-icon">💬</span>
+                Вопросы
             </button>
         </div>
 
+        <!-- Страница: Вопрос -->
         <div id="page-question" class="page active">
             <div class="card">
                 <div class="card-title">⏰ Вопрос часа</div>
@@ -171,16 +345,18 @@
                     <button data-visibility="1">🎭 Под маской</button>
                     <button data-visibility="2">👤 Открыто</button>
                 </div>
-                <textarea class="answer-input" id="answerInput" placeholder="Напишите ваш ответ..."></textarea>
+                <textarea class="answer-input" id="answerInput" placeholder="Напишите ваш ответ..." rows="4"></textarea>
                 <button class="btn-primary" id="submitAnswerBtn">Отправить ответ</button>
             </div>
-            <div class="card">
-                <div class="card-title">📌 Быстрые действия</div>
-                <button class="btn-secondary" id="refreshQuestionBtn">🔄 Новый вопрос</button>
-                <button class="btn-secondary" id="askP2PBtn">❓ Задать свой вопрос</button>
+            <div class="card" style="padding: 12px 20px;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn-secondary" id="refreshQuestionBtn" style="flex:1; margin:0;">🔄 Новый вопрос</button>
+                    <button class="btn-secondary" id="askP2PBtn" style="flex:1; margin:0;">❓ Задать свой</button>
+                </div>
             </div>
         </div>
 
+        <!-- Страница: История -->
         <div id="page-history" class="page">
             <div class="card">
                 <div class="card-title">📜 Последние ответы</div>
@@ -188,6 +364,7 @@
             </div>
         </div>
 
+        <!-- Страница: Статистика -->
         <div id="page-stats" class="page">
             <div class="card">
                 <div class="card-title">📊 Твоя статистика</div>
@@ -199,6 +376,7 @@
             </div>
         </div>
 
+        <!-- Страница: P2P -->
         <div id="page-p2p" class="page">
             <div class="card">
                 <div class="card-title">💬 Активные вопросы сообщества</div>
@@ -214,23 +392,18 @@
         tg.ready();
 
         const user = tg.initDataUnsafe?.user || {};
-        const userId = user.id || 'неизвестно';
         const firstName = user.first_name || 'Пользователь';
         document.getElementById('userInfo').textContent = firstName;
 
-        // Глобальное состояние
         let currentVisibility = 0;
         let currentQuestion = null;
 
-        // ========== Отправка данных в бот ==========
+        // ========== Отправка данных в бот и получение ответа ==========
         function sendToBot(action, data = {}) {
             return new Promise((resolve) => {
                 const payload = JSON.stringify({ action, ...data });
                 tg.sendData(payload);
-                // Ответ бота приходит через событие 'message'
-                // Мы используем глобальный обработчик (устанавливаем ниже)
                 window._pendingResolve = resolve;
-                // Таймаут на случай, если бот не ответит
                 setTimeout(() => {
                     if (window._pendingResolve) {
                         window._pendingResolve(null);
@@ -240,51 +413,49 @@
             });
         }
 
-        // Обработчик входящих сообщений от бота (через WebApp)
+        // Обработчик ответа от бота (через answer_web_app_query)
         tg.onEvent('message', (event) => {
             try {
-                const data = JSON.parse(event.data);
-                if (window._pendingResolve) {
-                    window._pendingResolve(data);
-                    window._pendingResolve = null;
+                const raw = event.data;
+                // Проверяем, что это JSON
+                if (raw.startsWith('{') || raw.startsWith('[')) {
+                    const data = JSON.parse(raw);
+                    if (window._pendingResolve) {
+                        window._pendingResolve(data);
+                        window._pendingResolve = null;
+                    }
+                } else {
+                    // Если пришло не JSON, возможно это текст сообщения — игнорируем
                 }
             } catch (e) {
-                console.error('Ошибка парсинга ответа от бота:', e);
+                console.error('Ошибка парсинга ответа:', e);
             }
         });
 
-        // ========== Загрузка данных при открытии ==========
+        // ========== Загрузка всех данных ==========
         async function loadData() {
-            // Запрашиваем текущий вопрос
+            // Вопрос
             const questionData = await sendToBot('get_question');
-            if (questionData && questionData.question) {
+            if (questionData?.question) {
                 currentQuestion = questionData.question;
                 document.getElementById('questionDisplay').textContent = questionData.question;
             }
 
-            // Запрашиваем историю
+            // История
             const historyData = await sendToBot('get_history');
-            if (historyData && historyData.history) {
-                renderHistory(historyData.history);
-            }
+            if (historyData?.history) renderHistory(historyData.history);
 
-            // Запрашиваем статистику
+            // Статистика
             const statsData = await sendToBot('get_stats');
-            if (statsData && statsData.stats) {
-                renderStats(statsData.stats);
-            }
+            if (statsData?.stats) renderStats(statsData.stats);
 
-            // Запрашиваем топ
+            // Топ
             const topData = await sendToBot('get_top');
-            if (topData && topData.top) {
-                renderTop(topData.top);
-            }
+            if (topData?.top) renderTop(topData.top);
 
-            // Запрашиваем P2P вопросы
+            // P2P
             const p2pData = await sendToBot('get_p2p');
-            if (p2pData && p2pData.questions) {
-                renderP2P(p2pData.questions);
-            }
+            if (p2pData?.questions) renderP2P(p2pData.questions);
         }
 
         // ========== Рендеринг ==========
@@ -314,9 +485,9 @@
                 return;
             }
             container.innerHTML = `
-                <p>📝 Всего ответов: ${stats.total_answers}</p>
-                <p>⭐ Всего очков: ${stats.total_score}</p>
-                <p>📏 Средняя длина: ${stats.avg_length} символов</p>
+                <div class="stat-item"><span class="label">📝 Всего ответов</span><span class="value">${stats.total_answers}</span></div>
+                <div class="stat-item"><span class="label">⭐ Всего очков</span><span class="value">${stats.total_score}</span></div>
+                <div class="stat-item"><span class="label">📏 Средняя длина</span><span class="value">${stats.avg_length} символов</span></div>
             `;
         }
 
@@ -330,8 +501,10 @@
             top.forEach((item, index) => {
                 const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index+1}.`;
                 html += `
-                    <div class="list-item">
-                        <span>${medal} ${escapeHtml(item.name)} — ${item.score} очков</span>
+                    <div class="top-item">
+                        <span class="medal">${medal}</span>
+                        <span class="name">${escapeHtml(item.name)}</span>
+                        <span class="score">${item.score}</span>
                     </div>
                 `;
             });
@@ -347,32 +520,30 @@
             let html = '';
             questions.forEach(q => {
                 html += `
-                    <div class="p2p-item card">
+                    <div class="card p2p-item" style="padding:16px;">
                         <div class="question-text">${escapeHtml(q.text)}</div>
                         <div class="type">Тип: ${q.type} · Ответов: ${q.answers_count || 0}</div>
-                        <button class="btn-secondary answer-btn" data-question-id="${q.id}">Ответить</button>
+                        <button class="btn-secondary answer-btn" data-question-id="${q.id}" style="margin-top:10px;">Ответить</button>
                     </div>
                 `;
             });
             container.innerHTML = html;
-            // Вешаем обработчики на кнопки "Ответить"
             container.querySelectorAll('.answer-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const qId = this.dataset.questionId;
-                    // Отправляем команду ответить на P2P вопрос
                     sendToBot('answer_p2p', { question_id: qId });
+                    tg.showAlert('Напишите ответ в чат с ботом.');
                 });
             });
         }
 
-        // ========== Вспомогательные функции ==========
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // ========== Обработчики UI ==========
+        // ========== UI события ==========
         // Переключение вкладок
         document.querySelectorAll('.tab-item').forEach(tab => {
             tab.addEventListener('click', function() {
@@ -412,10 +583,10 @@
                     answer: answer,
                     visibility: currentVisibility
                 });
-                if (result && result.success) {
+                if (result?.success) {
                     tg.showAlert(`✅ Ответ сохранён! Вы получили ${result.score || 0} очков.`);
                     document.getElementById('answerInput').value = '';
-                    // Обновляем статистику
+                    // Обновляем все данные
                     loadData();
                 } else {
                     tg.showAlert('Ошибка при сохранении ответа.');
@@ -430,7 +601,7 @@
         // Новый вопрос
         document.getElementById('refreshQuestionBtn').addEventListener('click', async function() {
             const data = await sendToBot('get_question');
-            if (data && data.question) {
+            if (data?.question) {
                 currentQuestion = data.question;
                 document.getElementById('questionDisplay').textContent = data.question;
                 document.getElementById('answerInput').value = '';
@@ -446,6 +617,13 @@
 
         // ========== Загрузка при старте ==========
         loadData();
+
+        // Обновляем при переключении вкладок (по желанию)
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Можно подгрузить данные для активной вкладки, но они уже общие
+            });
+        });
     </script>
 </body>
 </html>
