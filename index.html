@@ -3,198 +3,628 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Re:Self</title>
+    <title>Re:Self — Космос</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
-            padding: 16px;
-            padding-bottom: 80px;
+        /* ========== ГЛОБАЛЬНЫЕ СТИЛИ ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container { max-width: 600px; margin: 0 auto; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0a0e1a;
+            color: #e0e8f0;
+            padding: 0 0 80px 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        /* Импорт шрифта Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+
+        /* ========== ОБЩИЕ КОМПОНЕНТЫ ========== */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px 20px 0;
+        }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--tg-theme-hint-color, #ccc);
+            padding: 16px 0 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
-        .header h1 { font-size: 20px; font-weight: 600; }
-        .header .user-info { font-size: 14px; color: var(--tg-theme-hint-color, #888); }
-        .card {
-            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #7dd3fc, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            text-shadow: 0 0 40px rgba(56, 189, 248, 0.15);
         }
-        .card-title { font-weight: 600; font-size: 16px; margin-bottom: 8px; }
-        .question-text { font-size: 18px; line-height: 1.5; margin-bottom: 12px; }
+        .header .user-info {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.06);
+            padding: 6px 16px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* Страницы */
+        .page {
+            display: none;
+            animation: fadeInUp 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Карточки (стекло) */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+
+        /* ========== ГЛАВНЫЙ ЭКРАН (ВОПРОС) ========== */
+        #page-question {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .question-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 20px 0;
+        }
+        /* Космический круг */
+        .cosmic-circle {
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(56, 189, 248, 0.15), rgba(10, 14, 26, 0.9));
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            margin-bottom: 28px;
+            position: relative;
+            box-shadow: 0 0 80px rgba(56, 189, 248, 0.05), inset 0 0 60px rgba(56, 189, 248, 0.02);
+        }
+        .cosmic-circle::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            padding: 1px;
+            background: conic-gradient(from 0deg, rgba(56, 189, 248, 0.2), transparent 40%, transparent 60%, rgba(56, 189, 248, 0.2));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+        .cosmic-circle .question-text {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 500;
+            line-height: 1.6;
+            max-height: 180px;
+            overflow-y: auto;
+            padding: 4px;
+            text-shadow: 0 0 30px rgba(56, 189, 248, 0.1);
+        }
+        .cosmic-circle .question-text::-webkit-scrollbar {
+            width: 2px;
+        }
+        .cosmic-circle .question-text::-webkit-scrollbar-thumb {
+            background: rgba(56, 189, 248, 0.3);
+            border-radius: 4px;
+        }
+
+        /* Кнопки видимости */
         .visibility-buttons {
             display: flex;
             gap: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
+            justify-content: center;
         }
         .visibility-buttons button {
-            padding: 6px 12px;
-            border: 1px solid var(--tg-theme-button-color, #2481cc);
-            background: transparent;
-            color: var(--tg-theme-text-color, #000);
-            border-radius: 20px;
+            padding: 8px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.6);
+            border-radius: 30px;
             cursor: pointer;
             font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-family: inherit;
         }
         .visibility-buttons button.active {
-            background: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #fff);
+            background: rgba(56, 189, 248, 0.2);
+            border-color: #38bdf8;
+            color: #ffffff;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.1);
         }
+        .visibility-buttons button:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Поле ответа */
         .answer-input {
             width: 100%;
-            min-height: 80px;
-            padding: 10px;
-            border: 1px solid var(--tg-theme-hint-color, #ccc);
-            border-radius: 8px;
-            background: var(--tg-theme-bg-color, #fff);
-            color: var(--tg-theme-text-color, #000);
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 30px;
+            color: #ffffff;
             font-size: 16px;
-            resize: vertical;
-            margin-bottom: 12px;
+            font-family: inherit;
+            resize: none;
+            min-height: 52px;
+            max-height: 120px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
         }
+        .answer-input:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.05);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .answer-input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Кнопка отправки */
         .btn-primary {
-            background: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #fff);
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            color: #ffffff;
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 14px;
+            border-radius: 30px;
             font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            box-shadow: 0 4px 24px rgba(56, 189, 248, 0.2);
+        }
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Быстрые действия */
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            width: 100%;
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px 16px;
+            border-radius: 30px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            width: 100%;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            flex: 1;
+            text-align: center;
         }
-        .btn-primary:active { opacity: 0.7; }
-        .btn-secondary {
-            background: transparent;
-            color: var(--tg-theme-button-color, #2481cc);
-            border: 1px solid var(--tg-theme-button-color, #2481cc);
+        .btn-secondary:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+        .btn-secondary:active {
+            transform: scale(0.96);
+        }
+
+        /* ========== ИСТОРИЯ ========== */
+        .history-item {
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        .history-item .question {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 15px;
+        }
+        .history-item .answer {
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .history-item .meta {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.2);
+            margin-top: 6px;
+        }
+        .history-item .meta .score-badge {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        /* ========== СТАТИСТИКА ========== */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 12px 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .stat-item .number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .stat-item .label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Топ — с золотом */
+        .top-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .top-item:last-child {
+            border-bottom: none;
+        }
+        .top-item .medal {
+            font-size: 22px;
+            width: 36px;
+            text-align: center;
+        }
+        .top-item .name {
+            flex: 1;
+            font-weight: 500;
+            margin-left: 8px;
+            color: #ffffff;
+        }
+        .top-item .score {
+            font-weight: 700;
+            color: #d4af37;
+            font-size: 16px;
+            background: rgba(212, 175, 55, 0.08);
+            padding: 2px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+        .top-item.gold .score {
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.12);
+            border-color: rgba(255, 215, 0, 0.15);
+        }
+        .top-item.silver .score {
+            color: #c0c0c0;
+            background: rgba(192, 192, 192, 0.08);
+            border-color: rgba(192, 192, 192, 0.1);
+        }
+        .top-item.bronze .score {
+            color: #cd7f32;
+            background: rgba(205, 127, 50, 0.08);
+            border-color: rgba(205, 127, 50, 0.1);
+        }
+
+        /* ========== P2P ВОПРОСЫ ========== */
+        .p2p-item {
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .p2p-item:last-child {
+            border-bottom: none;
+        }
+        .p2p-item .question-text {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 16px;
+        }
+        .p2p-item .type {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 2px;
+        }
+        .p2p-item .answers-count {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .p2p-item .answer-btn {
+            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.6);
             padding: 8px 16px;
-            border-radius: 8px;
+            border-radius: 30px;
             font-size: 14px;
             cursor: pointer;
-            margin-top: 8px;
-            width: 100%;
+            transition: all 0.3s ease;
+            font-family: inherit;
         }
-        .list-item { padding: 8px 0; border-bottom: 1px solid var(--tg-theme-hint-color, #ddd); }
-        .list-item:last-child { border-bottom: none; }
-        .list-item .question { font-weight: 500; }
-        .list-item .answer { color: var(--tg-theme-hint-color, #666); margin-top: 4px; }
-        .list-item .meta { font-size: 12px; color: var(--tg-theme-hint-color, #888); margin-top: 4px; }
+        .p2p-item .answer-btn:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        /* ========== КРАСНАЯ КОМНАТА ========== */
+        .red-room-placeholder {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .red-room-placeholder .icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 0 40px rgba(239, 68, 68, 0.2));
+        }
+        .red-room-placeholder h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+        .red-room-placeholder p {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* ========== НИЖНЕЕ МЕНЮ ========== */
         .tab-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: var(--tg-theme-bg-color, #fff);
-            border-top: 1px solid var(--tg-theme-hint-color, #ddd);
+            background: rgba(10, 14, 26, 0.9);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
             display: flex;
             justify-content: space-around;
-            padding: 8px 0;
+            padding: 8px 0 8px;
             padding-bottom: env(safe-area-inset-bottom);
             z-index: 100;
         }
         .tab-item {
             text-align: center;
-            font-size: 12px;
-            color: var(--tg-theme-hint-color, #888);
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.2);
             cursor: pointer;
             padding: 4px 8px;
             border: none;
             background: transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 50px;
+            font-family: inherit;
         }
-        .tab-item.active { color: var(--tg-theme-button-color, #2481cc); font-weight: 500; }
-        .tab-item .tab-icon { font-size: 20px; display: block; margin-bottom: 2px; }
-        .page { display: none; }
-        .page.active { display: block; }
-        .empty-state { text-align: center; color: var(--tg-theme-hint-color, #888); padding: 30px 0; }
-        .loading { text-align: center; padding: 20px; color: var(--tg-theme-hint-color, #888); }
-        .p2p-item { margin-bottom: 12px; }
-        .p2p-item .question-text { font-weight: 500; }
-        .p2p-item .type { font-size: 12px; color: var(--tg-theme-hint-color, #888); }
-        .p2p-item .answers-count { font-size: 12px; }
-        .p2p-item .answer-btn { margin-top: 6px; }
+        .tab-item .tab-icon {
+            font-size: 22px;
+            display: block;
+            margin-bottom: 2px;
+            transition: all 0.3s ease;
+        }
+        .tab-item.active {
+            color: #38bdf8;
+        }
+        .tab-item.active .tab-icon {
+            transform: scale(1.05);
+        }
+
+        /* ========== ЗВЁЗДЫ (фон) ========== */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .star {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: twinkle var(--duration) ease-in-out infinite alternate;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.1; transform: scale(0.8); }
+            100% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        /* ========== ОБЩИЕ УТИЛИТЫ ========== */
+        .empty-state {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.2);
+            padding: 30px 0;
+            font-size: 15px;
+        }
+        .loading {
+            text-align: center;
+            padding: 30px 0;
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ========== АДАПТАЦИЯ ========== */
+        @media (max-width: 480px) {
+            .cosmic-circle {
+                width: 180px;
+                height: 180px;
+            }
+            .cosmic-circle .question-text {
+                font-size: 16px;
+            }
+            .stat-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- ФОН СО ЗВЁЗДАМИ -->
+    <div class="stars" id="stars"></div>
+
     <div class="container">
+        <!-- ШАПКА -->
         <div class="header">
-            <h1>Re:Self</h1>
+            <h1>✦ Re:Self</h1>
             <span class="user-info" id="userInfo">Загрузка...</span>
         </div>
 
-        <div class="tab-bar">
-            <button class="tab-item active" data-page="page-question">
-                <span class="tab-icon">🧠</span> Вопрос
-            </button>
-            <button class="tab-item" data-page="page-history">
-                <span class="tab-icon">📜</span> История
-            </button>
-            <button class="tab-item" data-page="page-stats">
-                <span class="tab-icon">📊</span> Статистика
-            </button>
-            <button class="tab-item" data-page="page-p2p">
-                <span class="tab-icon">💬</span> Вопросы
-            </button>
-        </div>
-
+        <!-- СТРАНИЦЫ -->
         <div id="page-question" class="page active">
-            <div class="card">
-                <div class="card-title">⏰ Вопрос часа</div>
-                <div id="questionDisplay" class="question-text">Загрузка...</div>
+            <div class="question-wrapper">
+                <div class="cosmic-circle">
+                    <div class="question-text" id="questionDisplay">Загрузка...</div>
+                </div>
                 <div class="visibility-buttons" id="visibilityButtons">
                     <button data-visibility="0" class="active">🕵️ Анонимно</button>
-                    <button data-visibility="1">🎭 Под маской</button>
+                    <button data-visibility="1">🎭 Маска</button>
                     <button data-visibility="2">👤 Открыто</button>
                 </div>
-                <textarea class="answer-input" id="answerInput" placeholder="Напишите ваш ответ..."></textarea>
-                <button class="btn-primary" id="submitAnswerBtn">Отправить ответ</button>
-            </div>
-            <div class="card">
-                <div class="card-title">📌 Быстрые действия</div>
-                <button class="btn-secondary" id="refreshQuestionBtn">🔄 Новый вопрос</button>
-                <button class="btn-secondary" id="askP2PBtn">❓ Задать свой вопрос</button>
+                <textarea class="answer-input" id="answerInput" placeholder="Напишите ответ..." rows="2"></textarea>
+                <button class="btn-primary" id="submitAnswerBtn">Отправить</button>
+                <div class="quick-actions">
+                    <button class="btn-secondary" id="refreshQuestionBtn">🔄 Новый</button>
+                    <button class="btn-secondary" id="askP2PBtn">❓ Спросить</button>
+                </div>
             </div>
         </div>
 
         <div id="page-history" class="page">
-            <div class="card">
-                <div class="card-title">📜 Последние ответы</div>
+            <div class="glass-card">
+                <div class="card-title">📜 История</div>
                 <div id="historyList"><div class="loading">Загрузка...</div></div>
             </div>
         </div>
 
         <div id="page-stats" class="page">
-            <div class="card">
-                <div class="card-title">📊 Твоя статистика</div>
+            <div class="glass-card">
+                <div class="card-title">📊 Статистика</div>
                 <div id="statsDisplay"><div class="loading">Загрузка...</div></div>
             </div>
-            <div class="card">
-                <div class="card-title">🏆 Топ-10</div>
+            <div class="glass-card">
+                <div class="card-title">🏆 Топ участников</div>
                 <div id="topList"><div class="loading">Загрузка...</div></div>
             </div>
         </div>
 
         <div id="page-p2p" class="page">
-            <div class="card">
-                <div class="card-title">💬 Активные вопросы сообщества</div>
+            <div class="glass-card">
+                <div class="card-title">💬 Вопросы сообщества</div>
                 <div id="p2pList"><div class="loading">Загрузка...</div></div>
+            </div>
+        </div>
+
+        <div id="page-redroom" class="page">
+            <div class="glass-card red-room-placeholder">
+                <div class="icon">🔥</div>
+                <h2>Красная комната</h2>
+                <p>Скоро здесь будет анонимный чат на 3 минуты. Следите за новостями!</p>
             </div>
         </div>
     </div>
 
+    <!-- НИЖНЕЕ МЕНЮ -->
+    <div class="tab-bar">
+        <button class="tab-item active" data-page="page-question">
+            <span class="tab-icon">🧠</span> Вопрос
+        </button>
+        <button class="tab-item" data-page="page-history">
+            <span class="tab-icon">📜</span> История
+        </button>
+        <button class="tab-item" data-page="page-stats">
+            <span class="tab-icon">📊</span> Статистика
+        </button>
+        <button class="tab-item" data-page="page-p2p">
+            <span class="tab-icon">💬</span> Вопросы
+        </button>
+        <button class="tab-item" data-page="page-redroom">
+            <span class="tab-icon">🔥</span> Комната
+        </button>
+    </div>
+
     <script>
+        // ========== ГЕНЕРАЦИЯ ЗВЁЗД ==========
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 120; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 3 + 1;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.setProperty('--duration', (Math.random() * 4 + 2) + 's');
+            star.style.animationDelay = (Math.random() * 5) + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // ========== ИНИЦИАЛИЗАЦИЯ TELEGRAM WEB APP ==========
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
@@ -206,15 +636,16 @@
         let currentVisibility = 0;
         let currentQuestion = null;
 
+        // ========== ОТПРАВКА ДАННЫХ БОТУ ==========
         function sendToBot(action, data = {}) {
             return new Promise((resolve) => {
                 const payload = JSON.stringify({ action, ...data });
-                console.log('📤 Отправка запроса:', payload);
+                console.log('📤 Отправка:', payload);
                 tg.sendData(payload);
                 window._pendingResolve = resolve;
                 setTimeout(() => {
                     if (window._pendingResolve) {
-                        console.warn('⏰ Таймаут ожидания ответа');
+                        console.warn('⏰ Таймаут ответа');
                         window._pendingResolve(null);
                         window._pendingResolve = null;
                     }
@@ -222,20 +653,22 @@
             });
         }
 
+        // Обработчик ответа от бота
         tg.onEvent('message', (event) => {
-            console.log('📩 Получено событие message:', event);
+            console.log('📩 Получено событие:', event);
             try {
                 const data = JSON.parse(event.data);
-                console.log('📦 Распарсенные данные:', data);
+                console.log('📦 Данные:', data);
                 if (window._pendingResolve) {
                     window._pendingResolve(data);
                     window._pendingResolve = null;
                 }
             } catch (e) {
-                console.error('❌ Ошибка парсинга ответа:', e);
+                console.error('❌ Ошибка парсинга:', e);
             }
         });
 
+        // ========== РЕНДЕРИНГ ==========
         function renderHistory(history) {
             const container = document.getElementById('historyList');
             if (!history || history.length === 0) {
@@ -245,10 +678,13 @@
             let html = '';
             history.forEach(item => {
                 html += `
-                    <div class="list-item">
+                    <div class="history-item">
                         <div class="question">${escapeHtml(item.question)}</div>
                         <div class="answer">${escapeHtml(item.answer)}</div>
-                        <div class="meta">Очки: ${item.score} · ${new Date(item.timestamp * 1000).toLocaleString()}</div>
+                        <div class="meta">
+                            <span class="score-badge">${item.score} очков</span>
+                            · ${new Date(item.timestamp * 1000).toLocaleString()}
+                        </div>
                     </div>
                 `;
             });
@@ -262,9 +698,20 @@
                 return;
             }
             container.innerHTML = `
-                <p>📝 Всего ответов: ${stats.total_answers}</p>
-                <p>⭐ Всего очков: ${stats.total_score}</p>
-                <p>📏 Средняя длина: ${stats.avg_length} символов</p>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <span class="number">${stats.total_answers}</span>
+                        <span class="label">Ответов</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="number">${stats.total_score}</span>
+                        <span class="label">Очков</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="number">${stats.avg_length}</span>
+                        <span class="label">Символов</span>
+                    </div>
+                </div>
             `;
         }
 
@@ -276,8 +723,19 @@
             }
             let html = '';
             top.forEach((item, index) => {
-                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index+1}.`;
-                html += `<div class="list-item"><span>${medal} ${escapeHtml(item.name)} — ${item.score} очков</span></div>`;
+                let medal = '';
+                let cls = '';
+                if (index === 0) { medal = '🥇'; cls = 'gold'; }
+                else if (index === 1) { medal = '🥈'; cls = 'silver'; }
+                else if (index === 2) { medal = '🥉'; cls = 'bronze'; }
+                else { medal = `${index+1}.`; }
+                html += `
+                    <div class="top-item ${cls}">
+                        <span class="medal">${medal}</span>
+                        <span class="name">${escapeHtml(item.name)}</span>
+                        <span class="score">${item.score}</span>
+                    </div>
+                `;
             });
             container.innerHTML = html;
         }
@@ -291,10 +749,10 @@
             let html = '';
             questions.forEach(q => {
                 html += `
-                    <div class="p2p-item card">
+                    <div class="p2p-item">
                         <div class="question-text">${escapeHtml(q.text)}</div>
                         <div class="type">Тип: ${q.type} · Ответов: ${q.answers_count || 0}</div>
-                        <button class="btn-secondary answer-btn" data-question-id="${q.id}">Ответить</button>
+                        <button class="answer-btn" data-question-id="${q.id}">Ответить</button>
                     </div>
                 `;
             });
@@ -314,33 +772,29 @@
             return div.innerHTML;
         }
 
+        // ========== ЗАГРУЗКА ДАННЫХ ==========
         async function loadData() {
             console.log('🔄 Загрузка данных...');
-            const questionData = await sendToBot('get_question');
-            if (questionData?.question) {
-                currentQuestion = questionData.question;
-                document.getElementById('questionDisplay').textContent = questionData.question;
-            } else {
-                console.warn('❌ Вопрос не получен');
+            const qData = await sendToBot('get_question');
+            if (qData?.question) {
+                currentQuestion = qData.question;
+                document.getElementById('questionDisplay').textContent = qData.question;
             }
 
             const historyData = await sendToBot('get_history');
             if (historyData?.history) renderHistory(historyData.history);
-            else console.warn('❌ История не получена');
 
             const statsData = await sendToBot('get_stats');
             if (statsData?.stats) renderStats(statsData.stats);
-            else console.warn('❌ Статистика не получена');
 
             const topData = await sendToBot('get_top');
             if (topData?.top) renderTop(topData.top);
-            else console.warn('❌ Топ не получен');
 
             const p2pData = await sendToBot('get_p2p');
             if (p2pData?.questions) renderP2P(p2pData.questions);
-            else console.warn('❌ P2P вопросы не получены');
         }
 
+        // ========== UI СОБЫТИЯ ==========
         document.querySelectorAll('.tab-item').forEach(tab => {
             tab.addEventListener('click', function() {
                 document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
@@ -361,14 +815,8 @@
 
         document.getElementById('submitAnswerBtn').addEventListener('click', async function() {
             const answer = document.getElementById('answerInput').value.trim();
-            if (!answer) {
-                tg.showAlert('Напишите ответ!');
-                return;
-            }
-            if (!currentQuestion) {
-                tg.showAlert('Нет активного вопроса. Нажмите "Новый вопрос".');
-                return;
-            }
+            if (!answer) { tg.showAlert('Напишите ответ!'); return; }
+            if (!currentQuestion) { tg.showAlert('Нет активного вопроса. Нажмите "Новый".'); return; }
             this.disabled = true;
             this.textContent = 'Отправка...';
             try {
@@ -378,17 +826,17 @@
                     visibility: currentVisibility
                 });
                 if (result?.success) {
-                    tg.showAlert(`✅ Ответ сохранён! Вы получили ${result.score || 0} очков.`);
+                    tg.showAlert(`✅ Ответ сохранён! +${result.score || 0} очков.`);
                     document.getElementById('answerInput').value = '';
                     loadData();
                 } else {
-                    tg.showAlert('Ошибка при сохранении ответа.');
+                    tg.showAlert('Ошибка сохранения.');
                 }
             } catch (e) {
-                tg.showAlert('Ошибка связи с ботом.');
+                tg.showAlert('Ошибка связи.');
             }
             this.disabled = false;
-            this.textContent = 'Отправить ответ';
+            this.textContent = 'Отправить';
         });
 
         document.getElementById('refreshQuestionBtn').addEventListener('click', async function() {
@@ -406,6 +854,7 @@
             tg.showAlert('Напишите в чат с ботом команду /ask, чтобы задать вопрос.');
         });
 
+        // ========== ЗАПУСК ==========
         loadData();
     </script>
 </body>
