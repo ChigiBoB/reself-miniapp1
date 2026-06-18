@@ -20,7 +20,6 @@
             min-height: 100vh;
             overflow-x: hidden;
         }
-        /* Импорт шрифта Inter */
         @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
 
         /* ========== ОБЩИЕ КОМПОНЕНТЫ ========== */
@@ -55,7 +54,6 @@
             border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        /* Страницы */
         .page {
             display: none;
             animation: fadeInUp 0.5s cubic-bezier(0.23, 1, 0.32, 1);
@@ -68,7 +66,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Карточки (стекло) */
         .glass-card {
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(20px);
@@ -107,7 +104,6 @@
             text-align: center;
             padding: 20px 0;
         }
-        /* Космический круг */
         .cosmic-circle {
             width: 240px;
             height: 240px;
@@ -152,7 +148,6 @@
             border-radius: 4px;
         }
 
-        /* Кнопки видимости */
         .visibility-buttons {
             display: flex;
             gap: 8px;
@@ -182,7 +177,6 @@
             border-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* Поле ответа */
         .answer-input {
             width: 100%;
             padding: 14px 20px;
@@ -208,7 +202,6 @@
             color: rgba(255, 255, 255, 0.2);
         }
 
-        /* Кнопка отправки */
         .btn-primary {
             background: linear-gradient(135deg, #38bdf8, #0ea5e9);
             color: #ffffff;
@@ -232,7 +225,6 @@
             transform: none;
         }
 
-        /* Быстрые действия */
         .quick-actions {
             display: flex;
             gap: 10px;
@@ -496,7 +488,6 @@
             100% { opacity: 0.6; transform: scale(1.2); }
         }
 
-        /* ========== ОБЩИЕ УТИЛИТЫ ========== */
         .empty-state {
             text-align: center;
             color: rgba(255, 255, 255, 0.2);
@@ -509,7 +500,6 @@
             color: rgba(255, 255, 255, 0.2);
         }
 
-        /* ========== АДАПТАЦИЯ ========== */
         @media (max-width: 480px) {
             .cosmic-circle {
                 width: 180px;
@@ -525,17 +515,14 @@
     </style>
 </head>
 <body>
-    <!-- ФОН СО ЗВЁЗДАМИ -->
     <div class="stars" id="stars"></div>
 
     <div class="container">
-        <!-- ШАПКА -->
         <div class="header">
             <h1>✦ Re:Self</h1>
             <span class="user-info" id="userInfo">Загрузка...</span>
         </div>
 
-        <!-- СТРАНИЦЫ -->
         <div id="page-question" class="page active">
             <div class="question-wrapper">
                 <div class="cosmic-circle">
@@ -589,7 +576,6 @@
         </div>
     </div>
 
-    <!-- НИЖНЕЕ МЕНЮ -->
     <div class="tab-bar">
         <button class="tab-item active" data-page="page-question">
             <span class="tab-icon">🧠</span> Вопрос
@@ -630,43 +616,38 @@
         tg.ready();
 
         const user = tg.initDataUnsafe?.user || {};
+        const userId = user.id || 0;
         const firstName = user.first_name || 'Пользователь';
         document.getElementById('userInfo').textContent = firstName;
+
+        // ========== АДРЕС ВАШЕГО ВЕБ-СЕРВЕРА ==========
+        const API_URL = 'https://garage-courier-everybody.ngrok-free.dev/api';
 
         let currentVisibility = 0;
         let currentQuestion = null;
 
-        // ========== ОТПРАВКА ДАННЫХ БОТУ ==========
-        function sendToBot(action, data = {}) {
-            return new Promise((resolve) => {
-                const payload = JSON.stringify({ action, ...data });
-                console.log('📤 Отправка:', payload);
-                tg.sendData(payload);
-                window._pendingResolve = resolve;
-                setTimeout(() => {
-                    if (window._pendingResolve) {
-                        console.warn('⏰ Таймаут ответа');
-                        window._pendingResolve(null);
-                        window._pendingResolve = null;
-                    }
-                }, 5000);
-            });
-        }
-
-        // Обработчик ответа от бота
-        tg.onEvent('message', (event) => {
-            console.log('📩 Получено событие:', event);
+        // ========== ОТПРАВКА ЗАПРОСОВ ЧЕРЕЗ FETCH ==========
+        async function callApi(action, data = {}) {
             try {
-                const data = JSON.parse(event.data);
-                console.log('📦 Данные:', data);
-                if (window._pendingResolve) {
-                    window._pendingResolve(data);
-                    window._pendingResolve = null;
+                const payload = { action, user_id: userId, ...data };
+                console.log('📤 Запрос к API:', payload);
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                const result = await response.json();
+                console.log('📩 Ответ API:', result);
+                return result;
             } catch (e) {
-                console.error('❌ Ошибка парсинга:', e);
+                console.error('❌ Ошибка запроса:', e);
+                tg.showAlert('Ошибка связи с сервером. Проверьте интернет.');
+                return null;
             }
-        });
+        }
 
         // ========== РЕНДЕРИНГ ==========
         function renderHistory(history) {
@@ -760,7 +741,6 @@
             container.querySelectorAll('.answer-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const qId = this.dataset.questionId;
-                    sendToBot('answer_p2p', { question_id: qId });
                     tg.showAlert('Напишите ответ в чат с ботом.');
                 });
             });
@@ -775,22 +755,22 @@
         // ========== ЗАГРУЗКА ДАННЫХ ==========
         async function loadData() {
             console.log('🔄 Загрузка данных...');
-            const qData = await sendToBot('get_question');
+            const qData = await callApi('get_question');
             if (qData?.question) {
                 currentQuestion = qData.question;
                 document.getElementById('questionDisplay').textContent = qData.question;
             }
 
-            const historyData = await sendToBot('get_history');
+            const historyData = await callApi('get_history');
             if (historyData?.history) renderHistory(historyData.history);
 
-            const statsData = await sendToBot('get_stats');
+            const statsData = await callApi('get_stats');
             if (statsData?.stats) renderStats(statsData.stats);
 
-            const topData = await sendToBot('get_top');
+            const topData = await callApi('get_top');
             if (topData?.top) renderTop(topData.top);
 
-            const p2pData = await sendToBot('get_p2p');
+            const p2pData = await callApi('get_p2p');
             if (p2pData?.questions) renderP2P(p2pData.questions);
         }
 
@@ -820,7 +800,7 @@
             this.disabled = true;
             this.textContent = 'Отправка...';
             try {
-                const result = await sendToBot('submit_answer', {
+                const result = await callApi('submit_answer', {
                     question: currentQuestion,
                     answer: answer,
                     visibility: currentVisibility
@@ -840,7 +820,7 @@
         });
 
         document.getElementById('refreshQuestionBtn').addEventListener('click', async function() {
-            const data = await sendToBot('get_question');
+            const data = await callApi('get_question');
             if (data?.question) {
                 currentQuestion = data.question;
                 document.getElementById('questionDisplay').textContent = data.question;
