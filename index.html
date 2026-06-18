@@ -16,7 +16,9 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+            transition: background 0.5s ease;
         }
+        /* ЗВЁЗДЫ (фон для главной) */
         .stars {
             position: fixed;
             top: 0; left: 0;
@@ -37,6 +39,46 @@
             100% { opacity:0.6; transform:scale(1.2); }
         }
 
+        /* ===== ЦВЕТОВЫЕ СХЕМЫ ДЛЯ СТРАНИЦ ===== */
+        /* По умолчанию – космос (главная) */
+        body { background: #0b0e1a; }
+
+        /* Рейтинг – золото */
+        body.page-stats-active { background: #1a140e; }
+        .page-stats-active .glass { background: rgba(255,215,0,0.06); border-color: rgba(255,215,0,0.15); }
+        .page-stats-active .card-title { color: #d4af37; }
+        .page-stats-active .timer { background: rgba(255,215,0,0.1); color: #d4af37; border-color: rgba(255,215,0,0.2); }
+        .page-stats-active .btn-primary { background: linear-gradient(135deg, #d4af37, #f5d76e); }
+
+        /* Сообщество и Ответы – древесная доска */
+        body.page-wood-active { background: #2a1f14; }
+        .page-wood-active .glass { background: rgba(210,180,140,0.08); border-color: rgba(210,180,140,0.15); }
+        .page-wood-active .card-title { color: #d2b48c; }
+        .page-wood-active .timer { background: rgba(210,180,140,0.1); color: #d2b48c; border-color: rgba(210,180,140,0.2); }
+        .page-wood-active .btn-primary { background: linear-gradient(135deg, #a67c52, #d2b48c); }
+
+        /* Анонимный чат – таинственный фиолетовый */
+        body.page-mystery-active { background: #0e0a1a; }
+        .page-mystery-active .glass { background: rgba(120,80,200,0.06); border-color: rgba(120,80,200,0.15); }
+        .page-mystery-active .card-title { color: #9b7fd4; }
+        .page-mystery-active .timer { background: rgba(120,80,200,0.1); color: #9b7fd4; border-color: rgba(120,80,200,0.2); }
+        .page-mystery-active .btn-primary { background: linear-gradient(135deg, #6c3cb0, #9b7fd4); }
+
+        /* 18+ – красный, страстный */
+        body.page-18-active { background: #1a0a0a; }
+        .page-18-active .glass { background: rgba(200,40,40,0.06); border-color: rgba(200,40,40,0.15); }
+        .page-18-active .card-title { color: #e74c4c; }
+        .page-18-active .timer { background: rgba(200,40,40,0.1); color: #e74c4c; border-color: rgba(200,40,40,0.2); }
+        .page-18-active .btn-primary { background: linear-gradient(135deg, #c0392b, #e74c4c); }
+
+        /* Профиль – уютный, ламповый (тёплый бежевый) */
+        body.page-profile-active { background: #1e1710; }
+        .page-profile-active .glass { background: rgba(245,222,179,0.06); border-color: rgba(245,222,179,0.15); }
+        .page-profile-active .card-title { color: #f5deb3; }
+        .page-profile-active .timer { background: rgba(245,222,179,0.1); color: #f5deb3; border-color: rgba(245,222,179,0.2); }
+        .page-profile-active .btn-primary { background: linear-gradient(135deg, #c9a87c, #f5deb3); }
+
+        /* Остальные стили – универсальные */
         .container { max-width:600px; margin:0 auto; padding:16px 16px 0; }
         .header {
             display:flex; justify-content:space-between; align-items:center;
@@ -66,12 +108,10 @@
         .avatar-btn img { width:100%; height:100%; object-fit:cover; }
         .avatar-btn:active { transform:scale(.9); }
 
-        /* Страницы */
         .page { display:none; animation:fadeIn .4s ease; }
         .page.active { display:block; }
         @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 
-        /* Карточки */
         .glass {
             background:rgba(255,255,255,0.04);
             backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
@@ -131,7 +171,6 @@
         }
         .answer-input:focus { outline:none; border-color:#38bdf8; background:rgba(255,255,255,0.06); }
         .btn-primary {
-            background:linear-gradient(135deg, #38bdf8, #0ea5e9);
             color:#fff; border:none; padding:14px; border-radius:30px;
             font-size:16px; font-weight:600; cursor:pointer; width:100%;
             transition:.3s; font-family:inherit; position:relative; overflow:hidden;
@@ -161,39 +200,7 @@
             pointer-events:none;
         }
 
-        /* Другие вкладки */
-        .history-item, .p2p-item {
-            padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.04);
-        }
-        .history-item:last-child, .p2p-item:last-child { border-bottom:none; }
-        .history-item .question, .p2p-item .question-text {
-            font-weight:600; color:#fff; font-size:15px;
-        }
-        .history-item .answer {
-            color:rgba(255,255,255,0.5); margin-top:4px; font-size:14px;
-        }
-        .history-item .meta {
-            font-size:12px; color:rgba(255,255,255,0.2); margin-top:6px;
-        }
-        .score-badge {
-            display:inline-block; background:rgba(56,189,248,0.1);
-            color:#38bdf8; padding:2px 12px; border-radius:20px;
-            font-weight:600; font-size:12px;
-        }
-        .stat-grid {
-            display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;
-        }
-        .stat-item {
-            text-align:center; padding:12px 8px;
-            background:rgba(255,255,255,0.02); border-radius:16px;
-            border:1px solid rgba(255,255,255,0.04);
-        }
-        .stat-item .number {
-            font-size:28px; font-weight:700; color:#fff; display:block;
-        }
-        .stat-item .label {
-            font-size:12px; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px;
-        }
+        /* Топ (рейтинг) */
         .top-item {
             display:flex; align-items:center; padding:10px 0;
             border-bottom:1px solid rgba(255,255,255,0.04);
@@ -207,15 +214,26 @@
             padding:2px 12px; border-radius:20px;
             border:1px solid rgba(212,175,55,0.1);
         }
-        .p2p-item .answer-btn {
-            margin-top:10px;
-            background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.08);
-            color:rgba(255,255,255,0.6);
-            padding:8px 16px; border-radius:30px;
-            font-size:14px; cursor:pointer; transition:.3s; font-family:inherit;
+
+        /* P2P и Ответы (древесная доска) */
+        .p2p-item, .history-item {
+            padding:14px 0; border-bottom:1px solid rgba(255,255,255,0.04);
         }
-        .p2p-item .answer-btn:hover { border-color:rgba(255,255,255,0.2); color:#fff; }
+        .p2p-item:last-child, .history-item:last-child { border-bottom:none; }
+        .p2p-item .question-text, .history-item .question {
+            font-weight:600; color:#fff; font-size:15px;
+        }
+        .p2p-item .answer, .history-item .answer {
+            color:rgba(255,255,255,0.5); margin-top:4px; font-size:14px;
+        }
+        .history-item .meta {
+            font-size:12px; color:rgba(255,255,255,0.2); margin-top:6px;
+        }
+        .score-badge {
+            display:inline-block; background:rgba(56,189,248,0.1);
+            color:#38bdf8; padding:2px 12px; border-radius:20px;
+            font-weight:600; font-size:12px;
+        }
         .ask-form textarea {
             width:100%; padding:14px;
             background:rgba(255,255,255,0.04);
@@ -233,7 +251,7 @@
         .placeholder h2 { font-size:22px; color:#fff; margin-bottom:8px; }
         .placeholder p { color:rgba(255,255,255,0.3); font-size:15px; }
 
-        /* Нижнее меню (без истории) */
+        /* Нижнее меню (6 вкладок) */
         .tab-bar {
             position:fixed; bottom:0; left:0; right:0;
             background:rgba(10,14,26,0.9);
@@ -265,21 +283,19 @@
         /* Общие утилиты */
         .empty { text-align:center; color:rgba(255,255,255,0.2); padding:30px 0; }
         .loading { text-align:center; padding:30px 0; color:rgba(255,255,255,0.2); }
-        .hidden { display:none; }
 
         /* Адаптация */
         @media (max-width:480px) {
             .question-text { font-size:18px; }
-            .stat-grid { grid-template-columns:1fr 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- ЗВЁЗДЫ -->
+    <!-- ЗВЁЗДЫ (всегда есть, но могут перекрываться фоном страниц) -->
     <div class="stars" id="stars"></div>
 
     <div class="container">
-        <!-- ШАПКА с аватаркой -->
+        <!-- ШАПКА -->
         <div class="header">
             <h1>✦ Re:Self</h1>
             <div class="header-right">
@@ -291,7 +307,7 @@
         </div>
 
         <!-- СТРАНИЦЫ -->
-        <!-- 1. Вопрос -->
+        <!-- 1. Вопрос (главная) -->
         <div id="page-question" class="page active">
             <div class="glass">
                 <div class="question-header">
@@ -305,123 +321,120 @@
                     <button data-visibility="2">👤 Открыто</button>
                 </div>
                 <textarea class="answer-input" id="answerInput" placeholder="Напишите ответ..." rows="2"></textarea>
-                <button class="btn-primary" id="submitAnswerBtn">Отправить ответ</button>
+                <button class="btn-primary" id="submitAnswerBtn" style="background:linear-gradient(135deg, #38bdf8, #0ea5e9);">Отправить ответ</button>
             </div>
             <div class="glass" style="background:rgba(255,255,255,0.02); padding:12px 20px; text-align:center; color:rgba(255,255,255,0.2); font-size:13px;">
                 Следующий вопрос через <span id="timerShort" style="font-weight:600; color:#38bdf8;">--:--</span>
             </div>
         </div>
 
-        <!-- 2. Рейтинг (статистика + топ) -->
+        <!-- 2. Рейтинг (только топ) -->
         <div id="page-stats" class="page">
             <div class="glass">
-                <div class="card-title">📊 Статистика</div>
-                <div id="statsDisplay"><div class="loading">Загрузка...</div></div>
-            </div>
-            <div class="glass">
-                <div class="card-title">🏆 Топ участников</div>
+                <div class="card-title" style="color:#d4af37;">🏆 Топ участников</div>
                 <div id="topList"><div class="loading">Загрузка...</div></div>
             </div>
         </div>
 
-        <!-- 3. Сообщество (P2P) -->
+        <!-- 3. Сообщество (P2P) – древесный -->
         <div id="page-p2p" class="page">
             <div class="glass">
-                <div class="card-title">💬 Вопросы сообщества</div>
+                <div class="card-title" style="color:#d2b48c;">💬 Вопросы сообщества</div>
                 <div id="p2pList"><div class="loading">Загрузка...</div></div>
             </div>
             <div class="glass ask-form">
-                <div class="card-title">✍️ Задать свой вопрос</div>
+                <div class="card-title" style="color:#d2b48c;">✍️ Задать свой вопрос</div>
                 <textarea id="p2pQuestionInput" placeholder="Напишите ваш вопрос (не более 500 символов)..."></textarea>
-                <button class="btn-primary" id="p2pAskBtn">Опубликовать (стоит 5 очков)</button>
+                <button class="btn-primary" id="p2pAskBtn" style="background:linear-gradient(135deg, #a67c52, #d2b48c);">Опубликовать (стоит 5 очков)</button>
             </div>
         </div>
 
-        <!-- 4. 18+ -->
+        <!-- 4. 18+ – красный -->
         <div id="page-18plus" class="page">
-            <div class="glass placeholder">
-                <div class="icon">⚡</div>
-                <h2>18+ Вопросы</h2>
-                <p>Скоро здесь появятся анонимные вопросы эротического характера. Вся анонимность гарантирована.</p>
+            <div class="glass placeholder" style="border-color:rgba(200,40,40,0.2);">
+                <div class="icon" style="color:#e74c4c;">⚡</div>
+                <h2 style="color:#e74c4c;">18+ Вопросы</h2>
+                <p style="color:rgba(255,200,200,0.5);">Скоро здесь появятся анонимные вопросы эротического характера. Вся анонимность гарантирована.</p>
+                <p style="margin-top:12px; color:rgba(255,200,200,0.3); font-size:13px;">Открой свои фантазии, не стесняйся.</p>
             </div>
         </div>
 
-        <!-- 5. Галерея -->
+        <!-- 5. Ответы (галерея) – древесный -->
         <div id="page-gallery" class="page">
             <div class="glass">
-                <div class="card-title">👀 Ответы на текущий вопрос</div>
+                <div class="card-title" style="color:#d2b48c;">👀 Ответы на текущий вопрос</div>
                 <div id="galleryList"><div class="loading">Загрузка...</div></div>
             </div>
         </div>
 
-        <!-- 6. Красная комната -->
+        <!-- 6. Анонимный чат (бывш. Красная комната) – таинственный -->
         <div id="page-redroom" class="page">
-            <div class="glass placeholder">
-                <div class="icon">☯</div>
-                <h2>Красная комната</h2>
-                <p>Анонимный чат с незнакомцем. Начните поиск, и мы соединим вас с кем-то, кто тоже ищет откровенный разговор.</p>
-                <button class="btn-primary" style="margin-top:20px;" id="redRoomJoinBtn">Найти собеседника</button>
-                <div id="redRoomStatus" style="margin-top:12px; color:rgba(255,255,255,0.3);"></div>
+            <div class="glass placeholder" style="border-color:rgba(120,80,200,0.2);">
+                <div class="icon" style="color:#9b7fd4;">☯</div>
+                <h2 style="color:#9b7fd4;">Анонимный чат</h2>
+                <p style="color:rgba(200,180,255,0.5);">Погрузись в неизведанное. Найди собеседника, который готов к откровенному разговору.</p>
+                <button class="btn-primary" id="redRoomJoinBtn" style="background:linear-gradient(135deg, #6c3cb0, #9b7fd4); margin-top:20px;">Найти собеседника</button>
+                <div id="redRoomStatus" style="margin-top:12px; color:rgba(200,180,255,0.3);"></div>
             </div>
         </div>
 
-        <!-- 7. Профиль (отдельная страница) -->
+        <!-- 7. Профиль – уютный, ламповый -->
         <div id="page-profile" class="page">
-            <div class="glass">
-                <div class="card-title">👤 Профиль</div>
+            <div class="glass" style="border-color:rgba(245,222,179,0.15);">
+                <div class="card-title" style="color:#f5deb3;">👤 Профиль</div>
                 <div style="display:flex; align-items:center; margin-bottom:16px;">
-                    <div style="width:56px; height:56px; border-radius:50%; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:28px; margin-right:16px; overflow:hidden;">
+                    <div style="width:56px; height:56px; border-radius:50%; background:rgba(245,222,179,0.1); display:flex; align-items:center; justify-content:center; font-size:28px; margin-right:16px; overflow:hidden;">
                         <span id="profileAvatar">👤</span>
                     </div>
                     <div>
-                        <div style="font-size:18px; font-weight:600;" id="profileName">Имя</div>
-                        <div style="color:rgba(255,255,255,0.3); font-size:14px;" id="profileId">ID</div>
+                        <div style="font-size:18px; font-weight:600; color:#f5deb3;" id="profileName">Имя</div>
+                        <div style="color:rgba(245,222,179,0.4); font-size:14px;" id="profileId">ID</div>
                     </div>
                 </div>
-                <!-- Статистика профиля -->
+                <!-- Статистика (теперь здесь) -->
                 <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:16px;">
-                    <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:8px; text-align:center;">
-                        <div style="font-size:20px; font-weight:700;" id="profileAnswers">0</div>
-                        <div style="font-size:11px; color:rgba(255,255,255,0.3);">Ответов</div>
+                    <div style="background:rgba(245,222,179,0.05); border-radius:12px; padding:8px; text-align:center;">
+                        <div style="font-size:20px; font-weight:700; color:#f5deb3;" id="profileAnswers">0</div>
+                        <div style="font-size:11px; color:rgba(245,222,179,0.4);">Ответов</div>
                     </div>
-                    <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:8px; text-align:center;">
-                        <div style="font-size:20px; font-weight:700;" id="profileScore">0</div>
-                        <div style="font-size:11px; color:rgba(255,255,255,0.3);">Очков</div>
+                    <div style="background:rgba(245,222,179,0.05); border-radius:12px; padding:8px; text-align:center;">
+                        <div style="font-size:20px; font-weight:700; color:#f5deb3;" id="profileScore">0</div>
+                        <div style="font-size:11px; color:rgba(245,222,179,0.4);">Очков</div>
                     </div>
-                    <div style="background:rgba(255,255,255,0.02); border-radius:12px; padding:8px; text-align:center;">
-                        <div style="font-size:20px; font-weight:700;" id="profileStreak">0/24</div>
-                        <div style="font-size:11px; color:rgba(255,255,255,0.3);">Серия (сегодня)</div>
+                    <div style="background:rgba(245,222,179,0.05); border-radius:12px; padding:8px; text-align:center;">
+                        <div style="font-size:20px; font-weight:700; color:#f5deb3;" id="profileStreak">0/24</div>
+                        <div style="font-size:11px; color:rgba(245,222,179,0.4);">Серия (сегодня)</div>
                     </div>
                 </div>
                 <!-- Настройки -->
                 <div style="margin-bottom:12px;">
-                    <div style="color:rgba(255,255,255,0.3); font-size:13px; margin-bottom:4px;">Режим по умолчанию</div>
+                    <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">Режим по умолчанию</div>
                     <div class="visibility-buttons" id="profileVisibilityButtons">
-                        <button data-visibility="0" class="active">🕵 Анонимно</button>
-                        <button data-visibility="1">🎭 Маска</button>
-                        <button data-visibility="2">👤 Открыто</button>
+                        <button data-visibility="0" class="active" style="color:rgba(245,222,179,0.6); border-color:rgba(245,222,179,0.1);">🕵 Анонимно</button>
+                        <button data-visibility="1" style="color:rgba(245,222,179,0.6); border-color:rgba(245,222,179,0.1);">🎭 Маска</button>
+                        <button data-visibility="2" style="color:rgba(245,222,179,0.6); border-color:rgba(245,222,179,0.1);">👤 Открыто</button>
                     </div>
                 </div>
                 <div style="margin-bottom:12px;">
-                    <div style="color:rgba(255,255,255,0.3); font-size:13px; margin-bottom:4px;">Ваша маска (псевдоним)</div>
-                    <input type="text" id="profileMaskInput" placeholder="Введите псевдоним..." style="width:100%; padding:10px 16px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; color:#fff; font-size:16px;">
+                    <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">Ваша маска (псевдоним)</div>
+                    <input type="text" id="profileMaskInput" placeholder="Введите псевдоним..." style="width:100%; padding:10px 16px; background:rgba(245,222,179,0.05); border:1px solid rgba(245,222,179,0.1); border-radius:30px; color:#f5deb3; font-size:16px;">
                 </div>
-                <button class="btn-primary" id="profileSaveBtn">Сохранить настройки</button>
-                <div style="margin-top:8px; font-size:12px; color:rgba(255,255,255,0.2); text-align:center;">
+                <button class="btn-primary" id="profileSaveBtn" style="background:linear-gradient(135deg, #c9a87c, #f5deb3);">Сохранить настройки</button>
+                <div style="margin-top:8px; font-size:12px; color:rgba(245,222,179,0.2); text-align:center;">
                     * Без сохранения профиля вы не сможете отвечать на вопросы
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- НИЖНЕЕ МЕНЮ (без истории) -->
+    <!-- НИЖНЕЕ МЕНЮ (6 вкладок) -->
     <div class="tab-bar">
         <button class="tab-item active" data-page="page-question"><span class="tab-icon">◆</span>Вопрос</button>
         <button class="tab-item" data-page="page-stats"><span class="tab-icon">★</span>Рейтинг</button>
         <button class="tab-item" data-page="page-p2p"><span class="tab-icon">✉</span>Сообщество</button>
         <button class="tab-item" data-page="page-18plus"><span class="tab-icon">⚡</span>18+</button>
         <button class="tab-item" data-page="page-gallery"><span class="tab-icon">◉</span>Ответы</button>
-        <button class="tab-item" data-page="page-redroom"><span class="tab-icon">☯</span>Комната</button>
+        <button class="tab-item" data-page="page-redroom"><span class="tab-icon">☯</span>Чат</button>
     </div>
 
     <script>
@@ -554,11 +567,7 @@
                 }
             }
 
-            // Статистика для вкладки Рейтинг
-            const statsData = await callApi('get_stats');
-            if (statsData?.stats) renderStats(statsData.stats);
-
-            // Топ
+            // Топ (в рейтинге)
             const topData = await callApi('get_top');
             if (topData?.top) renderTop(topData.top);
 
@@ -572,18 +581,6 @@
         }
 
         // ========== РЕНДЕРИНГ ==========
-        function renderStats(stats) {
-            const container = document.getElementById('statsDisplay');
-            if (!stats) { container.innerHTML='<div class="empty">Нет данных</div>'; return; }
-            container.innerHTML = `
-                <div class="stat-grid">
-                    <div class="stat-item"><span class="number">${stats.total_answers}</span><span class="label">Ответов</span></div>
-                    <div class="stat-item"><span class="number">${stats.total_score}</span><span class="label">Очков</span></div>
-                    <div class="stat-item"><span class="number">${stats.avg_length}</span><span class="label">Символов</span></div>
-                </div>
-            `;
-        }
-
         function renderTop(top) {
             const container = document.getElementById('topList');
             if (!top || top.length===0) { container.innerHTML='<div class="empty">Пока нет участников</div>'; return; }
@@ -640,7 +637,7 @@
             return d.innerHTML;
         }
 
-        // ========== RIPPLE ЭФФЕКТ ==========
+        // ========== RIPPLE ==========
         function addRipple(e) {
             const target = e.currentTarget;
             const rect = target.getBoundingClientRect();
@@ -659,25 +656,36 @@
             el.addEventListener('click', addRipple);
         });
 
-        // ========== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==========
+        // ========== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК С МЕНЯЮЩИМСЯ ФОНОМ ==========
         document.querySelectorAll('.tab-item').forEach(tab => {
             tab.addEventListener('click', function() {
-                // Снимаем активность со всех вкладок и страниц
                 document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
                 this.classList.add('active');
                 const pageId = this.dataset.page;
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                 document.getElementById(pageId).classList.add('active');
+
+                // Меняем класс на body для цветовой схемы
+                const body = document.body;
+                body.className = ''; // сброс
+                if (pageId === 'page-stats') body.classList.add('page-stats-active');
+                else if (pageId === 'page-p2p' || pageId === 'page-gallery') body.classList.add('page-wood-active');
+                else if (pageId === 'page-redroom') body.classList.add('page-mystery-active');
+                else if (pageId === 'page-18plus') body.classList.add('page-18-active');
+                else if (pageId === 'page-profile') body.classList.add('page-profile-active');
+                // Главная – без класса (космос)
             });
         });
 
-        // ========== ОТКРЫТИЕ ПРОФИЛЯ ==========
+        // При загрузке страницы – если активна не главная, применяем класс
+        // Но у нас активна главная по умолчанию, поэтому ничего не делаем
+
+        // ========== ПРОФИЛЬ ==========
         document.getElementById('profileBtn').addEventListener('click', function() {
-            // Переключаем на страницу профиля
             document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-profile').classList.add('active');
-            // Подгружаем свежие данные
+            document.body.className = 'page-profile-active';
             loadData();
         });
 
@@ -693,7 +701,7 @@
         // ========== ОТПРАВКА ОТВЕТА ==========
         document.getElementById('submitAnswerBtn').addEventListener('click', async function() {
             if (!profileCompleted) {
-                tg.showAlert('❌ Сначала заполните профиль (нажмите на аватарку вверху)');
+                tg.showAlert('❌ Сначала заполните профиль (нажмите на аватарку)');
                 return;
             }
             const answer = document.getElementById('answerInput').value.trim();
@@ -718,7 +726,7 @@
         // ========== ЗАДАТЬ ВОПРОС В СООБЩЕСТВЕ ==========
         document.getElementById('p2pAskBtn').addEventListener('click', async function() {
             if (!profileCompleted) {
-                tg.showAlert('❌ Сначала заполните профиль (нажмите на аватарку вверху)');
+                tg.showAlert('❌ Сначала заполните профиль (нажмите на аватарку)');
                 return;
             }
             const text = document.getElementById('p2pQuestionInput').value.trim();
@@ -736,7 +744,7 @@
             }
         });
 
-        // ========== ПРОФИЛЬ ==========
+        // ========== ПРОФИЛЬ (сохранение) ==========
         document.querySelectorAll('#profileVisibilityButtons button').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('#profileVisibilityButtons button').forEach(b => b.classList.remove('active'));
@@ -760,10 +768,10 @@
             }
         });
 
-        // ========== КРАСНАЯ КОМНАТА ==========
+        // ========== АНОНИМНЫЙ ЧАТ ==========
         document.getElementById('redRoomJoinBtn').addEventListener('click', async function() {
             if (!profileCompleted) {
-                tg.showAlert('❌ Сначала заполните профиль (нажмите на аватарку вверху)');
+                tg.showAlert('❌ Сначала заполните профиль');
                 return;
             }
             this.disabled = true; this.textContent = 'Поиск...';
