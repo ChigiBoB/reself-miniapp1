@@ -58,8 +58,8 @@
             opacity: 0;
         }
 
-        /* ===== УНИКАЛЬНЫЕ ФОНЫ С ТЕКСТУРАМИ ===== */
-        /* Момент (главная) – туманность */
+        /* ===== УНИКАЛЬНЫЕ ФОНЫ С ДЕТАЛЯМИ ===== */
+        /* Момент – туманность с частицами */
         body.page-moment-active {
             background: radial-gradient(ellipse at 30% 40%, #1a1f3a, #0a0b1f 70%);
         }
@@ -67,23 +67,77 @@
             background: rgba(255, 255, 255, 0.04);
             border-color: rgba(255, 107, 107, 0.15);
         }
+        /* добавляем вращающиеся спирали и точки */
+        body.page-moment-active::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(78, 205, 196, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 107, 107, 0.06) 0%, transparent 40%);
+            animation: rotateBg 60s linear infinite;
+        }
+        @keyframes rotateBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-        /* Вершина – золото с пергаментом */
+        /* Вершина – светлая, золотая доска почёта */
         body.page-verhina-active {
-            background: radial-gradient(ellipse at 50% 80%, #2a1f0e, #120e0a);
+            background: radial-gradient(ellipse at 50% 80%, #f5e6c8, #d4af37 60%, #b8860b);
         }
         body.page-verhina-active .glass {
-            background: rgba(255, 215, 0, 0.06);
-            border-color: rgba(255, 215, 0, 0.12);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            color: #1a140e;
         }
         body.page-verhina-active .card-title {
-            color: #d4af37;
+            color: #5a3e0a;
         }
         body.page-verhina-active .btn-primary {
             background: linear-gradient(135deg, #b8860b, #ffd700);
+            color: #1a140e;
+        }
+        body.page-verhina-active .top-item .name {
+            color: #1a140e;
+        }
+        body.page-verhina-active .top-item .score {
+            color: #5a3e0a;
+            border-color: rgba(90, 62, 10, 0.2);
+            background: rgba(255, 215, 0, 0.15);
+        }
+        body.page-verhina-active .empty,
+        body.page-verhina-active .loading {
+            color: #5a3e0a;
+        }
+        /* золотые искры и линии */
+        body.page-verhina-active::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 10% 90%, rgba(255, 215, 0, 0.2) 0%, transparent 30%),
+                radial-gradient(circle at 90% 10%, rgba(255, 215, 0, 0.15) 0%, transparent 30%),
+                repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(255, 215, 0, 0.03) 40px, rgba(255, 215, 0, 0.03) 41px);
+            animation: goldPulse 4s ease-in-out infinite alternate;
+        }
+        @keyframes goldPulse {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
         }
 
-        /* Сеть – голографическая паутина */
+        /* Сеть – голографическая паутина с движущимися точками */
         body.page-set-active {
             background: radial-gradient(circle at 20% 30%, #141a24, #0d0f14);
         }
@@ -97,20 +151,24 @@
         body.page-set-active .btn-primary {
             background: linear-gradient(135deg, #0066ff, #00d4ff);
         }
-
-        /* Отражения – масляные разводы */
-        body.page-otrazhenie-active {
-            background: radial-gradient(ellipse at 60% 40%, #1a1420, #141210);
+        body.page-set-active::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 30% 40%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(0, 212, 255, 0.03) 0%, transparent 50%);
+            animation: networkPulse 8s ease-in-out infinite;
         }
-        body.page-otrazhenie-active .glass {
-            background: rgba(138, 43, 226, 0.05);
-            border-color: rgba(138, 43, 226, 0.1);
-        }
-        body.page-otrazhenie-active .card-title {
-            color: #8a2be2;
-        }
-        body.page-otrazhenie-active .btn-primary {
-            background: linear-gradient(135deg, #8a2be2, #ff69b4);
+        @keyframes networkPulse {
+            0% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.5; transform: scale(1); }
         }
 
         /* Искры – тлеющие угли */
@@ -127,8 +185,59 @@
         body.page-iskry-active .btn-primary {
             background: linear-gradient(135deg, #cc0033, #ff0033);
         }
+        body.page-iskry-active::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 50% 50%, rgba(255, 100, 0, 0.1) 0%, transparent 30%),
+                radial-gradient(circle at 80% 20%, rgba(255, 0, 0, 0.05) 0%, transparent 40%);
+            animation: fireGlow 3s ease-in-out infinite alternate;
+        }
+        @keyframes fireGlow {
+            0% { opacity: 0.5; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.1); }
+        }
 
-        /* Встреча – туман */
+        /* Отражения – масляные разводы */
+        body.page-otrazhenie-active {
+            background: radial-gradient(ellipse at 60% 40%, #1a1420, #141210);
+        }
+        body.page-otrazhenie-active .glass {
+            background: rgba(138, 43, 226, 0.05);
+            border-color: rgba(138, 43, 226, 0.1);
+        }
+        body.page-otrazhenie-active .card-title {
+            color: #8a2be2;
+        }
+        body.page-otrazhenie-active .btn-primary {
+            background: linear-gradient(135deg, #8a2be2, #ff69b4);
+        }
+        body.page-otrazhenie-active::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 40% 60%, rgba(138, 43, 226, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 70% 30%, rgba(255, 105, 180, 0.05) 0%, transparent 30%);
+            animation: oilShift 10s ease-in-out infinite alternate;
+        }
+        @keyframes oilShift {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(-20px) translateY(20px); }
+        }
+
+        /* Встреча – туман с тенями */
         body.page-vstrecha-active {
             background: radial-gradient(ellipse at 50% 50%, #1a1030, #0c0b1a);
         }
@@ -142,8 +251,27 @@
         body.page-vstrecha-active .btn-primary {
             background: linear-gradient(135deg, #7c4dff, #b388ff);
         }
+        body.page-vstrecha-active::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 30% 40%, rgba(179, 136, 255, 0.06) 0%, transparent 30%),
+                radial-gradient(circle at 70% 60%, rgba(179, 136, 255, 0.04) 0%, transparent 30%);
+            animation: fogMove 15s ease-in-out infinite alternate;
+        }
+        @keyframes fogMove {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(-5deg); }
+        }
 
-        /* Свой мир – тёплый дом */
+        /* Свой мир – тёплый дом с пылинками */
         body.page-svoymir-active {
             background: radial-gradient(ellipse at 40% 60%, #2a1f18, #1b120f);
         }
@@ -156,6 +284,24 @@
         }
         body.page-svoymir-active .btn-primary {
             background: linear-gradient(135deg, #8b7355, #f5deb3);
+        }
+        body.page-svoymir-active::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(245, 222, 179, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(245, 222, 179, 0.04) 0%, transparent 40%);
+            animation: dustMove 12s ease-in-out infinite alternate;
+        }
+        @keyframes dustMove {
+            0% { opacity: 0.6; transform: translateX(0); }
+            100% { opacity: 1; transform: translateX(10px); }
         }
 
         /* ===== ОБЩИЕ СТИЛИ ===== */
@@ -244,7 +390,7 @@
             padding: 20px;
             margin-bottom: 16px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: border-color 0.5s;
+            transition: all 0.5s;
         }
         .card-title {
             font-size: 13px;
@@ -255,7 +401,7 @@
             transition: color 0.5s;
         }
 
-        /* ===== ЦЕНТРАЛЬНЫЙ СИМВОЛ (для всех страниц, кроме главной) ===== */
+        /* ===== ЦЕНТРАЛЬНЫЙ СИМВОЛ ===== */
         .center-piece {
             display: flex;
             flex-direction: column;
@@ -308,7 +454,6 @@
             border: 1px solid rgba(255, 107, 107, 0.2);
         }
 
-        /* Круг с вопросом */
         .circle-wrapper {
             display: flex;
             justify-content: center;
@@ -423,12 +568,12 @@
             transform: none;
         }
 
-        /* ===== ВЕРШИНА (ТОП) ===== */
+        /* ===== ВЕРШИНА (ТОП) – светлая ===== */
         .top-item {
             display: flex;
             align-items: center;
             padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 215, 0, 0.08);
+            border-bottom: 1px solid rgba(90, 62, 10, 0.15);
         }
         .top-item:last-child {
             border-bottom: none;
@@ -442,15 +587,15 @@
             flex: 1;
             font-weight: 500;
             margin-left: 8px;
-            color: #fff;
+            color: #1a140e;
         }
         .top-item .score {
             font-weight: 700;
-            color: #ffd700;
-            background: rgba(255, 215, 0, 0.08);
+            color: #5a3e0a;
+            background: rgba(255, 215, 0, 0.15);
             padding: 2px 12px;
             border-radius: 20px;
-            border: 1px solid rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(90, 62, 10, 0.2);
         }
 
         /* ===== СЕТЬ (P2P) ===== */
@@ -580,7 +725,7 @@
             font-size: 15px;
         }
 
-        /* ===== НИЖНЕЕ МЕНЮ (7 вкладок) ===== */
+        /* ===== НИЖНЕЕ МЕНЮ ===== */
         .tab-bar {
             position: fixed;
             bottom: 0;
@@ -627,7 +772,6 @@
         /* ===== ОБЩИЕ УТИЛИТЫ ===== */
         .empty {
             text-align: center;
-            color: rgba(255, 255, 255, 0.2);
             padding: 30px 0;
         }
         .loading {
@@ -689,12 +833,12 @@
         <!-- 2. Вершина (рейтинг) -->
         <div id="page-verhina" class="page">
             <div class="center-piece">
-                <div class="symbol" style="color:#ffd700;">🏆</div>
-                <div class="label" style="color:#d4af37;">Вершина</div>
+                <div class="symbol" style="color:#b8860b;">🏆</div>
+                <div class="label" style="color:#5a3e0a;">Вершина</div>
             </div>
             <div class="glass">
-                <div class="card-title" style="color:#d4af37;">Топ участников</div>
-                <div id="topList"><div class="loading">Загрузка...</div></div>
+                <div class="card-title" style="color:#5a3e0a;">Топ участников</div>
+                <div id="topList"><div class="loading" style="color:#5a3e0a;">Загрузка...</div></div>
             </div>
         </div>
 
@@ -959,7 +1103,7 @@
         // ===== РЕНДЕРИНГ =====
         function renderTop(top) {
             const container = document.getElementById('topList');
-            if (!top || top.length === 0) { container.innerHTML = '<div class="empty">Пока нет участников</div>'; return; }
+            if (!top || top.length === 0) { container.innerHTML = '<div class="empty" style="color:#5a3e0a;">Пока нет участников</div>'; return; }
             let html = '';
             top.forEach((item, idx) => {
                 const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`;
@@ -1033,7 +1177,6 @@
             target.appendChild(ripple);
             ripple.addEventListener('animationend', () => ripple.remove());
         }
-        // Добавим ключевые кадры для ripple
         const styleSheet = document.createElement("style");
         styleSheet.textContent = `
             @keyframes rippleAnim {
@@ -1055,7 +1198,6 @@
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                 document.getElementById(pageId).classList.add('active');
 
-                // Меняем класс body для фона
                 const body = document.body;
                 body.className = '';
                 if (pageId === 'page-moment') body.classList.add('page-moment-active');
