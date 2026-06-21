@@ -410,7 +410,7 @@
                 </div>
                 <div class="planer-lock">
                     <div class="lock-icon">🔒</div>
-                    <button class="subscribe-btn" id="planerSubscribeBtn">Подписаться (50 Stars/мес)</button>
+                    <button class="subscribe-btn" id="planerSubscribeBtn" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e;">Подписаться (50 Stars/мес)</button>
                     <span style="font-size:12px; color:rgba(255,255,255,0.2); margin-top:8px;">Предварительный просмотр</span>
                 </div>
             </div>
@@ -831,9 +831,19 @@
             container.scrollTop = container.scrollHeight;
         });
 
-        // ===== ПЛАНЕР =====
-        document.getElementById('planerSubscribeBtn').addEventListener('click', function() {
-            tg.showAlert('Подписка на Планер: 50 Stars в месяц. Оплата через Telegram Stars.');
+        // ===== ПЛАНЕР (ПОДПИСКА) =====
+        document.getElementById('planerSubscribeBtn').addEventListener('click', async function() {
+            // Отправляем запрос на создание инвойса
+            try {
+                const result = await callApi('subscribe_planer');
+                if (result?.success) {
+                    tg.showAlert('✅ Запрос на оплату отправлен в бот. Проверьте чат с ботом.');
+                } else {
+                    tg.showAlert(result?.error || 'Ошибка при создании счёта.');
+                }
+            } catch(e) {
+                tg.showAlert('Ошибка связи с сервером.');
+            }
         });
 
         // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
