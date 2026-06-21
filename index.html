@@ -7,7 +7,6 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
-        /* ===== БАЗА ===== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -93,33 +92,45 @@
         .center-piece .label { margin-top:8px; font-size:18px; font-weight:500; letter-spacing:0.5px; opacity:0.7; }
         @keyframes pulse-soft { 0%{transform:scale(1); opacity:0.7;} 50%{transform:scale(1.05); opacity:1;} 100%{transform:scale(1); opacity:0.7;} }
 
-        /* ===== ГЛАВНАЯ (МОМЕНТ) – ВОПРОС ПО ЦЕНТРУ ===== */
+        /* ===== ГЛАВНАЯ (МОМЕНТ) – ОБЛАКО С ВОПРОСОМ ===== */
         .question-wrapper {
             display:flex; flex-direction:column; align-items:center; justify-content:center;
             min-height: 60vh;
             text-align:center;
         }
-        .question-circle {
-            width:220px; height:220px; border-radius:50%;
-            background:radial-gradient(circle at 30% 30%, rgba(78,205,196,0.15), rgba(10,11,31,0.9));
-            border:1px solid rgba(78,205,196,0.25);
-            display:flex; align-items:center; justify-content:center;
-            padding:24px;
-            position:relative;
-            box-shadow:0 0 60px rgba(78,205,196,0.05), inset 0 0 40px rgba(78,205,196,0.02);
-            margin-bottom:24px;
+        .question-cloud {
+            width: 260px;
+            min-height: 180px;
+            padding: 30px 40px;
+            background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.12), rgba(78,205,196,0.08));
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 60% 40% 50% 50% / 40% 60% 40% 60%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(78,205,196,0.05), inset 0 0 40px rgba(255,255,255,0.02);
+            backdrop-filter: blur(8px);
+            margin-bottom: 24px;
         }
-        .question-circle .question-text {
-            color:#fff; font-size:clamp(16px, 4vw, 20px); font-weight:500; line-height:1.5;
-            max-height:160px; overflow-y:auto; padding:4px;
-            text-shadow:0 0 20px rgba(78,205,196,0.1);
-            word-wrap:break-word; overflow-wrap:break-word; width:100%;
+        .question-cloud .question-text {
+            color: #fff;
+            font-size: clamp(16px, 4vw, 20px);
+            font-weight: 500;
+            line-height: 1.5;
+            max-height: 160px;
+            overflow-y: auto;
+            padding: 4px;
+            text-shadow: 0 0 20px rgba(78,205,196,0.1);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            width: 100%;
         }
-        .question-circle .question-text::-webkit-scrollbar { width:2px; }
-        .question-circle .question-text::-webkit-scrollbar-thumb { background:rgba(78,205,196,0.3); border-radius:4px; }
+        .question-cloud .question-text::-webkit-scrollbar { width:2px; }
+        .question-cloud .question-text::-webkit-scrollbar-thumb { background:rgba(78,205,196,0.3); border-radius:4px; }
         @media (max-width:480px) {
-            .question-circle { width:180px; height:180px; padding:16px; }
-            .question-circle .question-text { font-size:clamp(14px, 3.5vw, 17px); }
+            .question-cloud { width: 200px; min-height: 140px; padding: 20px 24px; }
+            .question-cloud .question-text { font-size: clamp(14px, 3.5vw, 17px); }
         }
 
         .visibility-buttons {
@@ -265,11 +276,11 @@
             </div>
         </div>
 
-        <!-- Момент (главная с вопросом по центру) -->
+        <!-- Момент -->
         <div id="page-moment" class="page active">
             <div class="glass">
                 <div class="question-wrapper">
-                    <div class="question-circle">
+                    <div class="question-cloud">
                         <div class="question-text" id="questionDisplay">Загрузка...</div>
                     </div>
                     <div class="visibility-buttons" id="visibilityButtons">
@@ -485,7 +496,6 @@
         }
 
         async function loadData() {
-            // Профиль
             const profileStatus = await callApi('get_profile_status');
             if (profileStatus?.completed !== undefined) {
                 profileCompleted = profileStatus.completed;
@@ -519,7 +529,6 @@
                 }
             }
 
-            // Вопрос
             const qData = await callApi('get_question');
             if (qData?.question) {
                 currentQuestion = qData.question;
