@@ -230,6 +230,7 @@
     <div class="stars" id="stars"></div>
 
     <div class="container">
+        <!-- ШАПКА -->
         <div class="header">
             <h1>✦ Re:Self</h1>
             <div class="header-right">
@@ -238,7 +239,7 @@
             </div>
         </div>
 
-        <!-- Момент -->
+        <!-- Момент (главная) -->
         <div id="page-moment" class="page active">
             <div class="glass" style="background:transparent; backdrop-filter:none; border:none; box-shadow:none; padding:0;">
                 <div class="question-wrapper">
@@ -254,7 +255,7 @@
             </div>
         </div>
 
-        <!-- Вершина -->
+        <!-- Вершина (рейтинг) -->
         <div id="page-verhina" class="page">
             <div class="center-piece"><div class="symbol" style="color:#ffd700;">🏆</div><div class="label" style="color:#d4af37;">Вершина</div></div>
             <div class="glass">
@@ -267,10 +268,19 @@
             </div>
         </div>
 
-        <!-- Сеть -->
+        <!-- Сеть (сообщество) -->
         <div id="page-set" class="page">
             <div class="center-piece"><div class="symbol" style="color:#00d4ff;">🧠</div><div class="label" style="color:#00d4ff;">Сеть</div></div>
-            <div class="glass"><div class="card-title" style="color:#00d4ff;">Вопросы сообщества</div><div id="p2pList"><div class="loading">Загрузка...</div></div></div>
+            <div class="glass">
+                <div class="card-title" style="color:#00d4ff;">Вопросы сообщества</div>
+                <div id="p2pList"><div class="loading">Загрузка...</div></div>
+            </div>
+            <!-- Форма для ответа на P2P (скрыта) -->
+            <div id="p2pAnswerForm" style="display:none; margin-top:12px;">
+                <div class="card-title" style="color:#00d4ff;">Ваш ответ</div>
+                <textarea id="p2pAnswerInput" placeholder="Напишите ответ..." rows="3"></textarea>
+                <button class="btn-primary" id="p2pAnswerSubmitBtn" style="background:linear-gradient(135deg, #0066ff, #00d4ff); margin-top:8px;">Отправить ответ</button>
+            </div>
             <div class="glass ask-form">
                 <div class="card-title" style="color:#00d4ff;">✍️ Задать вопрос</div>
                 <textarea id="p2pQuestionInput" placeholder="Напишите ваш вопрос (не более 500 символов)..."></textarea>
@@ -278,13 +288,13 @@
             </div>
         </div>
 
-        <!-- Отражения -->
+        <!-- Отражения (галерея ответов) -->
         <div id="page-otrazhenie" class="page">
             <div class="center-piece"><div class="symbol" style="color:#8a2be2;">👁</div><div class="label" style="color:#8a2be2;">Отражения</div></div>
             <div class="glass"><div class="card-title" style="color:#8a2be2;">Ответы на текущий вопрос</div><div id="galleryList"><div class="loading">Загрузка...</div></div></div>
         </div>
 
-        <!-- Искры -->
+        <!-- Искры (18+) -->
         <div id="page-iskry" class="page">
             <div class="center-piece"><div class="symbol" style="color:#ff0033;">🔥</div><div class="label" style="color:#ff0033;">Искры</div></div>
             <div class="glass evening-mode" id="iskryContainer">
@@ -294,7 +304,7 @@
             </div>
         </div>
 
-        <!-- Встреча -->
+        <!-- Встреча (анонимный чат) -->
         <div id="page-vstrecha" class="page">
             <div class="center-piece"><div class="symbol" style="color:#b388ff;">🔮</div><div class="label" style="color:#b388ff;">Встреча</div></div>
             <div class="glass" id="chatContainer">
@@ -335,7 +345,7 @@
             </div>
         </div>
 
-        <!-- Профиль -->
+        <!-- Профиль (открывается по аватарке) -->
         <div id="page-profile" class="page">
             <div class="glass">
                 <div class="card-title" style="color:#f5deb3;">Профиль</div>
@@ -378,7 +388,7 @@
         </div>
     </div>
 
-    <!-- НИЖНЕЕ МЕНЮ -->
+    <!-- НИЖНЕЕ МЕНЮ (без отдельной вкладки "Профиль") -->
     <div class="tab-bar">
         <button class="tab-item active" data-page="page-moment"><span class="tab-icon">✦</span>Момент</button>
         <button class="tab-item" data-page="page-verhina"><span class="tab-icon">🏆</span>Вершина</button>
@@ -388,7 +398,6 @@
         <button class="tab-item" data-page="page-vstrecha"><span class="tab-icon">🔮</span>Встреча</button>
         <button class="tab-item pro" data-page="page-planer"><span class="tab-icon">📋</span>Планер</button>
         <button class="tab-item" data-page="page-shop"><span class="tab-icon">🛍️</span>Магазин</button>
-        <button class="tab-item" data-page="page-profile" style="display:none;"><span class="tab-icon">👤</span>Профиль</button>
     </div>
 
     <script>
@@ -429,8 +438,8 @@
             document.getElementById('profileAvatar').parentElement.replaceChild(img2, document.getElementById('profileAvatar'));
         }
 
-        // ===== ГЛАВНОЕ: АДРЕС ВАШЕГО СЕРВЕРА (SERVEO) =====
-                const API_URL = 'https://garage-courier-everybody.ngrok-free.dev/api';
+        // ===== АДРЕС ВАШЕГО СЕРВЕРА (ngrok) =====
+        const API_URL = 'https://garage-courier-everybody.ngrok-free.dev/api';
 
         let currentVisibility = 0;
         let currentQuestion = null;
@@ -438,6 +447,7 @@
         let chatSessionId = null;
         let chatPartner = null;
         let chatPollInterval = null;
+        let p2pAnswerTarget = null; // для ответа на P2P
 
         async function callApi(action, data = {}) {
             try {
@@ -457,7 +467,9 @@
             }
         }
 
+        // ===== ЗАГРУЗКА ДАННЫХ =====
         async function loadData() {
+            // Профиль
             const profileStatus = await callApi('get_profile_status');
             if (profileStatus?.completed !== undefined) {
                 profileCompleted = profileStatus.completed;
@@ -476,6 +488,7 @@
                     const container = document.getElementById('achievementsList');
                     container.innerHTML = profileStatus.achievements.map(a => `<span style="background:rgba(245,222,179,0.1); padding:4px 12px; border-radius:20px; font-size:12px; color:#f5deb3;">🏅 ${a[0]}</span>`).join('');
                 }
+                // История
                 const historyData = await callApi('get_history');
                 if (historyData?.history) {
                     const container = document.getElementById('profileHistory');
@@ -491,6 +504,7 @@
                 }
             }
 
+            // Вопрос
             const qData = await callApi('get_question');
             if (qData?.question) {
                 currentQuestion = qData.question;
@@ -503,6 +517,7 @@
             checkIskry();
         }
 
+        // ===== ТОП =====
         async function loadTop(period) {
             document.getElementById('topList').innerHTML = '<div class="loading">Загрузка...</div>';
             const data = await callApi('get_top', { period });
@@ -521,6 +536,7 @@
             }
         }
 
+        // ===== P2P (СЕТЬ) =====
         async function loadP2P() {
             const data = await callApi('get_p2p');
             if (data?.questions) {
@@ -540,15 +556,41 @@
                     `;
                 });
                 container.innerHTML = html;
+                // Навешиваем обработчики на кнопки "Ответить"
                 container.querySelectorAll('.answer-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const qid = this.dataset.id;
-                        tg.showAlert('Напишите ответ в чат с ботом или через форму "Задать вопрос".');
+                        p2pAnswerTarget = qid;
+                        document.getElementById('p2pAnswerForm').style.display = 'block';
+                        document.getElementById('p2pAnswerInput').value = '';
+                        document.getElementById('p2pAnswerInput').focus();
                     });
                 });
             }
         }
 
+        // Отправка ответа на P2P
+        document.getElementById('p2pAnswerSubmitBtn').addEventListener('click', async function() {
+            const text = document.getElementById('p2pAnswerInput').value.trim();
+            if (!text) { tg.showAlert('Напишите ответ!'); return; }
+            if (!p2pAnswerTarget) { tg.showAlert('Ошибка: не выбран вопрос'); return; }
+            this.disabled = true; this.textContent = 'Отправка...';
+            const result = await callApi('add_p2p_answer', {
+                question_id: p2pAnswerTarget,
+                text: text,
+                visibility: currentVisibility
+            });
+            this.disabled = false; this.textContent = 'Отправить ответ';
+            if (result?.success) {
+                tg.showAlert('✅ Ответ опубликован!');
+                document.getElementById('p2pAnswerForm').style.display = 'none';
+                loadP2P(); // обновить список
+            } else {
+                tg.showAlert(result?.error || 'Ошибка публикации.');
+            }
+        });
+
+        // ===== ГАЛЕРЕЯ =====
         async function loadGallery() {
             const data = await callApi('get_gallery');
             if (data?.answers) {
@@ -566,6 +608,7 @@
             }
         }
 
+        // ===== ИСКРЫ (18+) =====
         function checkIskry() {
             const now = new Date();
             const hours = now.getHours();
@@ -592,7 +635,7 @@
             }
         }
 
-        // ===== ЧАТ =====
+        // ===== ЧАТ (ВСТРЕЧА) =====
         document.getElementById('chatJoinBtn').addEventListener('click', async function() {
             if (chatSessionId) {
                 tg.showAlert('Вы уже в чате.');
@@ -649,7 +692,7 @@
             container.scrollTop = container.scrollHeight;
         });
 
-        // ===== ПЛАНЕР =====
+        // ===== ПЛАНЕР (ПОДПИСКА) =====
         document.getElementById('planerSubscribeBtn').addEventListener('click', function() {
             tg.showAlert('Подписка на Планер: 50 Stars в месяц. Оплата через Telegram Stars.');
         });
@@ -685,7 +728,7 @@
             });
         });
 
-        // ===== ПРОФИЛЬ =====
+        // ===== ПРОФИЛЬ (открывается по аватарке) =====
         document.getElementById('profileBtn').addEventListener('click', function() {
             document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -694,6 +737,7 @@
             loadData();
         });
 
+        // ===== ВИДИМОСТЬ =====
         document.querySelectorAll('#visibilityButtons button').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('#visibilityButtons button').forEach(b => b.classList.remove('active'));
@@ -702,6 +746,7 @@
             });
         });
 
+        // ===== ОТПРАВКА ОТВЕТА НА ГЛАВНЫЙ ВОПРОС =====
         document.getElementById('submitAnswerBtn').addEventListener('click', async function() {
             if (!profileCompleted) {
                 tg.showAlert('❌ Сначала заполните профиль (нажмите на аватарку)');
@@ -725,6 +770,7 @@
             }
         });
 
+        // ===== ЗАДАТЬ ВОПРОС В СООБЩЕСТВЕ =====
         document.getElementById('p2pAskBtn').addEventListener('click', async function() {
             if (!profileCompleted) {
                 tg.showAlert('❌ Сначала заполните профиль');
@@ -745,6 +791,7 @@
             }
         });
 
+        // ===== СОХРАНЕНИЕ ПРОФИЛЯ =====
         document.querySelectorAll('#profileVisibilityButtons button').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('#profileVisibilityButtons button').forEach(b => b.classList.remove('active'));
@@ -768,12 +815,14 @@
             }
         });
 
+        // ===== УТИЛИТЫ =====
         function escHtml(str) {
             const d = document.createElement('div');
             d.textContent = str;
             return d.innerHTML;
         }
 
+        // ===== ЗАПУСК =====
         loadData();
         setInterval(() => loadData(), 3600000);
     </script>
