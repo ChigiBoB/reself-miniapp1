@@ -216,21 +216,85 @@
         .placeholder h2 { font-size:22px; color:#fff; margin-bottom:8px; }
         .placeholder p { color:rgba(255,255,255,0.3); font-size:15px; }
 
-        #p2pAnswerForm {
-            background: rgba(255,255,255,0.04);
+        /* ===== МОДАЛЬНЫЕ ОКНА ДЛЯ ОТВЕТОВ ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-card {
+            background: #1a1f2a;
             border-radius: 24px;
-            padding: 16px;
-            margin-top: 12px;
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255,255,255,0.06);
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.08);
         }
-        #p2pAnswerForm .card-title { color: #00d4ff; }
-        #p2pAnswerForm textarea {
-            width:100%; padding:14px; background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.08); border-radius:16px; color:#fff;
-            font-size:16px; resize:vertical; min-height:80px; font-family:inherit; margin-bottom:12px;
+        .modal-card .modal-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #fff;
         }
-        #p2pAnswerForm textarea:focus { outline:none; border-color:#00d4ff; }
+        .modal-card .modal-question {
+            font-size: 15px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 16px;
+            padding: 12px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 12px;
+        }
+        .modal-card textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            color: #fff;
+            font-size: 15px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+            margin-bottom: 12px;
+        }
+        .modal-card textarea:focus {
+            outline: none;
+            border-color: #4ecdc4;
+        }
+        .modal-card .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-card .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .modal-card .modal-buttons .modal-submit {
+            background: linear-gradient(135deg, #4ecdc4, #38bdf8);
+            color: #fff;
+        }
+        .modal-card .modal-buttons .modal-cancel {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.6);
+        }
 
         .tab-bar {
             position:fixed; bottom:0; left:0; right:0;
@@ -259,6 +323,7 @@
 </head>
 <body>
     <div class="stars" id="stars"></div>
+
     <div class="container">
         <div class="header">
             <h1>✦ Re:Self</h1>
@@ -303,11 +368,6 @@
             <div class="glass">
                 <div class="card-title" style="color:#00d4ff;">Вопросы сообщества</div>
                 <div id="p2pList"><div class="loading">Загрузка...</div></div>
-            </div>
-            <div id="p2pAnswerForm">
-                <div class="card-title" style="color:#00d4ff;">Ваш ответ</div>
-                <textarea id="p2pAnswerInput" placeholder="Напишите ответ..." rows="3"></textarea>
-                <button class="btn-primary" id="p2pAnswerSubmitBtn" style="background:linear-gradient(135deg, #0066ff, #00d4ff); margin-top:8px;">Отправить ответ</button>
             </div>
             <div class="glass ask-form">
                 <div class="card-title" style="color:#00d4ff;">✍️ Задать вопрос</div>
@@ -359,16 +419,42 @@
         <!-- Планер -->
         <div id="page-planer" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">📋</div><div class="label" style="color:#d4af37;">Планер</div></div>
-            <div class="glass">
-                <div class="planer-preview">
-                    <div class="icon">📅</div>
-                    <h2>Ваш личный планировщик</h2>
-                    <p>Задачи, бюджет, время – всё в одном месте. Доступно по подписке.</p>
+            <div class="glass" id="planerContainer">
+                <div id="planerPreview" style="display:block;">
+                    <div class="planer-preview">
+                        <div class="icon">📅</div>
+                        <h2>Ваш личный планировщик</h2>
+                        <p>Задачи, бюджет, время – всё в одном месте. Доступно по подписке.</p>
+                    </div>
+                    <div class="planer-lock">
+                        <div class="lock-icon">🔒</div>
+                        <button class="subscribe-btn" id="planerSubscribeBtn" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e;">Подписаться (50 Stars/мес)</button>
+                        <button class="subscribe-btn" id="planerPreviewBtn" style="margin-top:8px; background:rgba(255,255,255,0.1); color:#fff;">Предпросмотр</button>
+                        <span style="font-size:12px; color:rgba(255,255,255,0.2); margin-top:8px;">Админам доступ бесплатно</span>
+                    </div>
                 </div>
-                <div class="planer-lock">
-                    <div class="lock-icon">🔒</div>
-                    <button class="subscribe-btn" id="planerSubscribeBtn" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e;">Подписаться (50 Stars/мес)</button>
-                    <span style="font-size:12px; color:rgba(255,255,255,0.2); margin-top:8px;">Предварительный просмотр</span>
+                <div id="planerDemo" style="display:none;">
+                    <div class="card-title" style="color:#d4af37;">📌 Задачи на сегодня</div>
+                    <div class="planer-demo">
+                        <div class="task-item"><span class="title">Утренняя зарядка</span><span class="time">08:00</span></div>
+                        <div class="task-item"><span class="title">Работа над проектом</span><span class="time">10:00–13:00</span></div>
+                        <div class="task-item"><span class="title">Обед</span><span class="time">13:00</span></div>
+                        <div class="task-item"><span class="title">Тренировка</span><span class="time">18:00</span></div>
+                    </div>
+                    <div style="margin-top:16px;">
+                        <div class="card-title" style="color:#d4af37;">💰 Бюджет (распределение)</div>
+                        <div class="planer-demo">
+                            <div class="budget-item"><span>Жильё</span><span class="percent">30%</span></div>
+                            <div class="budget-item"><span>Еда</span><span class="percent">20%</span></div>
+                            <div class="budget-item"><span>Транспорт</span><span class="percent">10%</span></div>
+                            <div class="budget-item"><span>Сбережения</span><span class="percent">25%</span></div>
+                            <div class="budget-item"><span>Развлечения</span><span class="percent">15%</span></div>
+                        </div>
+                    </div>
+                    <div style="margin-top:12px; text-align:center; color:rgba(255,255,255,0.3); font-size:13px;">
+                        Это демо-версия. Полный функционал доступен после подписки.
+                    </div>
+                    <button class="btn-primary" id="planerCloseDemoBtn" style="margin-top:12px; background:rgba(255,255,255,0.1);">Закрыть предпросмотр</button>
                 </div>
             </div>
         </div>
@@ -427,6 +513,33 @@
         </div>
     </div>
 
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ОТВЕТА В СЕТИ -->
+    <div class="modal-overlay" id="modalP2P">
+        <div class="modal-card">
+            <div class="modal-title">💬 Ответить на вопрос</div>
+            <div class="modal-question" id="modalP2PQuestion">Загрузка...</div>
+            <textarea id="modalP2PInput" placeholder="Напишите ответ..." rows="3"></textarea>
+            <div class="modal-buttons">
+                <button class="modal-submit" id="modalP2PSubmit">Отправить</button>
+                <button class="modal-cancel" id="modalP2PCancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ОТВЕТА В ИСКРАХ -->
+    <div class="modal-overlay" id="modalIskry">
+        <div class="modal-card">
+            <div class="modal-title">🔥 Ответить на вопрос 18+</div>
+            <div class="modal-question" id="modalIskryQuestion">Загрузка...</div>
+            <textarea id="modalIskryInput" placeholder="Напишите ответ..." rows="3"></textarea>
+            <div class="modal-buttons">
+                <button class="modal-submit" id="modalIskrySubmit">Отправить</button>
+                <button class="modal-cancel" id="modalIskryCancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- НИЖНЕЕ МЕНЮ -->
     <div class="tab-bar">
         <button class="tab-item active" data-page="page-moment"><span class="tab-icon">✦</span>Момент</button>
         <button class="tab-item" data-page="page-verhina"><span class="tab-icon">🏆</span>Вершина</button>
@@ -484,12 +597,15 @@
         let chatSessionId = null;
         let chatPartner = null;
         let chatPollInterval = null;
-        let p2pAnswerTarget = null;
-        let iskryCurrentQuestion = null;
+
+        // Переменные для модалок
+        let modalP2PQuestionId = null;
+        let modalIskryQuestionText = null;
 
         async function callApi(action, data = {}) {
             try {
                 const payload = { action, user_id: userId, ...data };
+                console.log('📤', payload);
                 const resp = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -559,8 +675,10 @@
             loadGallery();
             checkIskry();
             loadIskryGallery();
+            checkPlanerStatus();
         }
 
+        // ===== ТОП =====
         async function loadTop(period) {
             document.getElementById('topList').innerHTML = '<div class="loading">Загрузка...</div>';
             const data = await callApi('get_top', { period });
@@ -579,6 +697,7 @@
             }
         }
 
+        // ===== P2P (СЕТЬ) =====
         async function loadP2P() {
             const data = await callApi('get_p2p');
             if (data?.questions) {
@@ -600,35 +719,50 @@
                 container.innerHTML = html;
                 container.querySelectorAll('.answer-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
-                        p2pAnswerTarget = this.dataset.id;
-                        document.getElementById('p2pAnswerForm').style.display = 'block';
-                        document.getElementById('p2pAnswerInput').value = '';
-                        document.getElementById('p2pAnswerInput').focus();
+                        const qid = this.dataset.id;
+                        openModalP2P(qid);
                     });
                 });
             }
         }
 
-        document.getElementById('p2pAnswerSubmitBtn').addEventListener('click', async function() {
-            const text = document.getElementById('p2pAnswerInput').value.trim();
-            if (!text) { tg.showAlert('Напишите ответ!'); return; }
-            if (!p2pAnswerTarget) { tg.showAlert('Ошибка: не выбран вопрос'); return; }
+        // ===== МОДАЛКА ДЛЯ ОТВЕТА В СЕТИ =====
+        function openModalP2P(questionId) {
+            modalP2PQuestionId = questionId;
+            // Найдём текст вопроса
+            const item = document.querySelector(`.p2p-item .answer-btn[data-id="${questionId}"]`).closest('.p2p-item');
+            const questionText = item.querySelector('.question-text').textContent;
+            document.getElementById('modalP2PQuestion').textContent = questionText;
+            document.getElementById('modalP2PInput').value = '';
+            document.getElementById('modalP2P').classList.add('active');
+        }
+
+        document.getElementById('modalP2PCancel').addEventListener('click', function() {
+            document.getElementById('modalP2P').classList.remove('active');
+            modalP2PQuestionId = null;
+        });
+        document.getElementById('modalP2PSubmit').addEventListener('click', async function() {
+            const answer = document.getElementById('modalP2PInput').value.trim();
+            if (!answer) { tg.showAlert('Напишите ответ!'); return; }
+            if (!modalP2PQuestionId) { tg.showAlert('Ошибка: вопрос не выбран'); return; }
             this.disabled = true; this.textContent = 'Отправка...';
             const result = await callApi('add_p2p_answer', {
-                question_id: p2pAnswerTarget,
-                text: text,
+                question_id: modalP2PQuestionId,
+                text: answer,
                 visibility: currentVisibility
             });
-            this.disabled = false; this.textContent = 'Отправить ответ';
+            this.disabled = false; this.textContent = 'Отправить';
             if (result?.success) {
                 tg.showAlert('✅ Ответ опубликован!');
-                document.getElementById('p2pAnswerForm').style.display = 'none';
-                loadP2P();
+                document.getElementById('modalP2P').classList.remove('active');
+                modalP2PQuestionId = null;
+                loadP2P(); // обновить список
             } else {
                 tg.showAlert(result?.error || 'Ошибка публикации.');
             }
         });
 
+        // ===== ГАЛЕРЕЯ =====
         async function loadGallery() {
             const data = await callApi('get_gallery');
             if (data?.answers) {
@@ -646,6 +780,7 @@
             }
         }
 
+        // ===== ИСКРЫ =====
         function checkIskry() {
             const now = new Date();
             const hours = now.getHours();
@@ -661,10 +796,9 @@
                 document.getElementById('iskryQuestionBtn').addEventListener('click', async function() {
                     const data = await callApi('get_iskry_question');
                     if (data?.question) {
-                        document.getElementById('iskryQuestionDisplay').textContent = data.question;
-                        iskryCurrentQuestion = data.question;
-                        document.getElementById('iskryCurrentQuestion').textContent = data.question;
-                        document.getElementById('iskryAnswerArea').style.display = 'block';
+                        const questionText = data.question;
+                        document.getElementById('iskryQuestionDisplay').textContent = questionText;
+                        openModalIskry(questionText);
                     }
                 });
                 document.getElementById('iskryGallery').style.display = 'block';
@@ -674,31 +808,44 @@
                     <h2 style="color:#ff0033;">Вечерний режим</h2>
                     <p>Вопросы доступны с 20:00 до 08:00</p>
                 `;
-                document.getElementById('iskryAnswerArea').style.display = 'none';
                 document.getElementById('iskryGallery').style.display = 'none';
             }
         }
 
-        document.getElementById('iskryAnswerSubmitBtn').addEventListener('click', async function() {
-            const answer = document.getElementById('iskryAnswerInput').value.trim();
+        // ===== МОДАЛКА ДЛЯ ИСКР =====
+        function openModalIskry(questionText) {
+            modalIskryQuestionText = questionText;
+            document.getElementById('modalIskryQuestion').textContent = questionText;
+            document.getElementById('modalIskryInput').value = '';
+            document.getElementById('modalIskry').classList.add('active');
+        }
+
+        document.getElementById('modalIskryCancel').addEventListener('click', function() {
+            document.getElementById('modalIskry').classList.remove('active');
+            modalIskryQuestionText = null;
+        });
+        document.getElementById('modalIskrySubmit').addEventListener('click', async function() {
+            const answer = document.getElementById('modalIskryInput').value.trim();
             if (!answer) { tg.showAlert('Напишите ответ!'); return; }
-            if (!iskryCurrentQuestion) { tg.showAlert('Сначала получите вопрос'); return; }
+            if (!modalIskryQuestionText) { tg.showAlert('Ошибка: вопрос не получен'); return; }
             this.disabled = true; this.textContent = 'Отправка...';
             const result = await callApi('submit_iskry_answer', {
-                question: iskryCurrentQuestion,
+                question: modalIskryQuestionText,
                 answer: answer,
-                visibility: 0
+                visibility: 0  // всегда анонимно
             });
-            this.disabled = false; this.textContent = 'Отправить ответ';
+            this.disabled = false; this.textContent = 'Отправить';
             if (result?.success) {
                 tg.showAlert('✅ Ответ опубликован!');
-                document.getElementById('iskryAnswerInput').value = '';
+                document.getElementById('modalIskry').classList.remove('active');
+                modalIskryQuestionText = null;
                 loadIskryGallery();
             } else {
                 tg.showAlert('Ошибка публикации.');
             }
         });
 
+        // ===== ГАЛЕРЕЯ ИСКР =====
         async function loadIskryGallery() {
             const data = await callApi('get_iskry_gallery');
             if (data?.answers) {
@@ -721,6 +868,48 @@
                 container.innerHTML = html;
             }
         }
+
+        // ===== ПЛАНЕР =====
+        async function checkPlanerStatus() {
+            const data = await callApi('planer_status');
+            if (data) {
+                const preview = document.getElementById('planerPreview');
+                const demo = document.getElementById('planerDemo');
+                if (data.subscribed) {
+                    preview.style.display = 'none';
+                    demo.style.display = 'block';
+                } else {
+                    preview.style.display = 'block';
+                    demo.style.display = 'none';
+                }
+            }
+        }
+
+        document.getElementById('planerPreviewBtn').addEventListener('click', function() {
+            const demo = document.getElementById('planerDemo');
+            const preview = document.getElementById('planerPreview');
+            if (demo.style.display === 'none') {
+                demo.style.display = 'block';
+                preview.style.display = 'none';
+            } else {
+                demo.style.display = 'none';
+                preview.style.display = 'block';
+            }
+        });
+
+        document.getElementById('planerCloseDemoBtn').addEventListener('click', function() {
+            document.getElementById('planerDemo').style.display = 'none';
+            document.getElementById('planerPreview').style.display = 'block';
+        });
+
+        document.getElementById('planerSubscribeBtn').addEventListener('click', async function() {
+            const result = await callApi('subscribe_planer');
+            if (result?.success) {
+                tg.showAlert('✅ Запрос на оплату отправлен в бот. Проверьте чат.');
+            } else {
+                tg.showAlert(result?.error || 'Ошибка при создании счёта.');
+            }
+        });
 
         // ===== ЧАТ =====
         document.getElementById('chatJoinBtn').addEventListener('click', async function() {
@@ -779,46 +968,7 @@
             container.scrollTop = container.scrollHeight;
         });
 
-        // ===== ПЛАНЕР =====
-        document.getElementById('planerSubscribeBtn').addEventListener('click', async function() {
-            const result = await callApi('subscribe_planer');
-            if (result?.success) {
-                tg.showAlert('✅ Запрос на оплату отправлен в бот. Проверьте чат с ботом.');
-            } else {
-                tg.showAlert(result?.error || 'Ошибка при создании счёта.');
-            }
-        });
-
-        // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
-        document.querySelectorAll('.tab-item').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                const pageId = this.dataset.page;
-                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                document.getElementById(pageId).classList.add('active');
-                if (pageId === 'page-verhina') {
-                    const activePeriod = document.querySelector('#topTabs .active')?.dataset.period || 'day';
-                    loadTop(activePeriod);
-                } else if (pageId === 'page-set') {
-                    loadP2P();
-                } else if (pageId === 'page-otrazhenie') {
-                    loadGallery();
-                } else if (pageId === 'page-iskry') {
-                    checkIskry();
-                    loadIskryGallery();
-                }
-            });
-        });
-
-        document.querySelectorAll('#topTabs button').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('#topTabs button').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                loadTop(this.dataset.period);
-            });
-        });
-
+        // ===== ПРОФИЛЬ =====
         document.getElementById('profileBtn').addEventListener('click', function() {
             document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -898,6 +1048,38 @@
             } else {
                 tg.showAlert('Ошибка сохранения.');
             }
+        });
+
+        // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const pageId = this.dataset.page;
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(pageId).classList.add('active');
+                if (pageId === 'page-verhina') {
+                    const activePeriod = document.querySelector('#topTabs .active')?.dataset.period || 'day';
+                    loadTop(activePeriod);
+                } else if (pageId === 'page-set') {
+                    loadP2P();
+                } else if (pageId === 'page-otrazhenie') {
+                    loadGallery();
+                } else if (pageId === 'page-iskry') {
+                    checkIskry();
+                    loadIskryGallery();
+                } else if (pageId === 'page-planer') {
+                    checkPlanerStatus();
+                }
+            });
+        });
+
+        document.querySelectorAll('#topTabs button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#topTabs button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                loadTop(this.dataset.period);
+            });
         });
 
         function escHtml(str) {
