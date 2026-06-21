@@ -7,7 +7,6 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
-        /* ===== БАЗА ===== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -62,7 +61,6 @@
             transition:color 0.5s;
         }
 
-        /* ===== ЦЕНТРАЛЬНЫЙ СИМВОЛ ===== */
         .center-piece {
             display:flex; flex-direction:column; align-items:center; justify-content:center;
             margin:12px 0 20px;
@@ -72,12 +70,6 @@
         @keyframes pulse-soft { 0%{transform:scale(1); opacity:0.7;} 50%{transform:scale(1.05); opacity:1;} 100%{transform:scale(1); opacity:0.7;} }
 
         /* ===== ГЛАВНАЯ (МОМЕНТ) ===== */
-        .question-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-        .timer {
-            background:rgba(255,107,107,0.15); color:#ff6b6b;
-            padding:4px 14px; border-radius:30px; font-size:14px; font-weight:600;
-            border:1px solid rgba(255,107,107,0.2);
-        }
         .question-text {
             font-size:20px; font-weight:500; line-height:1.6; margin-bottom:20px; color:#fff;
             text-shadow:0 0 20px rgba(78,205,196,0.1);
@@ -181,7 +173,6 @@
         .profile-stat-item .number { font-size:28px; font-weight:700; color:#f5deb3; display:block; }
         .profile-stat-item .label { font-size:12px; color:rgba(245,222,179,0.3); text-transform:uppercase; letter-spacing:1px; }
 
-        /* ===== ЗАГЛУШКИ ===== */
         .placeholder { text-align:center; padding:40px 20px; }
         .placeholder .icon { font-size:48px; margin-bottom:16px; opacity:0.3; }
         .placeholder h2 { font-size:22px; color:#fff; margin-bottom:8px; }
@@ -208,7 +199,6 @@
         .tab-item.pro { position:relative; }
         .tab-item.pro::after { content:'PRO'; position:absolute; top:-6px; right:-6px; font-size:7px; background:#ffd700; color:#1a140e; padding:1px 4px; border-radius:10px; }
 
-        /* Утилиты */
         .empty { text-align:center; color:rgba(255,255,255,0.2); padding:30px 0; }
         .loading { text-align:center; padding:30px 0; color:rgba(255,255,255,0.2); }
         @media (max-width:480px) { .profile-stats { grid-template-columns:1fr 1fr; } }
@@ -216,7 +206,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- ШАПКА -->
         <div class="header">
             <h1>✦ Re:Self</h1>
             <div class="header-right">
@@ -225,14 +214,10 @@
             </div>
         </div>
 
-        <!-- СТРАНИЦЫ -->
         <!-- Момент -->
         <div id="page-moment" class="page active">
             <div class="glass">
-                <div class="question-header">
-                    <span style="font-weight:600; color:rgba(255,255,255,0.5);">Вопрос дня</span>
-                    <span class="timer" id="timerDisplay">⏳ --:--</span>
-                </div>
+                <div style="font-weight:600; color:rgba(255,255,255,0.5); margin-bottom:8px;">Вопрос дня</div>
                 <div class="question-text" id="questionDisplay">Загрузка...</div>
                 <div class="visibility-buttons" id="visibilityButtons">
                     <button data-visibility="0" class="active">🕵 Анонимно</button>
@@ -241,9 +226,6 @@
                 </div>
                 <textarea class="answer-input" id="answerInput" placeholder="Напишите ответ..." rows="2"></textarea>
                 <button class="btn-primary" id="submitAnswerBtn" style="background:linear-gradient(135deg, #ff6b6b, #4ecdc4);">Отправить ответ</button>
-            </div>
-            <div class="glass" style="background:rgba(255,255,255,0.02); padding:12px 20px; text-align:center; color:rgba(255,255,255,0.2); font-size:13px;">
-                Следующий вопрос через <span id="timerShort" style="font-weight:600; color:#ffe66d;">--:--</span>
             </div>
         </div>
 
@@ -287,7 +269,7 @@
             </div>
         </div>
 
-        <!-- Встреча (Чат) -->
+        <!-- Встреча -->
         <div id="page-vstrecha" class="page">
             <div class="center-piece"><div class="symbol" style="color:#b388ff;">🔮</div><div class="label" style="color:#b388ff;">Встреча</div></div>
             <div class="glass" id="chatContainer">
@@ -318,7 +300,7 @@
             </div>
         </div>
 
-        <!-- Магазин (заглушка) -->
+        <!-- Магазин -->
         <div id="page-shop" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">🛍️</div><div class="label" style="color:#d4af37;">Магазин</div></div>
             <div class="glass placeholder">
@@ -385,7 +367,6 @@
     </div>
 
     <script>
-        // ===== ИНИЦИАЛИЗАЦИЯ =====
         const tg = window.Telegram.WebApp;
         tg.expand(); tg.ready();
         const user = tg.initDataUnsafe?.user || {};
@@ -408,7 +389,6 @@
         const API_URL = 'https://garage-courier-everybody.ngrok-free.dev/api';
         let currentVisibility = 0;
         let currentQuestion = null;
-        let nextQuestionTime = null;
         let profileCompleted = false;
         let chatSessionId = null;
         let chatPartner = null;
@@ -432,28 +412,6 @@
             }
         }
 
-        // ===== ТАЙМЕР =====
-        function updateTimer() {
-            let diff;
-            if (nextQuestionTime) {
-                const now = Math.floor(Date.now()/1000);
-                diff = nextQuestionTime - now;
-                if (diff < 0) diff = 0;
-            } else {
-                const now = Math.floor(Date.now()/1000);
-                nextQuestionTime = now + 3600 - (now % 3600);
-                diff = 3600 - (now % 3600);
-            }
-            const mins = Math.floor(diff/60);
-            const secs = diff % 60;
-            const str = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
-            document.getElementById('timerDisplay').textContent = `⏳ ${str}`;
-            document.getElementById('timerShort').textContent = str;
-        }
-        setInterval(updateTimer, 1000);
-        setTimeout(updateTimer, 100);
-
-        // ===== ЗАГРУЗКА ДАННЫХ =====
         async function loadData() {
             // Статус профиля
             const profileStatus = await callApi('get_profile_status');
@@ -474,7 +432,6 @@
                     const container = document.getElementById('achievementsList');
                     container.innerHTML = profileStatus.achievements.map(a => `<span style="background:rgba(245,222,179,0.1); padding:4px 12px; border-radius:20px; font-size:12px; color:#f5deb3;">🏅 ${a[0]}</span>`).join('');
                 }
-                // История в профиле
                 const historyData = await callApi('get_history');
                 if (historyData?.history) {
                     const container = document.getElementById('profileHistory');
@@ -490,24 +447,18 @@
                 }
             }
 
-            // Вопрос
             const qData = await callApi('get_question');
             if (qData?.question) {
                 currentQuestion = qData.question;
                 document.getElementById('questionDisplay').textContent = qData.question;
             }
 
-            // Топ (день по умолчанию)
             loadTop('day');
-            // P2P
             loadP2P();
-            // Галерея
             loadGallery();
-            // Проверка Искр (18+)
             checkIskry();
         }
 
-        // ===== ТОП =====
         async function loadTop(period) {
             document.getElementById('topList').innerHTML = '<div class="loading">Загрузка...</div>';
             const data = await callApi('get_top', { period });
@@ -526,7 +477,6 @@
             }
         }
 
-        // ===== P2P =====
         async function loadP2P() {
             const data = await callApi('get_p2p');
             if (data?.questions) {
@@ -555,7 +505,6 @@
             }
         }
 
-        // ===== ГАЛЕРЕЯ =====
         async function loadGallery() {
             const data = await callApi('get_gallery');
             if (data?.answers) {
@@ -573,7 +522,6 @@
             }
         }
 
-        // ===== ИСКРЫ (18+) =====
         function checkIskry() {
             const now = new Date();
             const hours = now.getHours();
@@ -600,7 +548,7 @@
             }
         }
 
-        // ===== ЧАТ (ВСТРЕЧА) =====
+        // ===== ЧАТ =====
         document.getElementById('chatJoinBtn').addEventListener('click', async function() {
             if (chatSessionId) {
                 tg.showAlert('Вы уже в чате.');
@@ -611,7 +559,6 @@
             this.disabled = false; this.textContent = 'Найти собеседника';
             if (result?.status === 'waiting' || result?.status === 'idle') {
                 document.getElementById('chatStatus').textContent = 'Ожидание собеседника...';
-                // Начинаем опрос
                 if (chatPollInterval) clearInterval(chatPollInterval);
                 chatPollInterval = setInterval(async () => {
                     const statusData = await callApi('chat_status');
@@ -623,7 +570,6 @@
                         document.getElementById('chatInputArea').style.display = 'flex';
                         document.getElementById('chatStatus').textContent = `Чат с ${chatPartner}`;
                         clearInterval(chatPollInterval);
-                        // Запускаем получение сообщений
                         setInterval(async () => {
                             const msgData = await callApi('chat_poll', { session_id: chatSessionId });
                             if (msgData?.messages) {
@@ -651,7 +597,6 @@
             if (!text || !chatSessionId) return;
             await callApi('chat_send', { session_id: chatSessionId, message: text });
             input.value = '';
-            // Добавляем своё сообщение локально
             const container = document.getElementById('chatMessages');
             const div = document.createElement('div');
             div.className = 'chat-message own';
@@ -660,10 +605,9 @@
             container.scrollTop = container.scrollHeight;
         });
 
-        // ===== ПЛАНЕР (ПОДПИСКА) =====
+        // ===== ПЛАНЕР =====
         document.getElementById('planerSubscribeBtn').addEventListener('click', function() {
             tg.showAlert('Подписка на Планер: 50 Stars в месяц. Оплата через Telegram Stars.');
-            // Здесь можно добавить логику оплаты через createInvoiceLink
         });
 
         // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
@@ -674,19 +618,8 @@
                 const pageId = this.dataset.page;
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                 document.getElementById(pageId).classList.add('active');
-                // Меняем класс body для фона
                 const body = document.body;
                 body.className = '';
-                if (pageId === 'page-moment') body.classList.add('page-moment-active');
-                else if (pageId === 'page-verhina') body.classList.add('page-verhina-active');
-                else if (pageId === 'page-set') body.classList.add('page-set-active');
-                else if (pageId === 'page-iskry') body.classList.add('page-iskry-active');
-                else if (pageId === 'page-otrazhenie') body.classList.add('page-otrazhenie-active');
-                else if (pageId === 'page-vstrecha') body.classList.add('page-vstrecha-active');
-                else if (pageId === 'page-planer') body.classList.add('page-planer-active');
-                else if (pageId === 'page-shop') body.classList.add('page-shop-active');
-                else if (pageId === 'page-profile') body.classList.add('page-profile-active');
-                // При загрузке некоторых страниц подгружаем данные
                 if (pageId === 'page-verhina') {
                     const activePeriod = document.querySelector('#topTabs .active')?.dataset.period || 'day';
                     loadTop(activePeriod);
@@ -700,7 +633,6 @@
             });
         });
 
-        // ===== ТОП-ТАБЫ =====
         document.querySelectorAll('#topTabs button').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('#topTabs button').forEach(b => b.classList.remove('active'));
@@ -726,7 +658,6 @@
             });
         });
 
-        // ===== ОТПРАВКА ОТВЕТА =====
         document.getElementById('submitAnswerBtn').addEventListener('click', async function() {
             if (!profileCompleted) {
                 tg.showAlert('❌ Сначала заполните профиль (нажмите на аватарку)');
@@ -750,7 +681,6 @@
             }
         });
 
-        // ===== ЗАДАТЬ ВОПРОС =====
         document.getElementById('p2pAskBtn').addEventListener('click', async function() {
             if (!profileCompleted) {
                 tg.showAlert('❌ Сначала заполните профиль');
@@ -771,7 +701,6 @@
             }
         });
 
-        // ===== ПРОФИЛЬ (СОХРАНЕНИЕ) =====
         document.querySelectorAll('#profileVisibilityButtons button').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('#profileVisibilityButtons button').forEach(b => b.classList.remove('active'));
@@ -795,14 +724,12 @@
             }
         });
 
-        // ===== УТИЛИТЫ =====
         function escHtml(str) {
             const d = document.createElement('div');
             d.textContent = str;
             return d.innerHTML;
         }
 
-        // ===== ЗАПУСК =====
         loadData();
         setInterval(() => loadData(), 3600000);
     </script>
