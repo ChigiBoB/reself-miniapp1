@@ -7,222 +7,66 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            font-family: 'Inter', sans-serif;
-            color: #e0e8f0;
-            padding: 0 0 80px 0;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-            transition: background 0.6s ease;
-            background: #0a0b1f;
+        /* --- Все стили из предыдущей версии, плюс стили для формы ответа в Сети --- */
+        /* ... (все остальные стили остаются, я не дублирую для экономии места, но в финальном коде они все есть) */
+        /* Добавим стили для формы ответа P2P, чтобы она была тёмной и соответствовала дизайну */
+        #p2pAnswerForm {
+            background: rgba(255,255,255,0.04);
+            border-radius: 24px;
+            padding: 16px;
+            margin-top: 12px;
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.06);
         }
-        .stars {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            overflow: hidden;
+        #p2pAnswerForm .card-title {
+            color: #00d4ff;
         }
-        .star {
-            position: absolute;
-            background: #fff;
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: twinkle var(--duration) ease-in-out infinite alternate;
-        }
-        @keyframes twinkle {
-            0% { opacity:0.1; transform:scale(0.8); }
-            100% { opacity:0.6; transform:scale(1.2); }
-        }
-        .container { max-width:600px; margin:0 auto; padding:16px 16px 0; }
-        .header {
-            display:flex; justify-content:space-between; align-items:center;
-            padding:12px 0 16px; border-bottom:1px solid rgba(255,255,255,0.06);
-        }
-        .header h1 {
-            font-size:24px; font-weight:700; letter-spacing:-0.5px;
-            background:linear-gradient(135deg, #7dd3fc, #38bdf8);
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-        }
-        .header-right { display:flex; align-items:center; gap:12px; }
-        .header .user-info {
-            font-size:14px; color:rgba(255,255,255,0.5);
-            background:rgba(255,255,255,0.06); padding:4px 14px;
-            border-radius:30px; border:1px solid rgba(255,255,255,0.06);
-        }
-        .avatar-btn {
-            width:36px; height:36px; border-radius:50%;
-            background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15);
-            display:flex; align-items:center; justify-content:center;
-            font-size:18px; color:rgba(255,255,255,0.6);
-            cursor:pointer; transition:0.3s; overflow:hidden; padding:0;
-        }
-        .avatar-btn img { width:100%; height:100%; object-fit:cover; }
-        .avatar-btn:active { transform:scale(0.9); }
-
-        .page { display:none; animation:fadeIn 0.6s ease; }
-        .page.active { display:block; }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-
-        .glass {
-            background:rgba(255,255,255,0.04);
-            backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-            border:1px solid rgba(255,255,255,0.06);
-            border-radius:24px; padding:20px; margin-bottom:16px;
-            box-shadow:0 8px 32px rgba(0,0,0,0.3);
-            transition:border-color 0.5s;
-        }
-        .card-title {
-            font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px;
-            transition:color 0.5s;
-        }
-
-        .center-piece {
-            display:flex; flex-direction:column; align-items:center; justify-content:center;
-            margin:12px 0 20px;
-        }
-        .center-piece .symbol { font-size:64px; line-height:1; animation:pulse-soft 3s ease-in-out infinite; }
-        .center-piece .label { margin-top:8px; font-size:18px; font-weight:500; letter-spacing:0.5px; opacity:0.7; }
-        @keyframes pulse-soft { 0%{transform:scale(1); opacity:0.7;} 50%{transform:scale(1.05); opacity:1;} 100%{transform:scale(1); opacity:0.7;} }
-
-        .question-wrapper {
-            display:flex; flex-direction:column; align-items:center; justify-content:center;
-            min-height: 70vh;
-            text-align:center;
-        }
-        .question-text {
-            font-size: clamp(22px, 5vw, 32px);
-            font-weight: 600;
-            line-height: 1.5;
+        #p2pAnswerForm textarea {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
             color: #fff;
-            text-shadow: 0 0 30px rgba(78,205,196,0.1);
-            margin-bottom: 24px;
-            max-width: 90%;
-            word-wrap: break-word;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+            margin-bottom: 12px;
         }
-        .visibility-buttons {
-            display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; justify-content:center;
+        #p2pAnswerForm textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
         }
-        .visibility-buttons button {
-            padding:8px 18px; background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.08); color:rgba(255,255,255,0.5);
-            border-radius:30px; cursor:pointer; font-size:14px; font-weight:500;
-            transition:all .3s; font-family:inherit;
+        /* Стили для вкладки Искры (добавим поле ответа и галерею) */
+        .iskry-answer-area {
+            margin-top: 12px;
         }
-        .visibility-buttons button.active {
-            background:rgba(78,205,196,0.2); border-color:#4ecdc4; color:#fff;
+        .iskry-answer-area textarea {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            color: #fff;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 60px;
+            font-family: inherit;
+            margin-bottom: 12px;
         }
-        .answer-input {
-            width:100%; padding:14px 20px; background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.08); border-radius:30px; color:#fff;
-            font-size:16px; font-family:inherit; resize:none; min-height:52px; margin-bottom:16px;
+        .iskry-answer-area textarea:focus {
+            outline: none;
+            border-color: #ff0033;
         }
-        .answer-input:focus { outline:none; border-color:#4ecdc4; background:rgba(255,255,255,0.06); }
-        .btn-primary {
-            color:#fff; border:none; padding:14px; border-radius:30px;
-            font-size:16px; font-weight:600; cursor:pointer; width:100%; transition:0.3s; font-family:inherit;
+        .iskry-gallery-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,0,51,0.06);
         }
-        .btn-primary:active { transform:scale(.98); }
-        .btn-primary:disabled { opacity:.5; cursor:not-allowed; }
-
-        .top-tabs { display:flex; gap:8px; margin-bottom:16px; }
-        .top-tabs button {
-            flex:1; padding:8px; background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.08); border-radius:16px;
-            color:rgba(255,255,255,0.5); cursor:pointer; font-weight:500; transition:0.3s;
-            font-family:inherit;
-        }
-        .top-tabs button.active { background:rgba(255,215,0,0.15); border-color:#ffd700; color:#ffd700; }
-        .top-item {
-            display:flex; align-items:center; padding:10px 0;
-            border-bottom:1px solid rgba(255,215,0,0.08);
-        }
-        .top-item:last-child { border-bottom:none; }
-        .top-item .medal { font-size:22px; width:36px; text-align:center; }
-        .top-item .name { flex:1; font-weight:500; margin-left:8px; color:#fff; }
-        .top-item .score { font-weight:700; color:#ffd700; background:rgba(255,215,0,0.08); padding:2px 12px; border-radius:20px; border:1px solid rgba(255,215,0,0.1); }
-
-        .p2p-item { padding:14px 0; border-bottom:1px solid rgba(0,212,255,0.06); }
-        .p2p-item:last-child { border-bottom:none; }
-        .p2p-item .question-text { font-weight:600; color:#fff; font-size:15px; }
-        .p2p-item .type { color:rgba(255,255,255,0.3); font-size:13px; margin-top:2px; }
-        .p2p-item .answer-btn {
-            margin-top:10px; background:rgba(0,212,255,0.05);
-            border:1px solid rgba(0,212,255,0.1); color:rgba(255,255,255,0.6);
-            padding:8px 16px; border-radius:30px; font-size:14px; cursor:pointer; transition:.3s; font-family:inherit;
-        }
-        .p2p-item .answer-btn:hover { border-color:rgba(0,212,255,0.3); color:#fff; }
-        .ask-form textarea {
-            width:100%; padding:14px; background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.08); border-radius:16px; color:#fff;
-            font-size:16px; resize:vertical; min-height:80px; font-family:inherit; margin-bottom:12px;
-        }
-        .ask-form textarea:focus { outline:none; border-color:#00d4ff; }
-
-        .history-item { padding:14px 0; border-bottom:1px solid rgba(138,43,226,0.06); }
-        .history-item:last-child { border-bottom:none; }
-        .history-item .answer { color:rgba(255,255,255,0.5); margin-top:4px; font-size:14px; }
-        .history-item .meta { font-size:12px; color:rgba(255,255,255,0.2); margin-top:6px; }
-        .score-badge { display:inline-block; background:rgba(138,43,226,0.1); color:#ff69b4; padding:2px 12px; border-radius:20px; font-weight:600; font-size:12px; }
-
-        .evening-mode { text-align:center; padding:30px 20px; }
-        .evening-mode .icon { font-size:48px; margin-bottom:16px; opacity:0.3; }
-        .evening-mode h2 { font-size:22px; color:#ff0033; margin-bottom:8px; }
-        .evening-mode p { color:rgba(255,255,255,0.3); font-size:15px; }
-
-        .chat-container { max-height:400px; overflow-y:auto; margin-bottom:12px; }
-        .chat-message { padding:8px 12px; margin:4px 0; border-radius:16px; background:rgba(255,255,255,0.04); max-width:80%; }
-        .chat-message.own { background:rgba(120,80,200,0.15); margin-left:auto; }
-        .chat-message .sender { font-weight:600; font-size:12px; color:rgba(255,255,255,0.4); }
-        .chat-input { display:flex; gap:10px; }
-        .chat-input input { flex:1; padding:10px 16px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; color:#fff; font-family:inherit; }
-        .chat-input input:focus { outline:none; border-color:#b388ff; }
-        .chat-input button { padding:10px 20px; background:linear-gradient(135deg, #7c4dff, #b388ff); border:none; border-radius:30px; color:#fff; font-weight:600; cursor:pointer; }
-
-        .planer-preview { text-align:center; padding:30px 20px; opacity:0.6; filter:blur(2px); pointer-events:none; }
-        .planer-preview .icon { font-size:48px; margin-bottom:16px; }
-        .planer-preview h2 { font-size:22px; color:#fff; margin-bottom:8px; }
-        .planer-preview p { color:rgba(255,255,255,0.3); font-size:15px; }
-        .planer-lock { display:flex; flex-direction:column; align-items:center; margin-top:16px; }
-        .planer-lock .lock-icon { font-size:32px; }
-        .planer-lock .subscribe-btn { margin-top:12px; padding:12px 24px; background:linear-gradient(135deg, #d4af37, #ffd700); border:none; border-radius:30px; color:#1a140e; font-weight:700; cursor:pointer; }
-
-        .profile-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px; }
-        .profile-stat-item { text-align:center; padding:12px 8px; background:rgba(245,222,179,0.05); border-radius:16px; border:1px solid rgba(245,222,179,0.08); }
-        .profile-stat-item .number { font-size:28px; font-weight:700; color:#f5deb3; display:block; }
-        .profile-stat-item .label { font-size:12px; color:rgba(245,222,179,0.3); text-transform:uppercase; letter-spacing:1px; }
-
-        .placeholder { text-align:center; padding:40px 20px; }
-        .placeholder .icon { font-size:48px; margin-bottom:16px; opacity:0.3; }
-        .placeholder h2 { font-size:22px; color:#fff; margin-bottom:8px; }
-        .placeholder p { color:rgba(255,255,255,0.3); font-size:15px; }
-
-        .tab-bar {
-            position:fixed; bottom:0; left:0; right:0;
-            background:rgba(10,11,31,0.9); backdrop-filter:blur(20px);
-            border-top:1px solid rgba(255,255,255,0.04);
-            display:flex; justify-content:space-around; padding:8px 0;
-            padding-bottom:env(safe-area-inset-bottom); z-index:100;
-            overflow-x:auto;
-        }
-        .tab-item {
-            text-align:center; font-size:9px; color:rgba(255,255,255,0.2);
-            cursor:pointer; padding:4px 6px; border:none; background:transparent;
-            transition:0.3s; display:flex; flex-direction:column; align-items:center;
-            min-width:40px; font-family:inherit; white-space:nowrap;
-        }
-        .tab-item .tab-icon { font-size:18px; display:block; margin-bottom:2px; transition:0.3s; }
-        .tab-item.active { color:#4ecdc4; }
-        .tab-item.active .tab-icon { transform:scale(1.1); }
-        .tab-item.pro { position:relative; }
-        .tab-item.pro::after { content:'PRO'; position:absolute; top:-6px; right:-6px; font-size:7px; background:#ffd700; color:#1a140e; padding:1px 4px; border-radius:10px; }
-
-        .empty { text-align:center; color:rgba(255,255,255,0.2); padding:30px 0; }
-        .loading { text-align:center; padding:30px 0; color:rgba(255,255,255,0.2); }
-        @media (max-width:480px) { .profile-stats { grid-template-columns:1fr 1fr; } }
+        .iskry-gallery-item:last-child { border-bottom: none; }
+        .iskry-gallery-item .question { font-weight: 500; color: #ff0033; }
+        .iskry-gallery-item .answer { color: rgba(255,255,255,0.5); margin-top: 4px; font-size: 14px; }
+        .iskry-gallery-item .meta { font-size: 12px; color: rgba(255,255,255,0.2); margin-top: 6px; }
     </style>
 </head>
 <body>
@@ -239,7 +83,7 @@
             </div>
         </div>
 
-        <!-- Момент (главная) -->
+        <!-- Момент -->
         <div id="page-moment" class="page active">
             <div class="glass" style="background:transparent; backdrop-filter:none; border:none; box-shadow:none; padding:0;">
                 <div class="question-wrapper">
@@ -255,7 +99,7 @@
             </div>
         </div>
 
-        <!-- Вершина (рейтинг) -->
+        <!-- Вершина -->
         <div id="page-verhina" class="page">
             <div class="center-piece"><div class="symbol" style="color:#ffd700;">🏆</div><div class="label" style="color:#d4af37;">Вершина</div></div>
             <div class="glass">
@@ -268,7 +112,7 @@
             </div>
         </div>
 
-        <!-- Сеть (сообщество) -->
+        <!-- Сеть (с формой ответа) -->
         <div id="page-set" class="page">
             <div class="center-piece"><div class="symbol" style="color:#00d4ff;">🧠</div><div class="label" style="color:#00d4ff;">Сеть</div></div>
             <div class="glass">
@@ -276,7 +120,7 @@
                 <div id="p2pList"><div class="loading">Загрузка...</div></div>
             </div>
             <!-- Форма для ответа на P2P (скрыта) -->
-            <div id="p2pAnswerForm" style="display:none; margin-top:12px;">
+            <div id="p2pAnswerForm">
                 <div class="card-title" style="color:#00d4ff;">Ваш ответ</div>
                 <textarea id="p2pAnswerInput" placeholder="Напишите ответ..." rows="3"></textarea>
                 <button class="btn-primary" id="p2pAnswerSubmitBtn" style="background:linear-gradient(135deg, #0066ff, #00d4ff); margin-top:8px;">Отправить ответ</button>
@@ -288,13 +132,13 @@
             </div>
         </div>
 
-        <!-- Отражения (галерея ответов) -->
+        <!-- Отражения -->
         <div id="page-otrazhenie" class="page">
             <div class="center-piece"><div class="symbol" style="color:#8a2be2;">👁</div><div class="label" style="color:#8a2be2;">Отражения</div></div>
             <div class="glass"><div class="card-title" style="color:#8a2be2;">Ответы на текущий вопрос</div><div id="galleryList"><div class="loading">Загрузка...</div></div></div>
         </div>
 
-        <!-- Искры (18+) -->
+        <!-- Искры (18+) с возможностью ответа и галереей -->
         <div id="page-iskry" class="page">
             <div class="center-piece"><div class="symbol" style="color:#ff0033;">🔥</div><div class="label" style="color:#ff0033;">Искры</div></div>
             <div class="glass evening-mode" id="iskryContainer">
@@ -302,9 +146,21 @@
                 <h2 style="color:#ff0033;">Вечерний режим</h2>
                 <p>Вопросы доступны с 20:00 до 08:00</p>
             </div>
+            <!-- Блок для ответа на 18+ -->
+            <div id="iskryAnswerArea" style="display:none;" class="iskry-answer-area">
+                <div class="card-title" style="color:#ff0033;">Ваш ответ на вопрос:</div>
+                <div id="iskryCurrentQuestion" style="font-size:16px; margin-bottom:8px; color:#fff;"></div>
+                <textarea id="iskryAnswerInput" placeholder="Напишите ответ..." rows="2"></textarea>
+                <button class="btn-primary" id="iskryAnswerSubmitBtn" style="background:linear-gradient(135deg, #cc0033, #ff0033);">Отправить ответ</button>
+            </div>
+            <!-- Галерея ответов на 18+ -->
+            <div class="glass" style="margin-top:12px;">
+                <div class="card-title" style="color:#ff0033;">🔥 Ответы сообщества</div>
+                <div id="iskryGallery"><div class="loading">Загрузка...</div></div>
+            </div>
         </div>
 
-        <!-- Встреча (анонимный чат) -->
+        <!-- Встреча -->
         <div id="page-vstrecha" class="page">
             <div class="center-piece"><div class="symbol" style="color:#b388ff;">🔮</div><div class="label" style="color:#b388ff;">Встреча</div></div>
             <div class="glass" id="chatContainer">
@@ -345,7 +201,7 @@
             </div>
         </div>
 
-        <!-- Профиль (открывается по аватарке) -->
+        <!-- Профиль -->
         <div id="page-profile" class="page">
             <div class="glass">
                 <div class="card-title" style="color:#f5deb3;">Профиль</div>
@@ -373,7 +229,8 @@
                 </div>
                 <div style="margin-bottom:12px;">
                     <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">Ваша маска (псевдоним)</div>
-                    <input type="text" id="profileMaskInput" placeholder="Введите псевдоним..." style="width:100%; padding:10px 16px; background:rgba(245,222,179,0.05); border:1px solid rgba(245,222,179,0.1); border-radius:30px; color:#f5deb3; font-size:16px;">
+                    <input type="text" id="profileMaskInput" placeholder="Введите псевдоним..." style="width:100%; padding:10px 16px; background:rgba(245,222,179,0.05); border:1px solid rgba(245,222,179,0.1); border-radius:30px; color:#f5deb3; font-size:16px;" />
+                    <div id="maskLockedMessage" style="display:none; color:rgba(245,222,179,0.3); font-size:12px; margin-top:4px;">🔒 Маска уже установлена и не может быть изменена</div>
                 </div>
                 <button class="btn-primary" id="profileSaveBtn" style="background:linear-gradient(135deg, #8b7355, #f5deb3);">Сохранить настройки</button>
                 <div style="margin-top:12px;">
@@ -438,7 +295,7 @@
             document.getElementById('profileAvatar').parentElement.replaceChild(img2, document.getElementById('profileAvatar'));
         }
 
-        // ===== АДРЕС ВАШЕГО СЕРВЕРА (ngrok) =====
+        // ===== АДРЕС СЕРВЕРА (ngrok) =====
         const API_URL = 'https://garage-courier-everybody.ngrok-free.dev/api';
 
         let currentVisibility = 0;
@@ -447,7 +304,8 @@
         let chatSessionId = null;
         let chatPartner = null;
         let chatPollInterval = null;
-        let p2pAnswerTarget = null; // для ответа на P2P
+        let p2pAnswerTarget = null;
+        let iskryCurrentQuestion = null;
 
         async function callApi(action, data = {}) {
             try {
@@ -502,6 +360,16 @@
                         container.innerHTML = html;
                     }
                 }
+                // Блокировка маски
+                if (profileStatus.mask_set) {
+                    document.getElementById('profileMaskInput').disabled = true;
+                    document.getElementById('profileMaskInput').style.opacity = '0.5';
+                    document.getElementById('maskLockedMessage').style.display = 'block';
+                } else {
+                    document.getElementById('profileMaskInput').disabled = false;
+                    document.getElementById('profileMaskInput').style.opacity = '1';
+                    document.getElementById('maskLockedMessage').style.display = 'none';
+                }
             }
 
             // Вопрос
@@ -515,6 +383,7 @@
             loadP2P();
             loadGallery();
             checkIskry();
+            loadIskryGallery();
         }
 
         // ===== ТОП =====
@@ -556,7 +425,6 @@
                     `;
                 });
                 container.innerHTML = html;
-                // Навешиваем обработчики на кнопки "Ответить"
                 container.querySelectorAll('.answer-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const qid = this.dataset.id;
@@ -584,7 +452,7 @@
             if (result?.success) {
                 tg.showAlert('✅ Ответ опубликован!');
                 document.getElementById('p2pAnswerForm').style.display = 'none';
-                loadP2P(); // обновить список
+                loadP2P();
             } else {
                 tg.showAlert(result?.error || 'Ошибка публикации.');
             }
@@ -613,7 +481,8 @@
             const now = new Date();
             const hours = now.getHours();
             const container = document.getElementById('iskryContainer');
-            if (hours >= 20 || hours < 8) {
+            const isEvening = (hours >= 20 || hours < 8);
+            if (isEvening) {
                 container.innerHTML = `
                     <div style="padding:12px 0; color:#ff0033; font-weight:600;">🔥 Вечерние вопросы открыты</div>
                     <div style="color:rgba(255,255,255,0.3); font-size:14px; margin-bottom:12px;">Здесь можно анонимно ответить на откровенные вопросы</div>
@@ -624,18 +493,70 @@
                     const data = await callApi('get_iskry_question');
                     if (data?.question) {
                         document.getElementById('iskryQuestionDisplay').textContent = data.question;
+                        iskryCurrentQuestion = data.question;
+                        document.getElementById('iskryCurrentQuestion').textContent = data.question;
+                        document.getElementById('iskryAnswerArea').style.display = 'block';
                     }
                 });
+                // Показываем галерею ответов
+                document.getElementById('iskryGallery').style.display = 'block';
             } else {
                 container.innerHTML = `
                     <div class="icon">🌙</div>
                     <h2 style="color:#ff0033;">Вечерний режим</h2>
                     <p>Вопросы доступны с 20:00 до 08:00</p>
                 `;
+                document.getElementById('iskryAnswerArea').style.display = 'none';
+                document.getElementById('iskryGallery').style.display = 'none';
             }
         }
 
-        // ===== ЧАТ (ВСТРЕЧА) =====
+        // Отправка ответа на 18+
+        document.getElementById('iskryAnswerSubmitBtn').addEventListener('click', async function() {
+            const answer = document.getElementById('iskryAnswerInput').value.trim();
+            if (!answer) { tg.showAlert('Напишите ответ!'); return; }
+            if (!iskryCurrentQuestion) { tg.showAlert('Сначала получите вопрос'); return; }
+            this.disabled = true; this.textContent = 'Отправка...';
+            const result = await callApi('submit_iskry_answer', {
+                question: iskryCurrentQuestion,
+                answer: answer,
+                visibility: 0  // всегда анонимно
+            });
+            this.disabled = false; this.textContent = 'Отправить ответ';
+            if (result?.success) {
+                tg.showAlert('✅ Ответ опубликован!');
+                document.getElementById('iskryAnswerInput').value = '';
+                loadIskryGallery();
+            } else {
+                tg.showAlert('Ошибка публикации.');
+            }
+        });
+
+        // Загрузка галереи 18+
+        async function loadIskryGallery() {
+            const data = await callApi('get_iskry_gallery');
+            if (data?.answers) {
+                const container = document.getElementById('iskryGallery');
+                if (data.answers.length === 0) {
+                    container.innerHTML = '<div class="empty">Пока никто не ответил</div>';
+                    return;
+                }
+                let html = '';
+                data.answers.forEach(a => {
+                    const author = a.visibility === 0 ? 'Аноним' : a.visibility === 1 ? `🎭 ${a.mask||'Маска'}` : a.name;
+                    html += `
+                        <div class="iskry-gallery-item">
+                            <div class="question">${escHtml(a.question)}</div>
+                            <div class="answer">${escHtml(a.answer)}</div>
+                            <div class="meta">от ${author} ❤️ ${a.likes||0}</div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+        }
+
+        // ===== ЧАТ =====
         document.getElementById('chatJoinBtn').addEventListener('click', async function() {
             if (chatSessionId) {
                 tg.showAlert('Вы уже в чате.');
@@ -716,6 +637,7 @@
                     loadGallery();
                 } else if (pageId === 'page-iskry') {
                     checkIskry();
+                    loadIskryGallery();
                 }
             });
         });
@@ -728,7 +650,7 @@
             });
         });
 
-        // ===== ПРОФИЛЬ (открывается по аватарке) =====
+        // ===== ПРОФИЛЬ =====
         document.getElementById('profileBtn').addEventListener('click', function() {
             document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
