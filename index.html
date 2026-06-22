@@ -4,11 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Re:Self</title>
-    <!-- Если хотите сменить название, измените выше и в h1 ниже -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
-        /* ===== БАЗОВЫЕ СТИЛИ ===== */
+        /* ===== БАЗОВЫЕ СТИЛИ (без изменений) ===== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -482,10 +481,11 @@
             </div>
         </div>
 
-        <!-- Планер (теперь открывается отдельно, как страница) -->
+        <!-- Планер (отдельная страница) -->
         <div id="page-planer" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">📋</div><div class="label" style="color:#d4af37;">Планер</div></div>
             <div class="glass" id="planerContainer">
+                <!-- Блок "Подписка" (по умолчанию видим) -->
                 <div id="planerLocked" style="display:block; text-align:center; padding:20px;">
                     <div style="font-size:48px;">🔒</div>
                     <h2 style="color:#d4af37; margin:12px 0;">Планер доступен по подписке</h2>
@@ -494,6 +494,44 @@
                     <button class="btn-primary" id="planerPreviewBtn" style="background:rgba(255,255,255,0.1); margin-top:8px; max-width:300px; margin-left:auto; margin-right:auto;">Предпросмотр</button>
                     <div style="margin-top:12px; font-size:12px; color:rgba(255,255,255,0.2);">Админам доступ бесплатно</div>
                 </div>
+
+                <!-- Демо-версия (предпросмотр) -->
+                <div id="planerDemo" style="display:none; text-align:center; padding:20px;">
+                    <div style="font-size:48px;">👀</div>
+                    <h2 style="color:#d4af37; margin:12px 0;">Демо-версия</h2>
+                    <p style="color:rgba(255,255,255,0.4); font-size:14px;">Это пример того, как выглядит планер. Для полного доступа оформите подписку.</p>
+                    <div style="margin-top:16px; background:rgba(255,255,255,0.03); border-radius:16px; padding:12px; text-align:left;">
+                        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                            <span>📌 Утренняя зарядка</span>
+                            <span style="color:#4caf50;">✔</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                            <span>📌 Работа над проектом</span>
+                            <span style="color:#ffeb3b;">⏳</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; padding:6px 0;">
+                            <span>📌 Обед</span>
+                            <span style="color:#4caf50;">✔</span>
+                        </div>
+                    </div>
+                    <div style="margin-top:16px; background:rgba(255,255,255,0.03); border-radius:16px; padding:12px; text-align:left;">
+                        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                            <span>💰 Жильё</span>
+                            <span style="color:#d4af37;">25%</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                            <span>💰 Еда</span>
+                            <span style="color:#d4af37;">20%</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; padding:6px 0;">
+                            <span>💰 Сбережения</span>
+                            <span style="color:#d4af37;">30%</span>
+                        </div>
+                    </div>
+                    <button class="btn-primary" id="planerCloseDemoBtn" style="margin-top:12px; background:rgba(255,255,255,0.1);">Закрыть предпросмотр</button>
+                </div>
+
+                <!-- Реальный функционал (по подписке) -->
                 <div id="planerContent" style="display:none;">
                     <div class="planer-tabs">
                         <button class="active" data-planer="tasks">📌 Задачи</button>
@@ -554,7 +592,7 @@
             </div>
         </div>
 
-        <!-- Магазин (отдельная страница) -->
+        <!-- Магазин -->
         <div id="page-shop" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">🛍️</div><div class="label" style="color:#d4af37;">Магазин</div></div>
             <div class="glass placeholder">
@@ -664,7 +702,7 @@
         </div>
     </div>
 
-    <!-- Модалка для календаря (просмотр/добавление отметки) -->
+    <!-- Модалка для календаря (просмотр/добавление/удаление отметок) -->
     <div class="modal-overlay" id="modalCalendar">
         <div class="modal-card">
             <div class="modal-title" id="modalCalendarTitle">📅 Отметки на дату</div>
@@ -685,7 +723,7 @@
         </div>
     </div>
 
-    <!-- Нижнее меню (убраны Планер и Магазин) -->
+    <!-- Нижнее меню (без Планера и Магазина) -->
     <div class="tab-bar">
         <button class="tab-item active" data-page="page-moment"><span class="tab-icon">✦</span>Момент</button>
         <button class="tab-item" data-page="page-verhina"><span class="tab-icon">🏆</span>Вершина</button>
@@ -747,7 +785,7 @@
         let currentBudgetMode = 0;
         let calendarDate = new Date();
         let calendarMarks = [];
-        let selectedCalendarDate = null; // для модалки
+        let selectedCalendarDate = null;
 
         // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
         async function callApi(action, data = {}) {
@@ -780,27 +818,19 @@
             return d.toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
         }
 
-        function formatDateShort(ts) {
-            if (!ts) return '';
-            const d = new Date(ts * 1000);
-            return d.toLocaleString('ru-RU', { day:'2-digit', month:'2-digit' });
-        }
-
         function getTodayTimestamp() {
             const d = new Date();
             d.setHours(0,0,0,0);
             return Math.floor(d.getTime() / 1000);
         }
 
-        // ===== ПЕРЕКЛЮЧЕНИЕ СТРАНИЦ (через верхние иконки) =====
+        // ===== ПЕРЕКЛЮЧЕНИЕ СТРАНИЦ =====
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-            // Обновляем активную вкладку в нижнем меню (если есть)
             document.querySelectorAll('.tab-item').forEach(t => {
                 t.classList.toggle('active', t.dataset.page === pageId);
             });
-            // Если страница требует загрузки данных
             if (pageId === 'page-verhina') {
                 loadTop(document.querySelector('#topTabs .active')?.dataset.period || 'day');
             } else if (pageId === 'page-set') {
@@ -885,7 +915,6 @@
             loadGallery();
             checkIskry();
             loadIskryGallery();
-            // Если страница планера активна, загружаем данные
             if (document.getElementById('page-planer').classList.contains('active')) {
                 checkPlanerStatus();
             }
@@ -910,7 +939,7 @@
             }
         }
 
-        // ===== P2P (СЕТЬ) =====
+        // ===== P2P =====
         async function loadP2P() {
             const data = await callApi('get_p2p');
             if (data?.questions) {
@@ -939,7 +968,6 @@
             }
         }
 
-        // ===== МОДАЛКА ДЛЯ ОТВЕТА В СЕТИ =====
         function openModalP2P(questionId) {
             const item = document.querySelector(`.p2p-item .answer-btn[data-id="${questionId}"]`).closest('.p2p-item');
             const questionText = item.querySelector('.question-text').textContent;
@@ -1074,25 +1102,49 @@
             }
         }
 
-        // ===== ПЛАНЕР =====
+        // ===== ПЛАНЕР (исправленный предпросмотр и подписка) =====
         async function checkPlanerStatus() {
             const data = await callApi('planer_status');
             if (data) {
                 const locked = document.getElementById('planerLocked');
+                const demo = document.getElementById('planerDemo');
                 const content = document.getElementById('planerContent');
                 if (data.subscribed) {
+                    // Есть подписка – показываем реальный функционал
                     locked.style.display = 'none';
+                    demo.style.display = 'none';
                     content.style.display = 'block';
                     await loadTasks();
                     await loadBudget();
                     await loadCalendar();
                     await loadTaskStats('day');
                 } else {
+                    // Нет подписки – показываем блок подписки (заблокирован)
                     locked.style.display = 'block';
+                    demo.style.display = 'none';
                     content.style.display = 'none';
                 }
             }
         }
+
+        // Обработчик предпросмотра
+        document.getElementById('planerPreviewBtn').addEventListener('click', function() {
+            const locked = document.getElementById('planerLocked');
+            const demo = document.getElementById('planerDemo');
+            const content = document.getElementById('planerContent');
+            // Скрыть блок подписки, показать демо
+            locked.style.display = 'none';
+            content.style.display = 'none';
+            demo.style.display = 'block';
+        });
+
+        // Закрыть демо (вернуться к блоку подписки)
+        document.getElementById('planerCloseDemoBtn').addEventListener('click', function() {
+            const locked = document.getElementById('planerLocked');
+            const demo = document.getElementById('planerDemo');
+            locked.style.display = 'block';
+            demo.style.display = 'none';
+        });
 
         document.getElementById('planerSubscribeBtn').addEventListener('click', async function() {
             const result = await callApi('subscribe_planer');
@@ -1103,19 +1155,7 @@
             }
         });
 
-        document.getElementById('planerPreviewBtn').addEventListener('click', function() {
-            const locked = document.getElementById('planerLocked');
-            const content = document.getElementById('planerContent');
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-                locked.style.display = 'none';
-            } else {
-                content.style.display = 'none';
-                locked.style.display = 'block';
-            }
-        });
-
-        // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ПЛАНЕРА =====
+        // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ПЛАНЕРА (для реального функционала) =====
         document.querySelectorAll('.planer-tabs button').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.planer-tabs button').forEach(b => b.classList.remove('active'));
@@ -1445,7 +1485,6 @@
                 }
 
                 div.addEventListener('click', function() {
-                    // Открываем модалку с отметками на этот день
                     const selectedDate = new Date(year, month, d);
                     selectedCalendarDate = Math.floor(selectedDate.getTime() / 1000);
                     openCalendarModal(selectedDate);
@@ -1458,7 +1497,6 @@
         function openCalendarModal(dateObj) {
             const dateStr = dateObj.toLocaleDateString('ru-RU', { day:'2-digit', month:'long', year:'numeric' });
             document.getElementById('modalCalendarDate').textContent = dateStr;
-            // Находим отметки на эту дату
             const ts = Math.floor(dateObj.getTime() / 1000);
             const marks = calendarMarks.filter(m => {
                 const mDate = new Date(m.date * 1000);
@@ -1473,12 +1511,34 @@
                 let html = '';
                 marks.forEach(m => {
                     const typeLabel = m.type === 'work' ? 'Работа' : m.type === 'important' ? 'Важно' : 'Своё';
-                    html += `<div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);"><strong>${typeLabel}</strong>: ${escHtml(m.note || 'Без заметки')}</div>`;
+                    html += `
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                            <div><strong>${typeLabel}</strong>: ${escHtml(m.note || 'Без заметки')}</div>
+                            <button class="delete-mark-btn" data-id="${m.id}" style="background:rgba(255,0,0,0.1); border:none; border-radius:30px; padding:2px 8px; color:#ff4444; cursor:pointer;">✕</button>
+                        </div>
+                    `;
                 });
                 marksContainer.innerHTML = html;
+                // Обработчики удаления
+                marksContainer.querySelectorAll('.delete-mark-btn').forEach(btn => {
+                    btn.addEventListener('click', async function(e) {
+                        e.stopPropagation();
+                        const markId = parseInt(this.dataset.id);
+                        if (!confirm('Удалить эту отметку?')) return;
+                        const result = await callApi('delete_calendar_mark', { mark_id: markId });
+                        if (result?.success) {
+                            tg.showAlert('✅ Отметка удалена');
+                            // Обновить модалку и календарь
+                            const currentDate = new Date(selectedCalendarDate * 1000);
+                            openCalendarModal(currentDate);
+                            loadCalendar();
+                        } else {
+                            tg.showAlert('Ошибка удаления.');
+                        }
+                    });
+                });
             }
             document.getElementById('modalCalendarNote').value = '';
-            // Сохраняем выбранную дату для добавления
             document.getElementById('modalCalendar').dataset.selectedDate = ts;
             document.getElementById('modalCalendar').classList.add('active');
         }
@@ -1500,7 +1560,9 @@
                 });
                 if (result?.success) {
                     tg.showAlert('✅ Отметка добавлена');
-                    document.getElementById('modalCalendar').classList.remove('active');
+                    // Обновить модалку и календарь
+                    const currentDate = new Date(dateTs * 1000);
+                    openCalendarModal(currentDate);
                     loadCalendar();
                 } else {
                     tg.showAlert('Ошибка добавления');
@@ -1560,7 +1622,6 @@
                         document.getElementById('chatStatus').textContent = `Чат с ${chatPartner}`;
                         document.getElementById('chatLeaveBtn').style.display = 'none';
                         clearInterval(chatPollInterval);
-                        // Запуск опроса сообщений
                         setInterval(async () => {
                             const msgData = await callApi('chat_poll', { session_id: chatSessionId });
                             if (msgData?.messages) {
@@ -1585,7 +1646,6 @@
 
         document.getElementById('chatLeaveBtn').addEventListener('click', async function() {
             if (chatSessionId) {
-                // Если уже в чате, эту кнопку мы скрываем, но на всякий случай
                 tg.showAlert('Вы уже в чате. Используйте /stop в боте для выхода.');
                 return;
             }
@@ -1713,8 +1773,6 @@
         // ===== ЗАПУСК =====
         loadData();
         setInterval(() => loadData(), 3600000);
-
-        // Скрываем кнопку отмены поиска изначально
         document.getElementById('chatLeaveBtn').style.display = 'none';
     </script>
 </body>
