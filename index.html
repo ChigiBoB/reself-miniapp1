@@ -282,12 +282,28 @@
             color:rgba(255,255,255,0.5); cursor:pointer; transition:0.3s; font-family:inherit;
         }
         .budget-mode-toggle button.active { background:rgba(212,175,55,0.15); border-color:#d4af37; color:#d4af37; }
+        .budget-income-row {
+            display:flex; gap:10px; align-items:center; margin-bottom:16px;
+        }
+        .budget-income-row label {
+            color:rgba(255,255,255,0.5); font-size:14px; white-space:nowrap;
+        }
+        .budget-income-row input {
+            flex:1; padding:8px 14px; background:rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.08); border-radius:16px; color:#fff; font-size:16px; font-family:inherit;
+        }
+        .budget-income-row input:focus { outline:none; border-color:#d4af37; }
+        .budget-income-row button {
+            padding:8px 16px; background:rgba(212,175,55,0.2); border:1px solid #d4af37;
+            border-radius:30px; color:#d4af37; cursor:pointer; font-family:inherit; font-weight:600;
+        }
         .budget-category {
             display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);
         }
         .budget-category:last-child { border-bottom:none; }
         .budget-category .cat-name { flex:1; font-weight:500; color:#fff; }
         .budget-category .cat-percent { width:60px; text-align:right; color:#d4af37; font-weight:600; }
+        .budget-category .cat-amount { min-width:70px; text-align:right; color:rgba(255,255,255,0.6); font-size:14px; }
         .budget-category .cat-active { width:40px; text-align:center; cursor:pointer; color:rgba(255,255,255,0.3); font-size:18px; }
         .budget-category .cat-active.active { color:#4ecdc4; }
         .budget-category input[type="number"] {
@@ -477,6 +493,11 @@
                         <div class="budget-mode-toggle">
                             <button class="active" data-mode="0">Без кредитов</button>
                             <button data-mode="1">С кредитами</button>
+                        </div>
+                        <div class="budget-income-row">
+                            <label for="incomeInput">💰 Доход (руб/мес):</label>
+                            <input type="number" id="incomeInput" value="0" min="0" step="100" />
+                            <button id="incomeSaveBtn">Сохранить</button>
                         </div>
                         <div id="budgetCategories"><div class="loading">Загрузка...</div></div>
                         <button id="budgetSaveBtn" class="btn-primary" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e; margin-top:12px;">Сохранить бюджет</button>
@@ -778,6 +799,10 @@
                     currentBudgetMode = profileStatus.budget_mode;
                     updateBudgetModeUI();
                 }
+                // Загружаем доход в поле ввода
+                if (profileStatus.income !== undefined) {
+                    document.getElementById('incomeInput').value = profileStatus.income || 0;
+                }
             }
 
             const qData = await callApi('get_question');
@@ -1007,13 +1032,11 @@
         });
 
         document.getElementById('planerPreviewBtn').addEventListener('click', function() {
-            // Показываем демо-контент (уже есть в HTML)
             const locked = document.getElementById('planerLocked');
             const content = document.getElementById('planerContent');
             if (content.style.display === 'none') {
                 content.style.display = 'block';
                 locked.style.display = 'none';
-                // Загружаем демо-данные (можно заглушки)
             } else {
                 content.style.display = 'none';
                 locked.style.display = 'block';
@@ -1069,7 +1092,6 @@
                 });
                 container.innerHTML = html;
 
-                // Обработчики
                 container.querySelectorAll('.task-check').forEach(el => {
                     el.addEventListener('click', async function() {
                         const id = parseInt(this.dataset.id);
@@ -1123,7 +1145,6 @@
             const description = document.getElementById('taskDescription').value.trim();
             let scheduled = document.getElementById('taskScheduled').value;
             if (!scheduled) {
-                // По умолчанию сейчас
                 const now = new Date();
                 scheduled = now.toISOString().slice(0,16);
             }
@@ -1195,32 +1216,43 @@
         async function loadBudget() {
             const container = document.getElementById('budgetCategories');
             container.innerHTML = '<div class="loading">Загрузка...</div>';
+
+            // Загружаем доход
+            const incomeData = await callApi('get_income');
+            if (incomeData?.income !== undefined) {
+                document.getElementById('incomeInput').value = incomeData.income || 0;
+            }
+
             const data = await callApi('get_budget');
             if (data?.categories) {
+                const income = parseFloat(document.getElementById('incomeInput').value) || 0;
                 let html = '';
                 data.categories.forEach((cat, idx) => {
+                    const amount = (income * cat.percent / 100).toFixed(0);
                     html += `
                         <div class="budget-category">
                             <span class="cat-name">${escHtml(cat.name)}</span>
                             <input type="number" class="cat-percent-input" data-idx="${idx}" value="${cat.percent}" min="0" max="100" step="0.1" />
                             <span class="cat-percent">${cat.percent}%</span>
+                            <span class="cat-amount">${amount} ₽</span>
                             <span class="cat-active ${cat.active?'active':''}" data-idx="${idx}">${cat.active?'✔':'✕'}</span>
                         </div>
                     `;
                 });
                 container.innerHTML = html;
 
-                // Обновление процентов при вводе
                 container.querySelectorAll('.cat-percent-input').forEach(inp => {
                     inp.addEventListener('input', function() {
                         const idx = parseInt(this.dataset.idx);
                         const val = parseFloat(this.value) || 0;
                         const percentSpan = this.parentElement.querySelector('.cat-percent');
+                        const amountSpan = this.parentElement.querySelector('.cat-amount');
                         percentSpan.textContent = val + '%';
+                        const incomeNow = parseFloat(document.getElementById('incomeInput').value) || 0;
+                        amountSpan.textContent = (incomeNow * val / 100).toFixed(0) + ' ₽';
                     });
                 });
 
-                // Переключение активности
                 container.querySelectorAll('.cat-active').forEach(el => {
                     el.addEventListener('click', function() {
                         this.classList.toggle('active');
@@ -1271,13 +1303,24 @@
             });
         });
 
+        // ===== ДОХОД =====
+        document.getElementById('incomeSaveBtn').addEventListener('click', async function() {
+            const income = parseInt(document.getElementById('incomeInput').value) || 0;
+            const result = await callApi('set_income', { income });
+            if (result?.success) {
+                tg.showAlert('✅ Доход сохранён');
+                loadBudget(); // обновить суммы
+            } else {
+                tg.showAlert('Ошибка сохранения');
+            }
+        });
+
         // ===== КАЛЕНДАРЬ =====
         async function loadCalendar() {
             const year = calendarDate.getFullYear();
             const month = calendarDate.getMonth();
             document.getElementById('calMonthYear').textContent = `${new Intl.DateTimeFormat('ru-RU', { month:'long', year:'numeric' }).format(calendarDate)}`;
 
-            // Получить отметки за месяц
             const start = new Date(year, month, 1);
             const end = new Date(year, month + 1, 0);
             const startTs = Math.floor(start.getTime() / 1000);
@@ -1288,7 +1331,6 @@
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
 
-            // Заголовки дней недели
             const daysOfWeek = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
             daysOfWeek.forEach(d => {
                 const div = document.createElement('div');
@@ -1300,8 +1342,8 @@
                 grid.appendChild(div);
             });
 
-            const firstDay = start.getDay(); // 0-воскресенье
-            const offset = firstDay === 0 ? 6 : firstDay - 1; // смещение для понедельника
+            const firstDay = start.getDay();
+            const offset = firstDay === 0 ? 6 : firstDay - 1;
             const daysInMonth = end.getDate();
             const today = new Date();
 
@@ -1320,7 +1362,6 @@
                 }
                 div.textContent = d;
 
-                // Проверяем отметки
                 const marks = calendarMarks.filter(m => {
                     const mDate = new Date(m.date * 1000);
                     return mDate.getDate() === d && mDate.getMonth() === month && mDate.getFullYear() === year;
@@ -1333,7 +1374,6 @@
                 }
 
                 div.addEventListener('click', function() {
-                    // Показать информацию о дне
                     const info = document.getElementById('calendarMarksInfo');
                     if (marks.length > 0) {
                         const types = marks.map(m => m.type).join(', ');
@@ -1356,11 +1396,9 @@
             loadCalendar();
         });
 
-        // Добавление отметок
         document.querySelectorAll('.cal-mark-btn').forEach(btn => {
             btn.addEventListener('click', async function() {
                 const type = this.dataset.type;
-                // Выбрать день (по умолчанию сегодня)
                 const now = new Date();
                 const dateTs = Math.floor(now.getTime() / 1000);
                 const note = prompt('Введите заметку (необязательно):');
