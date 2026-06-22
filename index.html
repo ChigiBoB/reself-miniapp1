@@ -7,7 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
-        /* ===== БАЗОВЫЕ СТИЛИ (все эффекты сохранены) ===== */
+        /* ===== БАЗОВЫЕ СТИЛИ ===== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -15,11 +15,9 @@
             padding: 0 0 80px 0;
             min-height: 100vh;
             overflow-x: hidden;
-            position: relative;
-            transition: background 0.6s ease;
             background: #0a0b1f;
+            transition: background 0.6s ease;
         }
-
         .stars {
             position: fixed;
             top: 0; left: 0;
@@ -39,7 +37,6 @@
             0% { opacity:0.1; transform:scale(0.8); }
             100% { opacity:0.6; transform:scale(1.2); }
         }
-
         .container { max-width:600px; margin:0 auto; padding:16px 16px 0; }
         .header {
             display:flex; justify-content:space-between; align-items:center;
@@ -76,11 +73,9 @@
             border:1px solid rgba(255,255,255,0.06);
             border-radius:24px; padding:20px; margin-bottom:16px;
             box-shadow:0 8px 32px rgba(0,0,0,0.3);
-            transition:border-color 0.5s;
         }
         .card-title {
             font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px;
-            transition:color 0.5s;
         }
 
         .center-piece {
@@ -91,33 +86,16 @@
         .center-piece .label { margin-top:8px; font-size:18px; font-weight:500; letter-spacing:0.5px; opacity:0.7; }
         @keyframes pulse-soft { 0%{transform:scale(1); opacity:0.7;} 50%{transform:scale(1.05); opacity:1;} 100%{transform:scale(1); opacity:0.7;} }
 
-        .question-wrapper {
-            display:flex; flex-direction:column; align-items:center; justify-content:center;
-            min-height: 70vh;
-            text-align:center;
-        }
-        .question-text {
-            font-size: clamp(22px, 5vw, 32px);
-            font-weight: 600;
-            line-height: 1.5;
-            color: #fff;
-            text-shadow: 0 0 30px rgba(78,205,196,0.1);
-            margin-bottom: 24px;
-            max-width: 90%;
-            word-wrap: break-word;
-        }
-        .visibility-buttons {
-            display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; justify-content:center;
-        }
+        .question-wrapper { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center; }
+        .question-text { font-size:clamp(22px,5vw,32px); font-weight:600; line-height:1.5; color:#fff; text-shadow:0 0 30px rgba(78,205,196,0.1); margin-bottom:24px; max-width:90%; word-wrap:break-word; }
+        .visibility-buttons { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; justify-content:center; }
         .visibility-buttons button {
             padding:8px 18px; background:rgba(255,255,255,0.04);
             border:1px solid rgba(255,255,255,0.08); color:rgba(255,255,255,0.5);
             border-radius:30px; cursor:pointer; font-size:14px; font-weight:500;
             transition:all .3s; font-family:inherit;
         }
-        .visibility-buttons button.active {
-            background:rgba(78,205,196,0.2); border-color:#4ecdc4; color:#fff;
-        }
+        .visibility-buttons button.active { background:rgba(78,205,196,0.2); border-color:#4ecdc4; color:#fff; }
         .answer-input {
             width:100%; padding:14px 20px; background:rgba(255,255,255,0.04);
             border:1px solid rgba(255,255,255,0.08); border-radius:30px; color:#fff;
@@ -139,10 +117,7 @@
             font-family:inherit;
         }
         .top-tabs button.active { background:rgba(255,215,0,0.15); border-color:#ffd700; color:#ffd700; }
-        .top-item {
-            display:flex; align-items:center; padding:10px 0;
-            border-bottom:1px solid rgba(255,215,0,0.08);
-        }
+        .top-item { display:flex; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,215,0,0.08); }
         .top-item:last-child { border-bottom:none; }
         .top-item .medal { font-size:22px; width:36px; text-align:center; }
         .top-item .name { flex:1; font-weight:500; margin-left:8px; color:#fff; }
@@ -176,7 +151,7 @@
         .evening-mode h2 { font-size:22px; color:#ff0033; margin-bottom:8px; }
         .evening-mode p { color:rgba(255,255,255,0.3); font-size:15px; }
 
-        .iskry-answer-area { margin-top: 12px; }
+        .iskry-answer-area { margin-top:12px; }
         .iskry-answer-area textarea {
             width:100%; padding:14px; background:rgba(255,255,255,0.04);
             border:1px solid rgba(255,255,255,0.08); border-radius:16px; color:#fff;
@@ -198,14 +173,6 @@
         .chat-input input:focus { outline:none; border-color:#b388ff; }
         .chat-input button { padding:10px 20px; background:linear-gradient(135deg, #7c4dff, #b388ff); border:none; border-radius:30px; color:#fff; font-weight:600; cursor:pointer; }
 
-        .planer-preview { text-align:center; padding:30px 20px; opacity:0.6; filter:blur(2px); pointer-events:none; }
-        .planer-preview .icon { font-size:48px; margin-bottom:16px; }
-        .planer-preview h2 { font-size:22px; color:#fff; margin-bottom:8px; }
-        .planer-preview p { color:rgba(255,255,255,0.3); font-size:15px; }
-        .planer-lock { display:flex; flex-direction:column; align-items:center; margin-top:16px; }
-        .planer-lock .lock-icon { font-size:32px; }
-        .planer-lock .subscribe-btn { margin-top:12px; padding:12px 24px; background:linear-gradient(135deg, #d4af37, #ffd700); border:none; border-radius:30px; color:#1a140e; font-weight:700; cursor:pointer; }
-
         .profile-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px; }
         .profile-stat-item { text-align:center; padding:12px 8px; background:rgba(245,222,179,0.05); border-radius:16px; border:1px solid rgba(245,222,179,0.08); }
         .profile-stat-item .number { font-size:28px; font-weight:700; color:#f5deb3; display:block; }
@@ -216,85 +183,145 @@
         .placeholder h2 { font-size:22px; color:#fff; margin-bottom:8px; }
         .placeholder p { color:rgba(255,255,255,0.3); font-size:15px; }
 
-        /* ===== МОДАЛЬНЫЕ ОКНА ДЛЯ ОТВЕТОВ ===== */
+        /* ===== МОДАЛЬНЫЕ ОКНА ===== */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(6px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            padding: 20px;
+            top:0; left:0;
+            width:100%; height:100%;
+            background:rgba(0,0,0,0.7);
+            backdrop-filter:blur(6px);
+            display:none;
+            align-items:center;
+            justify-content:center;
+            z-index:200;
+            padding:20px;
         }
-        .modal-overlay.active {
-            display: flex;
-        }
+        .modal-overlay.active { display:flex; }
         .modal-card {
-            background: #1a1f2a;
-            border-radius: 24px;
-            padding: 20px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-            border: 1px solid rgba(255,255,255,0.08);
+            background:#1a1f2a;
+            border-radius:24px;
+            padding:20px;
+            max-width:500px;
+            width:100%;
+            max-height:90vh;
+            overflow-y:auto;
+            box-shadow:0 20px 60px rgba(0,0,0,0.6);
+            border:1px solid rgba(255,255,255,0.08);
         }
-        .modal-card .modal-title {
-            font-weight: 600;
-            font-size: 16px;
-            margin-bottom: 8px;
-            color: #fff;
+        .modal-card .modal-title { font-weight:600; font-size:16px; margin-bottom:8px; color:#fff; }
+        .modal-card .modal-question { font-size:15px; color:rgba(255,255,255,0.7); margin-bottom:16px; padding:12px; background:rgba(255,255,255,0.04); border-radius:12px; }
+        .modal-card input, .modal-card select, .modal-card textarea {
+            width:100%;
+            padding:10px 14px;
+            background:rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:16px;
+            color:#fff;
+            font-size:15px;
+            font-family:inherit;
+            margin-bottom:10px;
         }
-        .modal-card .modal-question {
-            font-size: 15px;
-            color: rgba(255,255,255,0.7);
-            margin-bottom: 16px;
-            padding: 12px;
-            background: rgba(255,255,255,0.04);
-            border-radius: 12px;
+        .modal-card input:focus, .modal-card select:focus, .modal-card textarea:focus {
+            outline:none;
+            border-color:#4ecdc4;
         }
-        .modal-card textarea {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px;
-            color: #fff;
-            font-size: 15px;
-            resize: vertical;
-            min-height: 80px;
-            font-family: inherit;
-            margin-bottom: 12px;
-        }
-        .modal-card textarea:focus {
-            outline: none;
-            border-color: #4ecdc4;
-        }
-        .modal-card .modal-buttons {
-            display: flex;
-            gap: 10px;
-        }
+        .modal-card textarea { resize:vertical; min-height:60px; }
+        .modal-card select option { background:#1a1f2a; }
+        .modal-card .modal-buttons { display:flex; gap:10px; }
         .modal-card .modal-buttons button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 30px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            font-family: inherit;
+            flex:1; padding:12px; border:none; border-radius:30px; font-size:15px; font-weight:600; cursor:pointer; transition:0.3s; font-family:inherit;
         }
-        .modal-card .modal-buttons .modal-submit {
-            background: linear-gradient(135deg, #4ecdc4, #38bdf8);
-            color: #fff;
+        .modal-card .modal-buttons .modal-submit { background:linear-gradient(135deg, #4ecdc4, #38bdf8); color:#fff; }
+        .modal-card .modal-buttons .modal-cancel { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.6); }
+
+        /* ===== ПЛАНЕР ===== */
+        .planer-tabs {
+            display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;
         }
-        .modal-card .modal-buttons .modal-cancel {
-            background: rgba(255,255,255,0.08);
-            color: rgba(255,255,255,0.6);
+        .planer-tabs button {
+            flex:1; min-width:60px; padding:8px; background:rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.08); border-radius:16px;
+            color:rgba(255,255,255,0.5); cursor:pointer; font-weight:500; transition:0.3s; font-family:inherit;
         }
+        .planer-tabs button.active { background:rgba(212,175,55,0.15); border-color:#d4af37; color:#d4af37; }
+
+        .planer-section { display:none; animation:fadeIn 0.4s ease; }
+        .planer-section.active { display:block; }
+
+        /* Задачи */
+        .task-item {
+            display:flex; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05);
+            gap:8px; flex-wrap:wrap;
+        }
+        .task-item:last-child { border-bottom:none; }
+        .task-item .task-check { width:24px; height:24px; border-radius:50%; border:2px solid rgba(255,255,255,0.2); background:transparent; cursor:pointer; flex-shrink:0; transition:0.3s; }
+        .task-item .task-check.done { background:#4ecdc4; border-color:#4ecdc4; position:relative; }
+        .task-item .task-check.done::after { content:'✓'; color:#fff; font-size:16px; display:flex; align-items:center; justify-content:center; width:100%; height:100%; }
+        .task-item .task-info { flex:1; min-width:0; }
+        .task-item .task-info .task-title { font-weight:500; color:#fff; }
+        .task-item .task-info .task-title.done { text-decoration:line-through; color:rgba(255,255,255,0.3); }
+        .task-item .task-info .task-meta { font-size:12px; color:rgba(255,255,255,0.3); }
+        .task-item .task-priority { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+        .task-item .task-priority.low { background:#4caf50; }
+        .task-item .task-priority.medium { background:#ffeb3b; }
+        .task-item .task-priority.high { background:#f44336; }
+        .task-item .task-actions { display:flex; gap:6px; }
+        .task-item .task-actions button {
+            background:rgba(255,255,255,0.05); border:none; border-radius:30px;
+            padding:4px 10px; color:rgba(255,255,255,0.5); cursor:pointer; font-size:12px; font-family:inherit; transition:0.3s;
+        }
+        .task-item .task-actions button:hover { background:rgba(255,255,255,0.1); color:#fff; }
+        .task-item .task-deadline-overdue { color:#f44336; font-size:12px; }
+        .task-add-btn { margin-top:12px; }
+
+        /* Бюджет */
+        .budget-mode-toggle { display:flex; gap:8px; margin-bottom:12px; }
+        .budget-mode-toggle button {
+            flex:1; padding:8px; background:rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.08); border-radius:16px;
+            color:rgba(255,255,255,0.5); cursor:pointer; transition:0.3s; font-family:inherit;
+        }
+        .budget-mode-toggle button.active { background:rgba(212,175,55,0.15); border-color:#d4af37; color:#d4af37; }
+        .budget-category {
+            display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);
+        }
+        .budget-category:last-child { border-bottom:none; }
+        .budget-category .cat-name { flex:1; font-weight:500; color:#fff; }
+        .budget-category .cat-percent { width:60px; text-align:right; color:#d4af37; font-weight:600; }
+        .budget-category .cat-active { width:40px; text-align:center; cursor:pointer; color:rgba(255,255,255,0.3); font-size:18px; }
+        .budget-category .cat-active.active { color:#4ecdc4; }
+        .budget-category input[type="number"] {
+            width:60px; padding:4px 6px; background:rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.08); border-radius:12px; color:#fff; font-size:14px;
+        }
+        .budget-category input[type="number"]:focus { outline:none; border-color:#d4af37; }
+
+        /* Календарь */
+        .calendar-nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+        .calendar-nav button { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:6px 16px; color:#fff; cursor:pointer; font-family:inherit; }
+        .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+        .calendar-grid .day {
+            aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+            background:rgba(255,255,255,0.02); border-radius:12px; font-size:14px; color:rgba(255,255,255,0.6);
+            cursor:pointer; transition:0.3s; position:relative;
+        }
+        .calendar-grid .day:hover { background:rgba(255,255,255,0.06); }
+        .calendar-grid .day.today { border:1px solid #4ecdc4; color:#fff; }
+        .calendar-grid .day.has-mark { background:rgba(212,175,55,0.1); color:#d4af37; }
+        .calendar-grid .day .mark-dot { width:6px; height:6px; border-radius:50%; background:#d4af37; margin-top:2px; }
+        .calendar-grid .day .mark-dot.work { background:#4caf50; }
+        .calendar-grid .day .mark-dot.important { background:#f44336; }
+        .calendar-grid .day .mark-dot.custom { background:#ff9800; }
+
+        /* Статистика задач */
+        .stats-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        .stats-card { text-align:center; padding:16px; background:rgba(255,255,255,0.04); border-radius:16px; border:1px solid rgba(255,255,255,0.06); }
+        .stats-card .number { font-size:32px; font-weight:700; display:block; }
+        .stats-card .label { font-size:12px; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px; }
+        .stats-card.total .number { color:#fff; }
+        .stats-card.completed .number { color:#4ecdc4; }
+        .stats-card.pending .number { color:#ffeb3b; }
+        .stats-card.overdue .number { color:#f44336; }
 
         .tab-bar {
             position:fixed; bottom:0; left:0; right:0;
@@ -318,7 +345,7 @@
 
         .empty { text-align:center; color:rgba(255,255,255,0.2); padding:30px 0; }
         .loading { text-align:center; padding:30px 0; color:rgba(255,255,255,0.2); }
-        @media (max-width:480px) { .profile-stats { grid-template-columns:1fr 1fr; } }
+        @media (max-width:480px) { .profile-stats { grid-template-columns:1fr 1fr; } .stats-cards { grid-template-columns:1fr 1fr; } }
     </style>
 </head>
 <body>
@@ -420,41 +447,71 @@
         <div id="page-planer" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">📋</div><div class="label" style="color:#d4af37;">Планер</div></div>
             <div class="glass" id="planerContainer">
-                <div id="planerPreview" style="display:block;">
-                    <div class="planer-preview">
-                        <div class="icon">📅</div>
-                        <h2>Ваш личный планировщик</h2>
-                        <p>Задачи, бюджет, время – всё в одном месте. Доступно по подписке.</p>
-                    </div>
-                    <div class="planer-lock">
-                        <div class="lock-icon">🔒</div>
-                        <button class="subscribe-btn" id="planerSubscribeBtn" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e;">Подписаться (50 Stars/мес)</button>
-                        <button class="subscribe-btn" id="planerPreviewBtn" style="margin-top:8px; background:rgba(255,255,255,0.1); color:#fff;">Предпросмотр</button>
-                        <span style="font-size:12px; color:rgba(255,255,255,0.2); margin-top:8px;">Админам доступ бесплатно</span>
-                    </div>
+                <div id="planerLocked" style="display:block; text-align:center; padding:20px;">
+                    <div style="font-size:48px;">🔒</div>
+                    <h2 style="color:#d4af37; margin:12px 0;">Планер доступен по подписке</h2>
+                    <p style="color:rgba(255,255,255,0.3);">Оформите подписку, чтобы управлять задачами, бюджетом и календарём.</p>
+                    <button class="btn-primary" id="planerSubscribeBtn" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e; margin-top:16px; max-width:300px; margin-left:auto; margin-right:auto;">Подписаться (50 Stars/мес)</button>
+                    <button class="btn-primary" id="planerPreviewBtn" style="background:rgba(255,255,255,0.1); margin-top:8px; max-width:300px; margin-left:auto; margin-right:auto;">Предпросмотр</button>
+                    <div style="margin-top:12px; font-size:12px; color:rgba(255,255,255,0.2);">Админам доступ бесплатно</div>
                 </div>
-                <div id="planerDemo" style="display:none;">
-                    <div class="card-title" style="color:#d4af37;">📌 Задачи на сегодня</div>
-                    <div class="planer-demo">
-                        <div class="task-item"><span class="title">Утренняя зарядка</span><span class="time">08:00</span></div>
-                        <div class="task-item"><span class="title">Работа над проектом</span><span class="time">10:00–13:00</span></div>
-                        <div class="task-item"><span class="title">Обед</span><span class="time">13:00</span></div>
-                        <div class="task-item"><span class="title">Тренировка</span><span class="time">18:00</span></div>
+                <div id="planerContent" style="display:none;">
+                    <div class="planer-tabs">
+                        <button class="active" data-planer="tasks">📌 Задачи</button>
+                        <button data-planer="budget">💰 Бюджет</button>
+                        <button data-planer="calendar">📅 Календарь</button>
+                        <button data-planer="stats">📊 Статистика</button>
                     </div>
-                    <div style="margin-top:16px;">
-                        <div class="card-title" style="color:#d4af37;">💰 Бюджет (распределение)</div>
-                        <div class="planer-demo">
-                            <div class="budget-item"><span>Жильё</span><span class="percent">30%</span></div>
-                            <div class="budget-item"><span>Еда</span><span class="percent">20%</span></div>
-                            <div class="budget-item"><span>Транспорт</span><span class="percent">10%</span></div>
-                            <div class="budget-item"><span>Сбережения</span><span class="percent">25%</span></div>
-                            <div class="budget-item"><span>Развлечения</span><span class="percent">15%</span></div>
+
+                    <!-- Задачи -->
+                    <div class="planer-section active" id="planer-tasks">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                            <span style="font-weight:600; color:rgba(255,255,255,0.5);">Задачи на сегодня</span>
+                            <button id="taskAddBtn" style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.2); border-radius:30px; padding:6px 16px; color:#d4af37; cursor:pointer; font-family:inherit;">+ Добавить</button>
+                        </div>
+                        <div id="tasksList"><div class="loading">Загрузка...</div></div>
+                    </div>
+
+                    <!-- Бюджет -->
+                    <div class="planer-section" id="planer-budget">
+                        <div class="budget-mode-toggle">
+                            <button class="active" data-mode="0">Без кредитов</button>
+                            <button data-mode="1">С кредитами</button>
+                        </div>
+                        <div id="budgetCategories"><div class="loading">Загрузка...</div></div>
+                        <button id="budgetSaveBtn" class="btn-primary" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e; margin-top:12px;">Сохранить бюджет</button>
+                    </div>
+
+                    <!-- Календарь -->
+                    <div class="planer-section" id="planer-calendar">
+                        <div class="calendar-nav">
+                            <button id="calPrev">◀</button>
+                            <span id="calMonthYear" style="font-weight:600; color:#fff;">Январь 2025</span>
+                            <button id="calNext">▶</button>
+                        </div>
+                        <div class="calendar-grid" id="calendarGrid"></div>
+                        <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+                            <button class="cal-mark-btn" data-type="work" style="background:rgba(76,175,80,0.1); border:1px solid #4caf50; border-radius:30px; padding:4px 12px; color:#4caf50; cursor:pointer;">✔ Работа</button>
+                            <button class="cal-mark-btn" data-type="important" style="background:rgba(244,67,54,0.1); border:1px solid #f44336; border-radius:30px; padding:4px 12px; color:#f44336; cursor:pointer;">❗ Важно</button>
+                            <button class="cal-mark-btn" data-type="custom" style="background:rgba(255,152,0,0.1); border:1px solid #ff9800; border-radius:30px; padding:4px 12px; color:#ff9800; cursor:pointer;">📝 Своё</button>
+                        </div>
+                        <div id="calendarMarksInfo" style="margin-top:12px; color:rgba(255,255,255,0.3); font-size:13px;"></div>
+                    </div>
+
+                    <!-- Статистика -->
+                    <div class="planer-section" id="planer-stats">
+                        <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+                            <button class="stats-period-btn active" data-period="day" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:6px 16px; color:rgba(255,255,255,0.5); cursor:pointer; font-family:inherit;">День</button>
+                            <button class="stats-period-btn" data-period="week" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:6px 16px; color:rgba(255,255,255,0.5); cursor:pointer; font-family:inherit;">Неделя</button>
+                            <button class="stats-period-btn" data-period="month" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:6px 16px; color:rgba(255,255,255,0.5); cursor:pointer; font-family:inherit;">Месяц</button>
+                        </div>
+                        <div class="stats-cards" id="statsCards">
+                            <div class="stats-card total"><span class="number" id="statTotal">0</span><span class="label">Всего</span></div>
+                            <div class="stats-card completed"><span class="number" id="statCompleted">0</span><span class="label">Выполнено</span></div>
+                            <div class="stats-card pending"><span class="number" id="statPending">0</span><span class="label">Ожидает</span></div>
+                            <div class="stats-card overdue"><span class="number" id="statOverdue">0</span><span class="label">Просрочено</span></div>
                         </div>
                     </div>
-                    <div style="margin-top:12px; text-align:center; color:rgba(255,255,255,0.3); font-size:13px;">
-                        Это демо-версия. Полный функционал доступен после подписки.
-                    </div>
-                    <button class="btn-primary" id="planerCloseDemoBtn" style="margin-top:12px; background:rgba(255,255,255,0.1);">Закрыть предпросмотр</button>
                 </div>
             </div>
         </div>
@@ -513,7 +570,8 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ОТВЕТА В СЕТИ -->
+    <!-- ===== МОДАЛЬНЫЕ ОКНА ===== -->
+    <!-- Модалка для ответа в сети -->
     <div class="modal-overlay" id="modalP2P">
         <div class="modal-card">
             <div class="modal-title">💬 Ответить на вопрос</div>
@@ -526,7 +584,7 @@
         </div>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ОТВЕТА В ИСКРАХ -->
+    <!-- Модалка для искр -->
     <div class="modal-overlay" id="modalIskry">
         <div class="modal-card">
             <div class="modal-title">🔥 Ответить на вопрос 18+</div>
@@ -539,7 +597,36 @@
         </div>
     </div>
 
-    <!-- НИЖНЕЕ МЕНЮ -->
+    <!-- Модалка для создания/редактирования задачи -->
+    <div class="modal-overlay" id="modalTask">
+        <div class="modal-card">
+            <div class="modal-title" id="modalTaskTitle">➕ Новая задача</div>
+            <input type="text" id="taskTitle" placeholder="Название задачи" />
+            <input type="text" id="taskDescription" placeholder="Описание (необязательно)" />
+            <input type="datetime-local" id="taskScheduled" />
+            <input type="number" id="taskDuration" placeholder="Длительность (мин)" value="60" />
+            <input type="text" id="taskCategory" placeholder="Категория (например, Работа)" />
+            <select id="taskPriority">
+                <option value="0">Низкий</option>
+                <option value="1" selected>Средний</option>
+                <option value="2">Высокий</option>
+            </select>
+            <input type="datetime-local" id="taskDeadline" placeholder="Дедлайн (необязательно)" />
+            <select id="taskRepeat">
+                <option value="none">Нет</option>
+                <option value="daily">Ежедневно</option>
+                <option value="weekly">Еженедельно</option>
+                <option value="monthly">Ежемесячно</option>
+            </select>
+            <input type="datetime-local" id="taskRepeatEnd" placeholder="Дата окончания повторений" />
+            <div class="modal-buttons">
+                <button class="modal-submit" id="modalTaskSubmit">Сохранить</button>
+                <button class="modal-cancel" id="modalTaskCancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Нижнее меню -->
     <div class="tab-bar">
         <button class="tab-item active" data-page="page-moment"><span class="tab-icon">✦</span>Момент</button>
         <button class="tab-item" data-page="page-verhina"><span class="tab-icon">🏆</span>Вершина</button>
@@ -597,11 +684,12 @@
         let chatSessionId = null;
         let chatPartner = null;
         let chatPollInterval = null;
+        let editingTaskId = null;
+        let currentBudgetMode = 0;
+        let calendarDate = new Date();
+        let calendarMarks = [];
 
-        // Переменные для модалок
-        let modalP2PQuestionId = null;
-        let modalIskryQuestionText = null;
-
+        // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
         async function callApi(action, data = {}) {
             try {
                 const payload = { action, user_id: userId, ...data };
@@ -618,6 +706,30 @@
                 tg.showAlert('Ошибка связи с сервером.');
                 return null;
             }
+        }
+
+        function escHtml(str) {
+            const d = document.createElement('div');
+            d.textContent = str;
+            return d.innerHTML;
+        }
+
+        function formatDate(ts) {
+            if (!ts) return '';
+            const d = new Date(ts * 1000);
+            return d.toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+        }
+
+        function formatDateShort(ts) {
+            if (!ts) return '';
+            const d = new Date(ts * 1000);
+            return d.toLocaleString('ru-RU', { day:'2-digit', month:'2-digit' });
+        }
+
+        function getTodayTimestamp() {
+            const d = new Date();
+            d.setHours(0,0,0,0);
+            return Math.floor(d.getTime() / 1000);
         }
 
         // ===== ЗАГРУЗКА ДАННЫХ =====
@@ -661,6 +773,10 @@
                     document.getElementById('profileMaskInput').disabled = false;
                     document.getElementById('profileMaskInput').style.opacity = '1';
                     document.getElementById('maskLockedMessage').style.display = 'none';
+                }
+                if (profileStatus.budget_mode !== undefined) {
+                    currentBudgetMode = profileStatus.budget_mode;
+                    updateBudgetModeUI();
                 }
             }
 
@@ -728,8 +844,6 @@
 
         // ===== МОДАЛКА ДЛЯ ОТВЕТА В СЕТИ =====
         function openModalP2P(questionId) {
-            modalP2PQuestionId = questionId;
-            // Найдём текст вопроса
             const item = document.querySelector(`.p2p-item .answer-btn[data-id="${questionId}"]`).closest('.p2p-item');
             const questionText = item.querySelector('.question-text').textContent;
             document.getElementById('modalP2PQuestion').textContent = questionText;
@@ -739,15 +853,15 @@
 
         document.getElementById('modalP2PCancel').addEventListener('click', function() {
             document.getElementById('modalP2P').classList.remove('active');
-            modalP2PQuestionId = null;
         });
         document.getElementById('modalP2PSubmit').addEventListener('click', async function() {
             const answer = document.getElementById('modalP2PInput').value.trim();
             if (!answer) { tg.showAlert('Напишите ответ!'); return; }
-            if (!modalP2PQuestionId) { tg.showAlert('Ошибка: вопрос не выбран'); return; }
+            const qid = parseInt(document.querySelector('.p2p-item .answer-btn')?.dataset.id);
+            if (!qid) { tg.showAlert('Ошибка'); return; }
             this.disabled = true; this.textContent = 'Отправка...';
             const result = await callApi('add_p2p_answer', {
-                question_id: modalP2PQuestionId,
+                question_id: qid,
                 text: answer,
                 visibility: currentVisibility
             });
@@ -755,8 +869,7 @@
             if (result?.success) {
                 tg.showAlert('✅ Ответ опубликован!');
                 document.getElementById('modalP2P').classList.remove('active');
-                modalP2PQuestionId = null;
-                loadP2P(); // обновить список
+                loadP2P();
             } else {
                 tg.showAlert(result?.error || 'Ошибка публикации.');
             }
@@ -812,9 +925,7 @@
             }
         }
 
-        // ===== МОДАЛКА ДЛЯ ИСКР =====
         function openModalIskry(questionText) {
-            modalIskryQuestionText = questionText;
             document.getElementById('modalIskryQuestion').textContent = questionText;
             document.getElementById('modalIskryInput').value = '';
             document.getElementById('modalIskry').classList.add('active');
@@ -822,30 +933,27 @@
 
         document.getElementById('modalIskryCancel').addEventListener('click', function() {
             document.getElementById('modalIskry').classList.remove('active');
-            modalIskryQuestionText = null;
         });
         document.getElementById('modalIskrySubmit').addEventListener('click', async function() {
             const answer = document.getElementById('modalIskryInput').value.trim();
             if (!answer) { tg.showAlert('Напишите ответ!'); return; }
-            if (!modalIskryQuestionText) { tg.showAlert('Ошибка: вопрос не получен'); return; }
+            const question = document.getElementById('modalIskryQuestion').textContent;
             this.disabled = true; this.textContent = 'Отправка...';
             const result = await callApi('submit_iskry_answer', {
-                question: modalIskryQuestionText,
+                question: question,
                 answer: answer,
-                visibility: 0  // всегда анонимно
+                visibility: 0
             });
             this.disabled = false; this.textContent = 'Отправить';
             if (result?.success) {
                 tg.showAlert('✅ Ответ опубликован!');
                 document.getElementById('modalIskry').classList.remove('active');
-                modalIskryQuestionText = null;
                 loadIskryGallery();
             } else {
                 tg.showAlert('Ошибка публикации.');
             }
         });
 
-        // ===== ГАЛЕРЕЯ ИСКР =====
         async function loadIskryGallery() {
             const data = await callApi('get_iskry_gallery');
             if (data?.answers) {
@@ -873,34 +981,21 @@
         async function checkPlanerStatus() {
             const data = await callApi('planer_status');
             if (data) {
-                const preview = document.getElementById('planerPreview');
-                const demo = document.getElementById('planerDemo');
+                const locked = document.getElementById('planerLocked');
+                const content = document.getElementById('planerContent');
                 if (data.subscribed) {
-                    preview.style.display = 'none';
-                    demo.style.display = 'block';
+                    locked.style.display = 'none';
+                    content.style.display = 'block';
+                    await loadTasks();
+                    await loadBudget();
+                    await loadCalendar();
+                    await loadTaskStats('day');
                 } else {
-                    preview.style.display = 'block';
-                    demo.style.display = 'none';
+                    locked.style.display = 'block';
+                    content.style.display = 'none';
                 }
             }
         }
-
-        document.getElementById('planerPreviewBtn').addEventListener('click', function() {
-            const demo = document.getElementById('planerDemo');
-            const preview = document.getElementById('planerPreview');
-            if (demo.style.display === 'none') {
-                demo.style.display = 'block';
-                preview.style.display = 'none';
-            } else {
-                demo.style.display = 'none';
-                preview.style.display = 'block';
-            }
-        });
-
-        document.getElementById('planerCloseDemoBtn').addEventListener('click', function() {
-            document.getElementById('planerDemo').style.display = 'none';
-            document.getElementById('planerPreview').style.display = 'block';
-        });
 
         document.getElementById('planerSubscribeBtn').addEventListener('click', async function() {
             const result = await callApi('subscribe_planer');
@@ -909,6 +1004,397 @@
             } else {
                 tg.showAlert(result?.error || 'Ошибка при создании счёта.');
             }
+        });
+
+        document.getElementById('planerPreviewBtn').addEventListener('click', function() {
+            // Показываем демо-контент (уже есть в HTML)
+            const locked = document.getElementById('planerLocked');
+            const content = document.getElementById('planerContent');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                locked.style.display = 'none';
+                // Загружаем демо-данные (можно заглушки)
+            } else {
+                content.style.display = 'none';
+                locked.style.display = 'block';
+            }
+        });
+
+        // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ПЛАНЕРА =====
+        document.querySelectorAll('.planer-tabs button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.planer-tabs button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const section = this.dataset.planer;
+                document.querySelectorAll('.planer-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(`planer-${section}`).classList.add('active');
+                if (section === 'tasks') loadTasks();
+                else if (section === 'budget') loadBudget();
+                else if (section === 'calendar') loadCalendar();
+                else if (section === 'stats') loadTaskStats(document.querySelector('.stats-period-btn.active')?.dataset.period || 'day');
+            });
+        });
+
+        // ===== ЗАДАЧИ =====
+        async function loadTasks() {
+            const container = document.getElementById('tasksList');
+            container.innerHTML = '<div class="loading">Загрузка...</div>';
+            const today = getTodayTimestamp();
+            const data = await callApi('get_tasks', { date: today });
+            if (data?.tasks) {
+                if (data.tasks.length === 0) {
+                    container.innerHTML = '<div class="empty">Нет задач на сегодня</div>';
+                    return;
+                }
+                let html = '';
+                const now = Math.floor(Date.now() / 1000);
+                data.tasks.forEach(t => {
+                    const done = t.status === 1;
+                    const priorityClass = t.priority === 0 ? 'low' : t.priority === 2 ? 'high' : 'medium';
+                    const overdue = t.deadline && t.deadline < now && !done;
+                    html += `
+                        <div class="task-item" data-id="${t.id}">
+                            <div class="task-check ${done?'done':''}" data-id="${t.id}"></div>
+                            <div class="task-info">
+                                <div class="task-title ${done?'done':''}">${escHtml(t.title)}</div>
+                                <div class="task-meta">${formatDate(t.scheduled_time)} · ${t.category||'Без категории'} ${t.repeat_type!=='none'?' 🔁'+t.repeat_type:''} ${overdue?' <span class="task-deadline-overdue">Просрочено!</span>':''}</div>
+                            </div>
+                            <div class="task-priority ${priorityClass}"></div>
+                            <div class="task-actions">
+                                <button class="task-edit" data-id="${t.id}">✎</button>
+                                <button class="task-delete" data-id="${t.id}">✕</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+
+                // Обработчики
+                container.querySelectorAll('.task-check').forEach(el => {
+                    el.addEventListener('click', async function() {
+                        const id = parseInt(this.dataset.id);
+                        const done = this.classList.contains('done');
+                        const newStatus = done ? 0 : 1;
+                        const result = await callApi('update_task_status', { task_id: id, status: newStatus });
+                        if (result?.success) loadTasks();
+                    });
+                });
+
+                container.querySelectorAll('.task-edit').forEach(el => {
+                    el.addEventListener('click', function() {
+                        const id = parseInt(this.dataset.id);
+                        openTaskModal(id);
+                    });
+                });
+
+                container.querySelectorAll('.task-delete').forEach(el => {
+                    el.addEventListener('click', async function() {
+                        if (!confirm('Удалить задачу?')) return;
+                        const id = parseInt(this.dataset.id);
+                        const result = await callApi('delete_task', { task_id: id });
+                        if (result?.success) loadTasks();
+                    });
+                });
+            }
+        }
+
+        document.getElementById('taskAddBtn').addEventListener('click', function() {
+            editingTaskId = null;
+            document.getElementById('modalTaskTitle').textContent = '➕ Новая задача';
+            document.getElementById('taskTitle').value = '';
+            document.getElementById('taskDescription').value = '';
+            document.getElementById('taskScheduled').value = '';
+            document.getElementById('taskDuration').value = '60';
+            document.getElementById('taskCategory').value = '';
+            document.getElementById('taskPriority').value = '1';
+            document.getElementById('taskDeadline').value = '';
+            document.getElementById('taskRepeat').value = 'none';
+            document.getElementById('taskRepeatEnd').value = '';
+            document.getElementById('modalTask').classList.add('active');
+        });
+
+        document.getElementById('modalTaskCancel').addEventListener('click', function() {
+            document.getElementById('modalTask').classList.remove('active');
+        });
+
+        document.getElementById('modalTaskSubmit').addEventListener('click', async function() {
+            const title = document.getElementById('taskTitle').value.trim();
+            if (!title) { tg.showAlert('Введите название задачи'); return; }
+            const description = document.getElementById('taskDescription').value.trim();
+            let scheduled = document.getElementById('taskScheduled').value;
+            if (!scheduled) {
+                // По умолчанию сейчас
+                const now = new Date();
+                scheduled = now.toISOString().slice(0,16);
+            }
+            const scheduledTs = Math.floor(new Date(scheduled).getTime() / 1000);
+            const duration = parseInt(document.getElementById('taskDuration').value) || 60;
+            const category = document.getElementById('taskCategory').value.trim() || 'Работа';
+            const priority = parseInt(document.getElementById('taskPriority').value);
+            let deadline = document.getElementById('taskDeadline').value;
+            const deadlineTs = deadline ? Math.floor(new Date(deadline).getTime() / 1000) : null;
+            const repeat_type = document.getElementById('taskRepeat').value;
+            let repeat_end = document.getElementById('taskRepeatEnd').value;
+            const repeatEndTs = repeat_end ? Math.floor(new Date(repeat_end).getTime() / 1000) : null;
+            const date = getTodayTimestamp();
+
+            const payload = {
+                title, description, scheduled_time: scheduledTs, duration, category, date,
+                priority, deadline: deadlineTs, repeat_type, repeat_end: repeatEndTs
+            };
+
+            let result;
+            if (editingTaskId) {
+                payload.task_id = editingTaskId;
+                result = await callApi('update_task', payload);
+            } else {
+                result = await callApi('add_task', payload);
+            }
+            if (result?.success) {
+                tg.showAlert('✅ Задача сохранена');
+                document.getElementById('modalTask').classList.remove('active');
+                loadTasks();
+            } else {
+                tg.showAlert('Ошибка сохранения.');
+            }
+        });
+
+        async function openTaskModal(taskId) {
+            editingTaskId = taskId;
+            document.getElementById('modalTaskTitle').textContent = '✎ Редактировать задачу';
+            const data = await callApi('get_tasks', { date: getTodayTimestamp() });
+            if (data?.tasks) {
+                const task = data.tasks.find(t => t.id === taskId);
+                if (task) {
+                    document.getElementById('taskTitle').value = task.title;
+                    document.getElementById('taskDescription').value = task.description || '';
+                    const scheduled = new Date(task.scheduled_time * 1000);
+                    document.getElementById('taskScheduled').value = scheduled.toISOString().slice(0,16);
+                    document.getElementById('taskDuration').value = task.duration || 60;
+                    document.getElementById('taskCategory').value = task.category || '';
+                    document.getElementById('taskPriority').value = task.priority !== undefined ? task.priority : 1;
+                    if (task.deadline) {
+                        const dl = new Date(task.deadline * 1000);
+                        document.getElementById('taskDeadline').value = dl.toISOString().slice(0,16);
+                    } else {
+                        document.getElementById('taskDeadline').value = '';
+                    }
+                    document.getElementById('taskRepeat').value = task.repeat_type || 'none';
+                    if (task.repeat_end) {
+                        const re = new Date(task.repeat_end * 1000);
+                        document.getElementById('taskRepeatEnd').value = re.toISOString().slice(0,16);
+                    } else {
+                        document.getElementById('taskRepeatEnd').value = '';
+                    }
+                    document.getElementById('modalTask').classList.add('active');
+                }
+            }
+        }
+
+        // ===== БЮДЖЕТ =====
+        async function loadBudget() {
+            const container = document.getElementById('budgetCategories');
+            container.innerHTML = '<div class="loading">Загрузка...</div>';
+            const data = await callApi('get_budget');
+            if (data?.categories) {
+                let html = '';
+                data.categories.forEach((cat, idx) => {
+                    html += `
+                        <div class="budget-category">
+                            <span class="cat-name">${escHtml(cat.name)}</span>
+                            <input type="number" class="cat-percent-input" data-idx="${idx}" value="${cat.percent}" min="0" max="100" step="0.1" />
+                            <span class="cat-percent">${cat.percent}%</span>
+                            <span class="cat-active ${cat.active?'active':''}" data-idx="${idx}">${cat.active?'✔':'✕'}</span>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+
+                // Обновление процентов при вводе
+                container.querySelectorAll('.cat-percent-input').forEach(inp => {
+                    inp.addEventListener('input', function() {
+                        const idx = parseInt(this.dataset.idx);
+                        const val = parseFloat(this.value) || 0;
+                        const percentSpan = this.parentElement.querySelector('.cat-percent');
+                        percentSpan.textContent = val + '%';
+                    });
+                });
+
+                // Переключение активности
+                container.querySelectorAll('.cat-active').forEach(el => {
+                    el.addEventListener('click', function() {
+                        this.classList.toggle('active');
+                        this.textContent = this.classList.contains('active') ? '✔' : '✕';
+                    });
+                });
+            }
+        }
+
+        document.getElementById('budgetSaveBtn').addEventListener('click', async function() {
+            const container = document.getElementById('budgetCategories');
+            const inputs = container.querySelectorAll('.budget-category');
+            const categories = [];
+            inputs.forEach(el => {
+                const name = el.querySelector('.cat-name').textContent;
+                const percent = parseFloat(el.querySelector('.cat-percent-input').value) || 0;
+                const active = el.querySelector('.cat-active').classList.contains('active');
+                categories.push({ name, percent, active });
+            });
+            const result = await callApi('update_budget', { categories });
+            if (result?.success) {
+                tg.showAlert('✅ Бюджет сохранён');
+                loadBudget();
+            } else {
+                tg.showAlert('Ошибка сохранения');
+            }
+        });
+
+        // ===== РЕЖИМ БЮДЖЕТА =====
+        function updateBudgetModeUI() {
+            document.querySelectorAll('.budget-mode-toggle button').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.mode) === currentBudgetMode);
+            });
+        }
+
+        document.querySelectorAll('.budget-mode-toggle button').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const mode = parseInt(this.dataset.mode);
+                const result = await callApi('set_budget_mode', { mode });
+                if (result?.success) {
+                    currentBudgetMode = mode;
+                    updateBudgetModeUI();
+                    loadBudget();
+                    tg.showAlert('Режим изменён');
+                } else {
+                    tg.showAlert('Ошибка');
+                }
+            });
+        });
+
+        // ===== КАЛЕНДАРЬ =====
+        async function loadCalendar() {
+            const year = calendarDate.getFullYear();
+            const month = calendarDate.getMonth();
+            document.getElementById('calMonthYear').textContent = `${new Intl.DateTimeFormat('ru-RU', { month:'long', year:'numeric' }).format(calendarDate)}`;
+
+            // Получить отметки за месяц
+            const start = new Date(year, month, 1);
+            const end = new Date(year, month + 1, 0);
+            const startTs = Math.floor(start.getTime() / 1000);
+            const endTs = Math.floor(end.getTime() / 1000);
+            const marksData = await callApi('get_calendar_marks', { start_date: startTs, end_date: endTs });
+            calendarMarks = marksData?.marks || [];
+
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            // Заголовки дней недели
+            const daysOfWeek = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+            daysOfWeek.forEach(d => {
+                const div = document.createElement('div');
+                div.style.textAlign = 'center';
+                div.style.fontSize = '12px';
+                div.style.color = 'rgba(255,255,255,0.3)';
+                div.style.padding = '4px';
+                div.textContent = d;
+                grid.appendChild(div);
+            });
+
+            const firstDay = start.getDay(); // 0-воскресенье
+            const offset = firstDay === 0 ? 6 : firstDay - 1; // смещение для понедельника
+            const daysInMonth = end.getDate();
+            const today = new Date();
+
+            for (let i = 0; i < offset; i++) {
+                const empty = document.createElement('div');
+                grid.appendChild(empty);
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateObj = new Date(year, month, d);
+                const ts = Math.floor(dateObj.getTime() / 1000);
+                const div = document.createElement('div');
+                div.className = 'day';
+                if (dateObj.toDateString() === today.toDateString()) {
+                    div.classList.add('today');
+                }
+                div.textContent = d;
+
+                // Проверяем отметки
+                const marks = calendarMarks.filter(m => {
+                    const mDate = new Date(m.date * 1000);
+                    return mDate.getDate() === d && mDate.getMonth() === month && mDate.getFullYear() === year;
+                });
+                if (marks.length > 0) {
+                    div.classList.add('has-mark');
+                    const dot = document.createElement('div');
+                    dot.className = `mark-dot ${marks[0].type}`;
+                    div.appendChild(dot);
+                }
+
+                div.addEventListener('click', function() {
+                    // Показать информацию о дне
+                    const info = document.getElementById('calendarMarksInfo');
+                    if (marks.length > 0) {
+                        const types = marks.map(m => m.type).join(', ');
+                        info.textContent = `📌 Отметки: ${types} (${marks.length})`;
+                    } else {
+                        info.textContent = 'Нет отметок. Нажмите кнопку выше, чтобы добавить.';
+                    }
+                });
+
+                grid.appendChild(div);
+            }
+        }
+
+        document.getElementById('calPrev').addEventListener('click', function() {
+            calendarDate.setMonth(calendarDate.getMonth() - 1);
+            loadCalendar();
+        });
+        document.getElementById('calNext').addEventListener('click', function() {
+            calendarDate.setMonth(calendarDate.getMonth() + 1);
+            loadCalendar();
+        });
+
+        // Добавление отметок
+        document.querySelectorAll('.cal-mark-btn').forEach(btn => {
+            btn.addEventListener('click', async function() {
+                const type = this.dataset.type;
+                // Выбрать день (по умолчанию сегодня)
+                const now = new Date();
+                const dateTs = Math.floor(now.getTime() / 1000);
+                const note = prompt('Введите заметку (необязательно):');
+                const result = await callApi('add_calendar_mark', {
+                    date: dateTs,
+                    mark_type: type,
+                    note: note || ''
+                });
+                if (result?.success) {
+                    tg.showAlert('✅ Отметка добавлена');
+                    loadCalendar();
+                } else {
+                    tg.showAlert('Ошибка');
+                }
+            });
+        });
+
+        // ===== СТАТИСТИКА ЗАДАЧ =====
+        async function loadTaskStats(period) {
+            const data = await callApi('get_task_stats', { period });
+            if (data?.stats) {
+                document.getElementById('statTotal').textContent = data.stats.total || 0;
+                document.getElementById('statCompleted').textContent = data.stats.completed || 0;
+                document.getElementById('statPending').textContent = data.stats.pending || 0;
+                document.getElementById('statOverdue').textContent = data.stats.overdue || 0;
+            }
+        }
+
+        document.querySelectorAll('.stats-period-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.stats-period-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                loadTaskStats(this.dataset.period);
+            });
         });
 
         // ===== ЧАТ =====
@@ -1082,12 +1568,7 @@
             });
         });
 
-        function escHtml(str) {
-            const d = document.createElement('div');
-            d.textContent = str;
-            return d.innerHTML;
-        }
-
+        // ===== ЗАПУСК =====
         loadData();
         setInterval(() => loadData(), 3600000);
     </script>
