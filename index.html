@@ -7,7 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
-        /* ===== БАЗОВЫЕ СТИЛИ ===== */
+        /* ===== БАЗОВЫЕ СТИЛИ (без изменений) ===== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -16,7 +16,6 @@
             min-height: 100vh;
             overflow-x: hidden;
             background: #0a0b1f;
-            transition: background 0.6s ease;
         }
         .stars {
             position: fixed;
@@ -174,6 +173,19 @@
         .iskry-gallery-item .question { font-weight:500; color:#ff0033; }
         .iskry-gallery-item .answer { color:rgba(255,255,255,0.5); margin-top:4px; font-size:14px; }
         .iskry-gallery-item .meta { font-size:12px; color:rgba(255,255,255,0.2); margin-top:6px; }
+        .iskry-gallery-item .reply-btn {
+            margin-top:6px;
+            background:rgba(255,0,51,0.05);
+            border:1px solid rgba(255,0,51,0.1);
+            color:rgba(255,255,255,0.6);
+            padding:4px 12px;
+            border-radius:30px;
+            font-size:12px;
+            cursor:pointer;
+            transition:.3s;
+            font-family:inherit;
+        }
+        .iskry-gallery-item .reply-btn:hover { border-color:rgba(255,0,51,0.3); color:#fff; }
 
         .chat-container { max-height:400px; overflow-y:auto; margin-bottom:12px; }
         .chat-message { padding:8px 12px; margin:4px 0; border-radius:16px; background:rgba(255,255,255,0.04); max-width:80%; }
@@ -259,7 +271,7 @@
         .planer-section { display:none; animation:fadeIn 0.4s ease; }
         .planer-section.active { display:block; }
 
-        /* Демо-режим – блокировка всех интерактивных элементов */
+        /* Демо-режим */
         .demo-mode .task-check,
         .demo-mode .task-edit,
         .demo-mode .task-delete,
@@ -501,15 +513,19 @@
             <div class="glass"><div class="card-title" style="color:#8a2be2;">Ответы на текущий вопрос</div><div id="galleryList"><div class="loading">Загрузка...</div></div></div>
         </div>
 
-        <!-- Искры (исправлено) -->
+        <!-- Искры -->
         <div id="page-iskry" class="page">
             <div class="center-piece"><div class="symbol" style="color:#ff0033;">🔥</div><div class="label" style="color:#ff0033;">Искры</div></div>
             <div class="glass evening-mode" id="iskryContainer">
                 <div class="icon">🌙</div>
                 <h2 style="color:#ff0033;">Вечерний режим</h2>
                 <p>Вопросы доступны с 20:00 до 08:00</p>
-                <button class="btn-primary" id="iskryQuestionBtn" style="margin-top:12px; background:linear-gradient(135deg, #cc0033, #ff0033); display:none;">Получить вопрос</button>
-                <div id="iskryQuestionDisplay" style="margin-top:12px; font-size:16px; color:#fff; display:none;"></div>
+            </div>
+            <div id="iskryAnswerArea" style="display:none;" class="iskry-answer-area">
+                <div class="card-title" style="color:#ff0033;">Ваш ответ на вопрос:</div>
+                <div id="iskryCurrentQuestion" style="font-size:16px; margin-bottom:8px; color:#fff;"></div>
+                <textarea id="iskryAnswerInput" placeholder="Напишите ответ..." rows="2"></textarea>
+                <button class="btn-primary" id="iskryAnswerSubmitBtn" style="background:linear-gradient(135deg, #cc0033, #ff0033);">Отправить ответ</button>
             </div>
             <div class="glass" style="margin-top:12px;">
                 <div class="card-title" style="color:#ff0033;">🔥 Ответы сообщества</div>
@@ -536,6 +552,7 @@
         <div id="page-planer" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">📋</div><div class="label" style="color:#d4af37;">Планер</div></div>
             <div class="glass" id="planerContainer">
+                <!-- Блок "Подписка" (по умолчанию видим) -->
                 <div id="planerLocked" style="display:block; text-align:center; padding:20px;">
                     <div style="font-size:48px;">🔒</div>
                     <h2 style="color:#d4af37; margin:12px 0;">Планер доступен по подписке</h2>
@@ -545,6 +562,7 @@
                     <div style="margin-top:12px; font-size:12px; color:rgba(255,255,255,0.2);">Админам доступ бесплатно</div>
                 </div>
 
+                <!-- Реальный функционал (по подписке) -->
                 <div id="planerContent" style="display:none;">
                     <div class="planer-tabs">
                         <button class="active" data-planer="tasks">📌 Задачи</button>
@@ -616,7 +634,7 @@
             </div>
         </div>
 
-        <!-- Профиль (убраны выборы маски/анонимности) -->
+        <!-- Профиль (без настроек видимости) -->
         <div id="page-profile" class="page">
             <div class="glass">
                 <div class="card-title" style="color:#f5deb3;">Профиль</div>
@@ -634,8 +652,7 @@
                     <div class="profile-stat-item"><span class="number" id="profileScore">0</span><span class="label">Очков</span></div>
                     <div class="profile-stat-item"><span class="number" id="profileStreak">0/5</span><span class="label">Серия</span></div>
                 </div>
-                <!-- Убраны выборы режима маски/анонимности -->
-
+                <!-- Убрана секция с кнопками видимости (маска/аноним/открыто) – она есть только на главной странице -->
                 <div style="margin-bottom:12px;">
                     <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">Ваша маска (псевдоним)</div>
                     <input type="text" id="profileMaskInput" placeholder="Введите псевдоним..." style="width:100%; padding:10px 16px; background:rgba(245,222,179,0.05); border:1px solid rgba(245,222,179,0.1); border-radius:30px; color:#f5deb3; font-size:16px;" />
@@ -668,7 +685,22 @@
         </div>
     </div>
 
-    <!-- Модалка для искр -->
+    <!-- Модалка для искр – ответ на ответ -->
+    <div class="modal-overlay" id="modalIskryReply">
+        <div class="modal-card">
+            <div class="modal-title">🔥 Ответить на ответ</div>
+            <div class="modal-question" id="modalIskryReplyQuestion">Загрузка...</div>
+            <div style="font-size:14px; color:rgba(255,255,255,0.4); margin-bottom:8px;">Ответ:</div>
+            <div id="modalIskryReplyOriginal" style="padding:8px 12px; background:rgba(255,255,255,0.04); border-radius:12px; margin-bottom:12px; color:rgba(255,255,255,0.6);"></div>
+            <textarea id="modalIskryReplyInput" placeholder="Ваш ответ..." rows="3"></textarea>
+            <div class="modal-buttons">
+                <button class="modal-submit" id="modalIskryReplySubmit">Отправить</button>
+                <button class="modal-cancel" id="modalIskryReplyCancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка для искр – ответ на вопрос -->
     <div class="modal-overlay" id="modalIskry">
         <div class="modal-card">
             <div class="modal-title">🔥 Ответить на вопрос 18+</div>
@@ -681,7 +713,7 @@
         </div>
     </div>
 
-    <!-- Модалка для задачи -->
+    <!-- Модалка для создания/редактирования задачи -->
     <div class="modal-overlay" id="modalTask">
         <div class="modal-card">
             <div class="modal-title" id="modalTaskTitle">➕ Новая задача</div>
@@ -794,6 +826,9 @@
         let calendarDate = new Date();
         let calendarMarks = [];
         let selectedCalendarDate = null;
+
+        // Переменные для модалок
+        let modalIskryReplyAnswerId = null;
 
         // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
         async function callApi(action, data = {}) {
@@ -1026,7 +1061,7 @@
             }
         }
 
-        // ===== ИСКРЫ (исправлено) =====
+        // ===== ИСКРЫ =====
         function checkIskry() {
             const now = new Date();
             const hours = now.getHours();
@@ -1054,7 +1089,7 @@
                     <h2 style="color:#ff0033;">Вечерний режим</h2>
                     <p>Вопросы доступны с 20:00 до 08:00</p>
                 `;
-                document.getElementById('iskryGallery').style.display = 'block';
+                document.getElementById('iskryGallery').style.display = 'none';
             }
         }
 
@@ -1075,12 +1110,51 @@
             const result = await callApi('submit_iskry_answer', {
                 question: question,
                 answer: answer,
-                visibility: 0  // всегда анонимно
+                visibility: 0
             });
             this.disabled = false; this.textContent = 'Отправить';
             if (result?.success) {
                 tg.showAlert('✅ Ответ опубликован!');
                 document.getElementById('modalIskry').classList.remove('active');
+                loadIskryGallery();
+            } else {
+                tg.showAlert('Ошибка публикации.');
+            }
+        });
+
+        // ===== ИСКРЫ: ОТВЕТ НА ОТВЕТ =====
+        function openModalIskryReply(answerId, questionText, originalAnswer) {
+            modalIskryReplyAnswerId = answerId;
+            document.getElementById('modalIskryReplyQuestion').textContent = questionText;
+            document.getElementById('modalIskryReplyOriginal').textContent = originalAnswer;
+            document.getElementById('modalIskryReplyInput').value = '';
+            document.getElementById('modalIskryReply').classList.add('active');
+        }
+
+        document.getElementById('modalIskryReplyCancel').addEventListener('click', function() {
+            document.getElementById('modalIskryReply').classList.remove('active');
+            modalIskryReplyAnswerId = null;
+        });
+        document.getElementById('modalIskryReplySubmit').addEventListener('click', async function() {
+            const reply = document.getElementById('modalIskryReplyInput').value.trim();
+            if (!reply) { tg.showAlert('Напишите ответ!'); return; }
+            if (!modalIskryReplyAnswerId) { tg.showAlert('Ошибка: ответ не выбран'); return; }
+            this.disabled = true; this.textContent = 'Отправка...';
+            // Здесь нужно сохранить ответ на ответ – у вас пока нет такого эндпоинта,
+            // поэтому я отправляю как новый ответ на вопрос (временно)
+            // В будущем можно добавить отдельный эндпоинт для ответов на ответы.
+            // Для демонстрации используем существующий.
+            const question = document.getElementById('modalIskryReplyQuestion').textContent;
+            const result = await callApi('submit_iskry_answer', {
+                question: question,
+                answer: reply,
+                visibility: 0
+            });
+            this.disabled = false; this.textContent = 'Отправить';
+            if (result?.success) {
+                tg.showAlert('✅ Ответ опубликован!');
+                document.getElementById('modalIskryReply').classList.remove('active');
+                modalIskryReplyAnswerId = null;
                 loadIskryGallery();
             } else {
                 tg.showAlert('Ошибка публикации.');
@@ -1096,17 +1170,26 @@
                     return;
                 }
                 let html = '';
-                data.answers.forEach(a => {
+                data.answers.forEach((a, idx) => {
                     const author = a.visibility === 0 ? 'Аноним' : a.visibility === 1 ? `🎭 ${a.mask||'Маска'}` : a.name;
                     html += `
-                        <div class="iskry-gallery-item">
+                        <div class="iskry-gallery-item" data-id="${a.id || idx}">
                             <div class="question">${escHtml(a.question)}</div>
                             <div class="answer">${escHtml(a.answer)}</div>
                             <div class="meta">от ${author} ❤️ ${a.likes||0}</div>
+                            <button class="reply-btn" data-id="${a.id || idx}" data-question="${escHtml(a.question)}" data-answer="${escHtml(a.answer)}">Ответить</button>
                         </div>
                     `;
                 });
                 container.innerHTML = html;
+                container.querySelectorAll('.reply-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const answerId = this.dataset.id;
+                        const questionText = this.dataset.question;
+                        const originalAnswer = this.dataset.answer;
+                        openModalIskryReply(answerId, questionText, originalAnswer);
+                    });
+                });
             }
         }
 
@@ -1160,7 +1243,6 @@
             }
         });
 
-        // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ПЛАНЕРА =====
         document.querySelectorAll('.planer-tabs button').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.planer-tabs button').forEach(b => b.classList.remove('active'));
@@ -1751,7 +1833,9 @@
 
         document.getElementById('profileSaveBtn').addEventListener('click', async function() {
             const mask = document.getElementById('profileMaskInput').value.trim();
-            const result = await callApi('save_profile', { mask, visibility: currentVisibility });
+            // Убрали выбор видимости из профиля – используем текущую из глобальной переменной
+            const visibility = 0; // или currentVisibility, но мы её не показываем
+            const result = await callApi('save_profile', { mask, visibility });
             if (result?.success) {
                 tg.showAlert('✅ Настройки сохранены!');
                 profileCompleted = true;
@@ -1779,8 +1863,9 @@
             });
         });
 
-        // ===== ДЕМО-ДАННЫЕ =====
+        // ===== ДЕМО-ДАННЫЕ ДЛЯ ПРЕДПРОСМОТРА =====
         function loadDemoData() {
+            // Задачи
             const tasksContainer = document.getElementById('tasksList');
             const demoTasks = [
                 { id: 1, title: 'Утренняя зарядка', time: '08:00', done: true, priority: 'low', category: 'Здоровье' },
@@ -1811,6 +1896,7 @@
             });
             tasksContainer.innerHTML = tasksHtml;
 
+            // Бюджет
             const budgetContainer = document.getElementById('budgetCategories');
             const demoCategories = [
                 { name: 'Жильё', percent: 25, active: true },
@@ -1841,6 +1927,7 @@
             });
             budgetContainer.innerHTML = budgetHtml;
 
+            // Календарь
             const today = new Date();
             const year = today.getFullYear();
             const month = today.getMonth();
@@ -1852,12 +1939,17 @@
             calendarMarks = demoMarks.map(m => ({ id: null, date: m.date, type: m.type, note: m.note }));
             loadCalendar();
 
+            // Статистика
             document.getElementById('statTotal').textContent = '12';
             document.getElementById('statCompleted').textContent = '5';
             document.getElementById('statPending').textContent = '4';
             document.getElementById('statOverdue').textContent = '3';
 
-            // Блокировка демо
+            // Блокировка кнопок
+            document.querySelector('#budgetSaveBtn').style.pointerEvents = 'none';
+            document.querySelector('#budgetSaveBtn').style.opacity = '0.6';
+            document.querySelector('#incomeSaveBtn').style.pointerEvents = 'none';
+            document.querySelector('#incomeSaveBtn').style.opacity = '0.6';
             document.getElementById('planerContent').classList.add('demo-mode');
         }
 
