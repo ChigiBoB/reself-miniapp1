@@ -501,19 +501,15 @@
             <div class="glass"><div class="card-title" style="color:#8a2be2;">Ответы на текущий вопрос</div><div id="galleryList"><div class="loading">Загрузка...</div></div></div>
         </div>
 
-        <!-- Искры -->
+        <!-- Искры (исправлено) -->
         <div id="page-iskry" class="page">
             <div class="center-piece"><div class="symbol" style="color:#ff0033;">🔥</div><div class="label" style="color:#ff0033;">Искры</div></div>
             <div class="glass evening-mode" id="iskryContainer">
                 <div class="icon">🌙</div>
                 <h2 style="color:#ff0033;">Вечерний режим</h2>
                 <p>Вопросы доступны с 20:00 до 08:00</p>
-            </div>
-            <div id="iskryAnswerArea" style="display:none;" class="iskry-answer-area">
-                <div class="card-title" style="color:#ff0033;">Ваш ответ на вопрос:</div>
-                <div id="iskryCurrentQuestion" style="font-size:16px; margin-bottom:8px; color:#fff;"></div>
-                <textarea id="iskryAnswerInput" placeholder="Напишите ответ..." rows="2"></textarea>
-                <button class="btn-primary" id="iskryAnswerSubmitBtn" style="background:linear-gradient(135deg, #cc0033, #ff0033);">Отправить ответ</button>
+                <button class="btn-primary" id="iskryQuestionBtn" style="margin-top:12px; background:linear-gradient(135deg, #cc0033, #ff0033); display:none;">Получить вопрос</button>
+                <div id="iskryQuestionDisplay" style="margin-top:12px; font-size:16px; color:#fff; display:none;"></div>
             </div>
             <div class="glass" style="margin-top:12px;">
                 <div class="card-title" style="color:#ff0033;">🔥 Ответы сообщества</div>
@@ -540,7 +536,6 @@
         <div id="page-planer" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">📋</div><div class="label" style="color:#d4af37;">Планер</div></div>
             <div class="glass" id="planerContainer">
-                <!-- Блок "Подписка" (по умолчанию видим) -->
                 <div id="planerLocked" style="display:block; text-align:center; padding:20px;">
                     <div style="font-size:48px;">🔒</div>
                     <h2 style="color:#d4af37; margin:12px 0;">Планер доступен по подписке</h2>
@@ -550,7 +545,6 @@
                     <div style="margin-top:12px; font-size:12px; color:rgba(255,255,255,0.2);">Админам доступ бесплатно</div>
                 </div>
 
-                <!-- Реальный функционал (по подписке) -->
                 <div id="planerContent" style="display:none;">
                     <div class="planer-tabs">
                         <button class="active" data-planer="tasks">📌 Задачи</button>
@@ -622,7 +616,7 @@
             </div>
         </div>
 
-        <!-- Профиль -->
+        <!-- Профиль (убраны выборы маски/анонимности) -->
         <div id="page-profile" class="page">
             <div class="glass">
                 <div class="card-title" style="color:#f5deb3;">Профиль</div>
@@ -640,14 +634,8 @@
                     <div class="profile-stat-item"><span class="number" id="profileScore">0</span><span class="label">Очков</span></div>
                     <div class="profile-stat-item"><span class="number" id="profileStreak">0/5</span><span class="label">Серия</span></div>
                 </div>
-                <div style="margin-bottom:12px;">
-                    <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">Режим по умолчанию</div>
-                    <div class="visibility-buttons" id="profileVisibilityButtons">
-                        <button data-visibility="0" class="active" style="color:rgba(245,222,179,0.6); border-color:rgba(245,222,179,0.1);">🕵 Анонимно</button>
-                        <button data-visibility="1" style="color:rgba(245,222,179,0.6); border-color:rgba(245,222,179,0.1);">🎭 Маска</button>
-                        <button data-visibility="2" style="color:rgba(245,222,179,0.6); border-color:rgba(245,222,179,0.1);">👤 Открыто</button>
-                    </div>
-                </div>
+                <!-- Убраны выборы режима маски/анонимности -->
+
                 <div style="margin-bottom:12px;">
                     <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">Ваша маска (псевдоним)</div>
                     <input type="text" id="profileMaskInput" placeholder="Введите псевдоним..." style="width:100%; padding:10px 16px; background:rgba(245,222,179,0.05); border:1px solid rgba(245,222,179,0.1); border-radius:30px; color:#f5deb3; font-size:16px;" />
@@ -693,7 +681,7 @@
         </div>
     </div>
 
-    <!-- Модалка для создания/редактирования задачи -->
+    <!-- Модалка для задачи -->
     <div class="modal-overlay" id="modalTask">
         <div class="modal-card">
             <div class="modal-title" id="modalTaskTitle">➕ Новая задача</div>
@@ -722,7 +710,7 @@
         </div>
     </div>
 
-    <!-- Модалка для календаря (просмотр/добавление/удаление отметок) -->
+    <!-- Модалка для календаря -->
     <div class="modal-overlay" id="modalCalendar">
         <div class="modal-card">
             <div class="modal-title" id="modalCalendarTitle">📅 Отметки на дату</div>
@@ -743,7 +731,7 @@
         </div>
     </div>
 
-    <!-- Нижнее меню (без Планера и Магазина) -->
+    <!-- Нижнее меню -->
     <div class="tab-bar">
         <button class="tab-item active" data-page="page-moment"><span class="tab-icon">✦</span>Момент</button>
         <button class="tab-item" data-page="page-verhina"><span class="tab-icon">🏆</span>Вершина</button>
@@ -1038,7 +1026,7 @@
             }
         }
 
-        // ===== ИСКРЫ =====
+        // ===== ИСКРЫ (исправлено) =====
         function checkIskry() {
             const now = new Date();
             const hours = now.getHours();
@@ -1066,7 +1054,7 @@
                     <h2 style="color:#ff0033;">Вечерний режим</h2>
                     <p>Вопросы доступны с 20:00 до 08:00</p>
                 `;
-                document.getElementById('iskryGallery').style.display = 'none';
+                document.getElementById('iskryGallery').style.display = 'block';
             }
         }
 
@@ -1087,7 +1075,7 @@
             const result = await callApi('submit_iskry_answer', {
                 question: question,
                 answer: answer,
-                visibility: 0
+                visibility: 0  // всегда анонимно
             });
             this.disabled = false; this.textContent = 'Отправить';
             if (result?.success) {
@@ -1128,13 +1116,9 @@
             if (data) {
                 const locked = document.getElementById('planerLocked');
                 const content = document.getElementById('planerContent');
-                const demo = document.getElementById('planerDemo'); // если есть
                 if (data.subscribed) {
-                    // Есть подписка – показываем реальный функционал
                     locked.style.display = 'none';
-                    if (demo) demo.style.display = 'none';
                     content.style.display = 'block';
-                    // Убираем демо-режим
                     content.classList.remove('demo-mode');
                     document.getElementById('planerCloseDemoBtn').style.display = 'none';
                     await loadTasks();
@@ -1142,30 +1126,22 @@
                     await loadCalendar();
                     await loadTaskStats('day');
                 } else {
-                    // Нет подписки – показываем блок подписки
                     locked.style.display = 'block';
-                    if (demo) demo.style.display = 'none';
                     content.style.display = 'none';
                 }
             }
         }
 
-        // Обработчик предпросмотра
         document.getElementById('planerPreviewBtn').addEventListener('click', function() {
             const locked = document.getElementById('planerLocked');
             const content = document.getElementById('planerContent');
-            // Показываем контент планера с демо-данными
             locked.style.display = 'none';
             content.style.display = 'block';
-            // Добавляем класс demo-mode для блокировки
             content.classList.add('demo-mode');
-            // Показываем кнопку "Закрыть предпросмотр"
             document.getElementById('planerCloseDemoBtn').style.display = 'block';
-            // Загружаем демо-данные
             loadDemoData();
         });
 
-        // Закрыть демо (вернуться к блоку подписки)
         document.getElementById('planerCloseDemoBtn').addEventListener('click', function() {
             const locked = document.getElementById('planerLocked');
             const content = document.getElementById('planerContent');
@@ -1184,7 +1160,7 @@
             }
         });
 
-        // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ПЛАНЕРА (для реального функционала) =====
+        // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ПЛАНЕРА =====
         document.querySelectorAll('.planer-tabs button').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.planer-tabs button').forEach(b => b.classList.remove('active'));
@@ -1353,7 +1329,7 @@
             }
         }
 
-        // ===== БЮДЖЕТ (ОБНОВЛЁННЫЙ) =====
+        // ===== БЮДЖЕТ =====
         async function loadBudget() {
             const container = document.getElementById('budgetCategories');
             container.innerHTML = '<div class="loading">Загрузка...</div>';
@@ -1382,7 +1358,6 @@
                 });
                 container.innerHTML = html;
 
-                // Обработчики для изменения процентов
                 container.querySelectorAll('.cat-percent-input').forEach(inp => {
                     inp.addEventListener('input', function() {
                         const idx = parseInt(this.dataset.idx);
@@ -1391,13 +1366,11 @@
                         const amountInput = this.parentElement.querySelector('.cat-amount-input');
                         const amountSpan = this.parentElement.querySelector('.cat-amount');
                         percentSpan.textContent = val + '%';
-                        // При изменении процента сбрасываем фиксированную сумму
                         amountInput.value = '';
                         amountSpan.textContent = '0 ₽';
                     });
                 });
 
-                // Обработчики для ввода суммы (фиксированная сумма)
                 container.querySelectorAll('.cat-amount-input').forEach(inp => {
                     inp.addEventListener('input', function() {
                         const idx = parseInt(this.dataset.idx);
@@ -1407,7 +1380,6 @@
                     });
                 });
 
-                // Переключение активности
                 container.querySelectorAll('.cat-active').forEach(el => {
                     el.addEventListener('click', function() {
                         this.classList.toggle('active');
@@ -1430,7 +1402,6 @@
                 const fixed_amount = parseFloat(amountInput.value) || 0;
                 categories.push({ name, percent, active, fixed_amount });
             });
-            // Отправляем на сервер
             const result = await callApi('update_budget', { categories, income });
             if (result?.success) {
                 tg.showAlert('✅ Бюджет сохранён');
@@ -1569,7 +1540,6 @@
                     `;
                 });
                 marksContainer.innerHTML = html;
-                // Обработчики удаления
                 marksContainer.querySelectorAll('.delete-mark-btn').forEach(btn => {
                     btn.addEventListener('click', async function(e) {
                         e.stopPropagation();
@@ -1779,18 +1749,9 @@
             }
         });
 
-        document.querySelectorAll('#profileVisibilityButtons button').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('#profileVisibilityButtons button').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
         document.getElementById('profileSaveBtn').addEventListener('click', async function() {
             const mask = document.getElementById('profileMaskInput').value.trim();
-            const visBtn = document.querySelector('#profileVisibilityButtons button.active');
-            const visibility = visBtn ? parseInt(visBtn.dataset.visibility) : 0;
-            const result = await callApi('save_profile', { mask, visibility });
+            const result = await callApi('save_profile', { mask, visibility: currentVisibility });
             if (result?.success) {
                 tg.showAlert('✅ Настройки сохранены!');
                 profileCompleted = true;
@@ -1818,9 +1779,8 @@
             });
         });
 
-        // ===== ДЕМО-ДАННЫЕ ДЛЯ ПРЕДПРОСМОТРА =====
+        // ===== ДЕМО-ДАННЫЕ =====
         function loadDemoData() {
-            // 1. Задачи
             const tasksContainer = document.getElementById('tasksList');
             const demoTasks = [
                 { id: 1, title: 'Утренняя зарядка', time: '08:00', done: true, priority: 'low', category: 'Здоровье' },
@@ -1851,7 +1811,6 @@
             });
             tasksContainer.innerHTML = tasksHtml;
 
-            // 2. Бюджет
             const budgetContainer = document.getElementById('budgetCategories');
             const demoCategories = [
                 { name: 'Жильё', percent: 25, active: true },
@@ -1864,7 +1823,7 @@
                 { name: 'Накопления', percent: 20, active: true },
             ];
             let budgetHtml = '';
-            const income = 50000; // демо-доход
+            const income = 50000;
             document.getElementById('incomeInput').value = income;
             demoCategories.forEach((cat, idx) => {
                 const amount = (income * cat.percent / 100).toFixed(0);
@@ -1882,7 +1841,6 @@
             });
             budgetContainer.innerHTML = budgetHtml;
 
-            // 3. Календарь – демо-отметки
             const today = new Date();
             const year = today.getFullYear();
             const month = today.getMonth();
@@ -1891,23 +1849,15 @@
                 { date: new Date(year, month, 10).getTime() / 1000, type: 'important', note: 'Дедлайн' },
                 { date: new Date(year, month, 20).getTime() / 1000, type: 'custom', note: 'Встреча' },
             ];
-            // Переопределим calendarMarks для демо
             calendarMarks = demoMarks.map(m => ({ id: null, date: m.date, type: m.type, note: m.note }));
-            // Перерисуем календарь
             loadCalendar();
 
-            // 4. Статистика задач (демо)
             document.getElementById('statTotal').textContent = '12';
             document.getElementById('statCompleted').textContent = '5';
             document.getElementById('statPending').textContent = '4';
             document.getElementById('statOverdue').textContent = '3';
 
-            // Блокируем кнопку "Сохранить бюджет" в демо
-            document.querySelector('#budgetSaveBtn').style.pointerEvents = 'none';
-            document.querySelector('#budgetSaveBtn').style.opacity = '0.6';
-            document.querySelector('#incomeSaveBtn').style.pointerEvents = 'none';
-            document.querySelector('#incomeSaveBtn').style.opacity = '0.6';
-            // Включаем демо-режим
+            // Блокировка демо
             document.getElementById('planerContent').classList.add('demo-mode');
         }
 
