@@ -7,7 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
-        /* ===== БАЗОВЫЕ СТИЛИ (без изменений) ===== */
+        /* ===== БАЗОВЫЕ СТИЛИ ===== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -259,6 +259,59 @@
         .planer-section { display:none; animation:fadeIn 0.4s ease; }
         .planer-section.active { display:block; }
 
+        /* Демо-режим – блокировка всех интерактивных элементов */
+        .demo-mode .task-check,
+        .demo-mode .task-edit,
+        .demo-mode .task-delete,
+        .demo-mode #taskAddBtn,
+        .demo-mode .budget-category input,
+        .demo-mode .budget-category .cat-active,
+        .demo-mode .budget-mode-toggle button,
+        .demo-mode .stats-period-btn,
+        .demo-mode .cal-mark-btn-modal,
+        .demo-mode .cal-mark-btn,
+        .demo-mode .delete-mark-btn,
+        .demo-mode .budget-income-row button,
+        .demo-mode #budgetSaveBtn,
+        .demo-mode #incomeSaveBtn,
+        .demo-mode .task-item .task-check,
+        .demo-mode .task-item .task-actions button,
+        .demo-mode .planer-tabs button,
+        .demo-mode .modal-buttons button,
+        .demo-mode .btn-primary {
+            pointer-events: none !important;
+            opacity: 0.6 !important;
+            cursor: default !important;
+        }
+        .demo-mode input, .demo-mode select, .demo-mode textarea, .demo-mode button {
+            pointer-events: none !important;
+            opacity: 0.6 !important;
+        }
+        .demo-mode .planer-tabs button {
+            pointer-events: none !important;
+            opacity: 0.6 !important;
+        }
+        #planerContent {
+            position: relative;
+        }
+        .demo-mode #planerContent::before {
+            content: "🔒 Демо-версия. Редактирование отключено";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.7);
+            color: #d4af37;
+            padding: 16px 24px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 700;
+            z-index: 10;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+
         /* Задачи */
         .task-item {
             display:flex; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05);
@@ -310,15 +363,16 @@
         }
         .budget-category {
             display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);
+            flex-wrap:wrap;
         }
         .budget-category:last-child { border-bottom:none; }
-        .budget-category .cat-name { flex:1; font-weight:500; color:#fff; }
+        .budget-category .cat-name { flex:1; font-weight:500; color:#fff; min-width:80px; }
         .budget-category .cat-percent { width:60px; text-align:right; color:#d4af37; font-weight:600; }
-        .budget-category .cat-amount { min-width:70px; text-align:right; color:rgba(255,255,255,0.6); font-size:14px; }
+        .budget-category .cat-amount { min-width:80px; text-align:right; color:rgba(255,255,255,0.6); font-size:14px; }
         .budget-category .cat-active { width:40px; text-align:center; cursor:pointer; color:rgba(255,255,255,0.3); font-size:18px; }
         .budget-category .cat-active.active { color:#4ecdc4; }
         .budget-category input[type="number"] {
-            width:60px; padding:4px 6px; background:rgba(255,255,255,0.04);
+            width:70px; padding:4px 6px; background:rgba(255,255,255,0.04);
             border:1px solid rgba(255,255,255,0.08); border-radius:12px; color:#fff; font-size:14px;
         }
         .budget-category input[type="number"]:focus { outline:none; border-color:#d4af37; }
@@ -380,6 +434,7 @@
             .tab-item .tab-icon { font-size:14px; }
             .budget-income-row { flex-wrap:wrap; }
             .budget-income-row input { min-width:120px; }
+            .budget-category input[type="number"] { width:60px; }
         }
     </style>
 </head>
@@ -481,7 +536,7 @@
             </div>
         </div>
 
-        <!-- Планер (отдельная страница) -->
+        <!-- Планер -->
         <div id="page-planer" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">📋</div><div class="label" style="color:#d4af37;">Планер</div></div>
             <div class="glass" id="planerContainer">
@@ -493,42 +548,6 @@
                     <button class="btn-primary" id="planerSubscribeBtn" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e; margin-top:16px; max-width:300px; margin-left:auto; margin-right:auto;">Подписаться (250 Stars/мес)</button>
                     <button class="btn-primary" id="planerPreviewBtn" style="background:rgba(255,255,255,0.1); margin-top:8px; max-width:300px; margin-left:auto; margin-right:auto;">Предпросмотр</button>
                     <div style="margin-top:12px; font-size:12px; color:rgba(255,255,255,0.2);">Админам доступ бесплатно</div>
-                </div>
-
-                <!-- Демо-версия (предпросмотр) -->
-                <div id="planerDemo" style="display:none; text-align:center; padding:20px;">
-                    <div style="font-size:48px;">👀</div>
-                    <h2 style="color:#d4af37; margin:12px 0;">Демо-версия</h2>
-                    <p style="color:rgba(255,255,255,0.4); font-size:14px;">Это пример того, как выглядит планер. Для полного доступа оформите подписку.</p>
-                    <div style="margin-top:16px; background:rgba(255,255,255,0.03); border-radius:16px; padding:12px; text-align:left;">
-                        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
-                            <span>📌 Утренняя зарядка</span>
-                            <span style="color:#4caf50;">✔</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
-                            <span>📌 Работа над проектом</span>
-                            <span style="color:#ffeb3b;">⏳</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; padding:6px 0;">
-                            <span>📌 Обед</span>
-                            <span style="color:#4caf50;">✔</span>
-                        </div>
-                    </div>
-                    <div style="margin-top:16px; background:rgba(255,255,255,0.03); border-radius:16px; padding:12px; text-align:left;">
-                        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
-                            <span>💰 Жильё</span>
-                            <span style="color:#d4af37;">25%</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
-                            <span>💰 Еда</span>
-                            <span style="color:#d4af37;">20%</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; padding:6px 0;">
-                            <span>💰 Сбережения</span>
-                            <span style="color:#d4af37;">30%</span>
-                        </div>
-                    </div>
-                    <button class="btn-primary" id="planerCloseDemoBtn" style="margin-top:12px; background:rgba(255,255,255,0.1);">Закрыть предпросмотр</button>
                 </div>
 
                 <!-- Реальный функционал (по подписке) -->
@@ -588,6 +607,7 @@
                             <div class="stats-card overdue"><span class="number" id="statOverdue">0</span><span class="label">Просрочено</span></div>
                         </div>
                     </div>
+                    <button class="btn-primary" id="planerCloseDemoBtn" style="margin-top:16px; background:rgba(255,255,255,0.1); display:none;">Закрыть предпросмотр</button>
                 </div>
             </div>
         </div>
@@ -1102,26 +1122,29 @@
             }
         }
 
-        // ===== ПЛАНЕР (исправленный предпросмотр и подписка) =====
+        // ===== ПЛАНЕР =====
         async function checkPlanerStatus() {
             const data = await callApi('planer_status');
             if (data) {
                 const locked = document.getElementById('planerLocked');
-                const demo = document.getElementById('planerDemo');
                 const content = document.getElementById('planerContent');
+                const demo = document.getElementById('planerDemo'); // если есть
                 if (data.subscribed) {
                     // Есть подписка – показываем реальный функционал
                     locked.style.display = 'none';
-                    demo.style.display = 'none';
+                    if (demo) demo.style.display = 'none';
                     content.style.display = 'block';
+                    // Убираем демо-режим
+                    content.classList.remove('demo-mode');
+                    document.getElementById('planerCloseDemoBtn').style.display = 'none';
                     await loadTasks();
                     await loadBudget();
                     await loadCalendar();
                     await loadTaskStats('day');
                 } else {
-                    // Нет подписки – показываем блок подписки (заблокирован)
+                    // Нет подписки – показываем блок подписки
                     locked.style.display = 'block';
-                    demo.style.display = 'none';
+                    if (demo) demo.style.display = 'none';
                     content.style.display = 'none';
                 }
             }
@@ -1130,20 +1153,26 @@
         // Обработчик предпросмотра
         document.getElementById('planerPreviewBtn').addEventListener('click', function() {
             const locked = document.getElementById('planerLocked');
-            const demo = document.getElementById('planerDemo');
             const content = document.getElementById('planerContent');
-            // Скрыть блок подписки, показать демо
+            // Показываем контент планера с демо-данными
             locked.style.display = 'none';
-            content.style.display = 'none';
-            demo.style.display = 'block';
+            content.style.display = 'block';
+            // Добавляем класс demo-mode для блокировки
+            content.classList.add('demo-mode');
+            // Показываем кнопку "Закрыть предпросмотр"
+            document.getElementById('planerCloseDemoBtn').style.display = 'block';
+            // Загружаем демо-данные
+            loadDemoData();
         });
 
         // Закрыть демо (вернуться к блоку подписки)
         document.getElementById('planerCloseDemoBtn').addEventListener('click', function() {
             const locked = document.getElementById('planerLocked');
-            const demo = document.getElementById('planerDemo');
+            const content = document.getElementById('planerContent');
             locked.style.display = 'block';
-            demo.style.display = 'none';
+            content.style.display = 'none';
+            content.classList.remove('demo-mode');
+            document.getElementById('planerCloseDemoBtn').style.display = 'none';
         });
 
         document.getElementById('planerSubscribeBtn').addEventListener('click', async function() {
@@ -1324,7 +1353,7 @@
             }
         }
 
-        // ===== БЮДЖЕТ =====
+        // ===== БЮДЖЕТ (ОБНОВЛЁННЫЙ) =====
         async function loadBudget() {
             const container = document.getElementById('budgetCategories');
             container.innerHTML = '<div class="loading">Загрузка...</div>';
@@ -1339,12 +1368,13 @@
                 const income = parseFloat(document.getElementById('incomeInput').value) || 0;
                 let html = '';
                 data.categories.forEach((cat, idx) => {
-                    const amount = (income * cat.percent / 100).toFixed(0);
+                    const amount = cat.amount || 0;
                     html += `
-                        <div class="budget-category">
+                        <div class="budget-category" data-idx="${idx}">
                             <span class="cat-name">${escHtml(cat.name)}</span>
                             <input type="number" class="cat-percent-input" data-idx="${idx}" value="${cat.percent}" min="0" max="100" step="0.1" />
                             <span class="cat-percent">${cat.percent}%</span>
+                            <input type="number" class="cat-amount-input" data-idx="${idx}" value="${amount}" min="0" step="100" placeholder="Сумма" />
                             <span class="cat-amount">${amount} ₽</span>
                             <span class="cat-active ${cat.active?'active':''}" data-idx="${idx}">${cat.active?'✔':'✕'}</span>
                         </div>
@@ -1352,18 +1382,32 @@
                 });
                 container.innerHTML = html;
 
+                // Обработчики для изменения процентов
                 container.querySelectorAll('.cat-percent-input').forEach(inp => {
                     inp.addEventListener('input', function() {
                         const idx = parseInt(this.dataset.idx);
                         const val = parseFloat(this.value) || 0;
                         const percentSpan = this.parentElement.querySelector('.cat-percent');
+                        const amountInput = this.parentElement.querySelector('.cat-amount-input');
                         const amountSpan = this.parentElement.querySelector('.cat-amount');
                         percentSpan.textContent = val + '%';
-                        const incomeNow = parseFloat(document.getElementById('incomeInput').value) || 0;
-                        amountSpan.textContent = (incomeNow * val / 100).toFixed(0) + ' ₽';
+                        // При изменении процента сбрасываем фиксированную сумму
+                        amountInput.value = '';
+                        amountSpan.textContent = '0 ₽';
                     });
                 });
 
+                // Обработчики для ввода суммы (фиксированная сумма)
+                container.querySelectorAll('.cat-amount-input').forEach(inp => {
+                    inp.addEventListener('input', function() {
+                        const idx = parseInt(this.dataset.idx);
+                        const val = parseFloat(this.value) || 0;
+                        const amountSpan = this.parentElement.querySelector('.cat-amount');
+                        amountSpan.textContent = val + ' ₽';
+                    });
+                });
+
+                // Переключение активности
                 container.querySelectorAll('.cat-active').forEach(el => {
                     el.addEventListener('click', function() {
                         this.classList.toggle('active');
@@ -1377,16 +1421,22 @@
             const container = document.getElementById('budgetCategories');
             const inputs = container.querySelectorAll('.budget-category');
             const categories = [];
+            const income = parseFloat(document.getElementById('incomeInput').value) || 0;
             inputs.forEach(el => {
                 const name = el.querySelector('.cat-name').textContent;
                 const percent = parseFloat(el.querySelector('.cat-percent-input').value) || 0;
                 const active = el.querySelector('.cat-active').classList.contains('active');
-                categories.push({ name, percent, active });
+                const amountInput = el.querySelector('.cat-amount-input');
+                const fixed_amount = parseFloat(amountInput.value) || 0;
+                categories.push({ name, percent, active, fixed_amount });
             });
-            const result = await callApi('update_budget', { categories });
+            // Отправляем на сервер
+            const result = await callApi('update_budget', { categories, income });
             if (result?.success) {
                 tg.showAlert('✅ Бюджет сохранён');
                 loadBudget();
+            } else if (result?.error) {
+                tg.showAlert(`❌ Ошибка: ${result.error}. Фиксированные расходы: ${result.fixed_total} ₽, доход: ${result.income} ₽. Уменьшите фиксированные суммы.`);
             } else {
                 tg.showAlert('Ошибка сохранения');
             }
@@ -1528,7 +1578,6 @@
                         const result = await callApi('delete_calendar_mark', { mark_id: markId });
                         if (result?.success) {
                             tg.showAlert('✅ Отметка удалена');
-                            // Обновить модалку и календарь
                             const currentDate = new Date(selectedCalendarDate * 1000);
                             openCalendarModal(currentDate);
                             loadCalendar();
@@ -1560,7 +1609,6 @@
                 });
                 if (result?.success) {
                     tg.showAlert('✅ Отметка добавлена');
-                    // Обновить модалку и календарь
                     const currentDate = new Date(dateTs * 1000);
                     openCalendarModal(currentDate);
                     loadCalendar();
@@ -1769,6 +1817,99 @@
                 loadTop(this.dataset.period);
             });
         });
+
+        // ===== ДЕМО-ДАННЫЕ ДЛЯ ПРЕДПРОСМОТРА =====
+        function loadDemoData() {
+            // 1. Задачи
+            const tasksContainer = document.getElementById('tasksList');
+            const demoTasks = [
+                { id: 1, title: 'Утренняя зарядка', time: '08:00', done: true, priority: 'low', category: 'Здоровье' },
+                { id: 2, title: 'Работа над проектом', time: '10:00–13:00', done: false, priority: 'high', category: 'Работа' },
+                { id: 3, title: 'Обед', time: '13:00', done: true, priority: 'medium', category: 'Личное' },
+                { id: 4, title: 'Встреча с клиентом', time: '15:00', done: false, priority: 'high', category: 'Работа', overdue: true },
+                { id: 5, title: 'Тренировка', time: '18:00', done: false, priority: 'medium', category: 'Здоровье' },
+            ];
+            let tasksHtml = '';
+            demoTasks.forEach(t => {
+                const doneClass = t.done ? 'done' : '';
+                const priorityClass = t.priority;
+                const overdueHtml = t.overdue ? ' <span class="task-deadline-overdue">Просрочено!</span>' : '';
+                tasksHtml += `
+                    <div class="task-item" data-id="${t.id}">
+                        <div class="task-check ${doneClass}"></div>
+                        <div class="task-info">
+                            <div class="task-title ${doneClass}">${t.title}</div>
+                            <div class="task-meta">${t.time} · ${t.category} ${overdueHtml}</div>
+                        </div>
+                        <div class="task-priority ${priorityClass}"></div>
+                        <div class="task-actions">
+                            <button class="task-edit">✎</button>
+                            <button class="task-delete">✕</button>
+                        </div>
+                    </div>
+                `;
+            });
+            tasksContainer.innerHTML = tasksHtml;
+
+            // 2. Бюджет
+            const budgetContainer = document.getElementById('budgetCategories');
+            const demoCategories = [
+                { name: 'Жильё', percent: 25, active: true },
+                { name: 'Еда', percent: 20, active: true },
+                { name: 'Транспорт', percent: 10, active: true },
+                { name: 'Здоровье', percent: 5, active: true },
+                { name: 'Связь', percent: 5, active: true },
+                { name: 'Одежда', percent: 5, active: true },
+                { name: 'Развлечения', percent: 10, active: true },
+                { name: 'Накопления', percent: 20, active: true },
+            ];
+            let budgetHtml = '';
+            const income = 50000; // демо-доход
+            document.getElementById('incomeInput').value = income;
+            demoCategories.forEach((cat, idx) => {
+                const amount = (income * cat.percent / 100).toFixed(0);
+                const activeClass = cat.active ? 'active' : '';
+                budgetHtml += `
+                    <div class="budget-category" data-idx="${idx}">
+                        <span class="cat-name">${cat.name}</span>
+                        <input type="number" class="cat-percent-input" value="${cat.percent}" min="0" max="100" step="0.1" disabled />
+                        <span class="cat-percent">${cat.percent}%</span>
+                        <input type="number" class="cat-amount-input" value="${amount}" min="0" step="100" disabled />
+                        <span class="cat-amount">${amount} ₽</span>
+                        <span class="cat-active ${activeClass}">${cat.active ? '✔' : '✕'}</span>
+                    </div>
+                `;
+            });
+            budgetContainer.innerHTML = budgetHtml;
+
+            // 3. Календарь – демо-отметки
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth();
+            const demoMarks = [
+                { date: new Date(year, month, 5).getTime() / 1000, type: 'work', note: 'Работа над проектом' },
+                { date: new Date(year, month, 10).getTime() / 1000, type: 'important', note: 'Дедлайн' },
+                { date: new Date(year, month, 20).getTime() / 1000, type: 'custom', note: 'Встреча' },
+            ];
+            // Переопределим calendarMarks для демо
+            calendarMarks = demoMarks.map(m => ({ id: null, date: m.date, type: m.type, note: m.note }));
+            // Перерисуем календарь
+            loadCalendar();
+
+            // 4. Статистика задач (демо)
+            document.getElementById('statTotal').textContent = '12';
+            document.getElementById('statCompleted').textContent = '5';
+            document.getElementById('statPending').textContent = '4';
+            document.getElementById('statOverdue').textContent = '3';
+
+            // Блокируем кнопку "Сохранить бюджет" в демо
+            document.querySelector('#budgetSaveBtn').style.pointerEvents = 'none';
+            document.querySelector('#budgetSaveBtn').style.opacity = '0.6';
+            document.querySelector('#incomeSaveBtn').style.pointerEvents = 'none';
+            document.querySelector('#incomeSaveBtn').style.opacity = '0.6';
+            // Включаем демо-режим
+            document.getElementById('planerContent').classList.add('demo-mode');
+        }
 
         // ===== ЗАПУСК =====
         loadData();
