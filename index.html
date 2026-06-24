@@ -87,6 +87,17 @@
         .card-title {
             font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px;
         }
+        .info-hint {
+            font-size:13px;
+            color:rgba(255,255,255,0.5);
+            background:rgba(255,255,255,0.03);
+            border-radius:16px;
+            padding:12px 16px;
+            margin-bottom:16px;
+            border-left:3px solid rgba(78,205,196,0.3);
+            line-height:1.5;
+        }
+        .info-hint strong { color:#d4af37; }
 
         .center-piece {
             display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -137,12 +148,20 @@
         .p2p-item:last-child { border-bottom:none; }
         .p2p-item .question-text { font-weight:600; color:#fff; font-size:15px; }
         .p2p-item .type { color:rgba(255,255,255,0.3); font-size:13px; margin-top:2px; }
-        .p2p-item .answer-btn {
-            margin-top:10px; background:rgba(0,212,255,0.05);
-            border:1px solid rgba(0,212,255,0.1); color:rgba(255,255,255,0.6);
-            padding:8px 16px; border-radius:30px; font-size:14px; cursor:pointer; transition:.3s; font-family:inherit;
+        .p2p-item .actions { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+        .p2p-item .actions button {
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:30px;
+            padding:4px 14px;
+            font-size:13px;
+            color:rgba(255,255,255,0.6);
+            cursor:pointer;
+            transition:.3s;
+            font-family:inherit;
         }
-        .p2p-item .answer-btn:hover { border-color:rgba(0,212,255,0.3); color:#fff; }
+        .p2p-item .actions button:hover { background:rgba(255,255,255,0.1); color:#fff; }
+
         .ask-form textarea {
             width:100%; padding:14px; background:rgba(255,255,255,0.04);
             border:1px solid rgba(255,255,255,0.08); border-radius:16px; color:#fff;
@@ -173,19 +192,19 @@
         .iskry-gallery-item .question { font-weight:500; color:#ff0033; }
         .iskry-gallery-item .answer { color:rgba(255,255,255,0.5); margin-top:4px; font-size:14px; }
         .iskry-gallery-item .meta { font-size:12px; color:rgba(255,255,255,0.2); margin-top:6px; }
-        .iskry-gallery-item .reply-btn {
-            margin-top:6px;
-            background:rgba(255,0,51,0.05);
-            border:1px solid rgba(255,0,51,0.1);
-            color:rgba(255,255,255,0.6);
-            padding:4px 12px;
+        .iskry-gallery-item .actions { display:flex; gap:8px; margin-top:6px; flex-wrap:wrap; }
+        .iskry-gallery-item .actions button {
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.08);
             border-radius:30px;
-            font-size:12px;
+            padding:4px 14px;
+            font-size:13px;
+            color:rgba(255,255,255,0.6);
             cursor:pointer;
             transition:.3s;
             font-family:inherit;
         }
-        .iskry-gallery-item .reply-btn:hover { border-color:rgba(255,0,51,0.3); color:#fff; }
+        .iskry-gallery-item .actions button:hover { background:rgba(255,255,255,0.1); color:#fff; }
 
         .chat-container { max-height:400px; overflow-y:auto; margin-bottom:12px; }
         .chat-message { padding:8px 12px; margin:4px 0; border-radius:16px; background:rgba(255,255,255,0.04); max-width:80%; }
@@ -271,7 +290,7 @@
         .planer-section { display:none; animation:fadeIn 0.4s ease; }
         .planer-section.active { display:block; }
 
-        /* Демо-режим */
+        /* Демо-режим – блокировка только для интерактивных элементов, но не для вкладок */
         .demo-mode .task-check,
         .demo-mode .task-edit,
         .demo-mode .task-delete,
@@ -288,7 +307,6 @@
         .demo-mode #incomeSaveBtn,
         .demo-mode .task-item .task-check,
         .demo-mode .task-item .task-actions button,
-        .demo-mode .planer-tabs button,
         .demo-mode .modal-buttons button,
         .demo-mode .btn-primary {
             pointer-events: none !important;
@@ -299,9 +317,11 @@
             pointer-events: none !important;
             opacity: 0.6 !important;
         }
+        /* Вкладки в демо-режиме должны работать */
         .demo-mode .planer-tabs button {
-            pointer-events: none !important;
-            opacity: 0.6 !important;
+            pointer-events: auto !important;
+            opacity: 1 !important;
+            cursor: pointer !important;
         }
         #planerContent {
             position: relative;
@@ -348,7 +368,6 @@
         }
         .task-item .task-actions button:hover { background:rgba(255,255,255,0.1); color:#fff; }
         .task-item .task-deadline-overdue { color:#f44336; font-size:12px; }
-        .task-add-btn { margin-top:12px; }
 
         /* Бюджет */
         .budget-mode-toggle { display:flex; gap:8px; margin-bottom:12px; }
@@ -466,6 +485,12 @@
 
         <!-- Момент -->
         <div id="page-moment" class="page active">
+            <div class="info-hint">
+                📌 <strong>Ответьте на вопрос дня.</strong><br>
+                Чем длиннее и глубже ваш ответ, тем больше баллов вы получите:<br>
+                ⏱ Скорость (до 1 балла) · 📏 Длина (от 200 символов – +2) · 📝 Развёрнутость (3+ предложений – +1) · 🧠 Глубина (упоминание чувств – +2) · ❓ Саморефлексия (есть вопрос – +1)<br>
+                <strong>Максимум 5 баллов за один ответ.</strong> Выберите режим видимости.
+            </div>
             <div class="glass" style="background:transparent; backdrop-filter:none; border:none; box-shadow:none; padding:0;">
                 <div class="question-wrapper">
                     <div class="question-text" id="questionDisplay">Загрузка...</div>
@@ -483,6 +508,11 @@
         <!-- Вершина -->
         <div id="page-verhina" class="page">
             <div class="center-piece"><div class="symbol" style="color:#ffd700;">🏆</div><div class="label" style="color:#d4af37;">Вершина</div></div>
+            <div class="info-hint">
+                🏆 <strong>Топ пользователей</strong> по набранным баллам за выбранный период.<br>
+                Каждый месяц среди лидеров разыгрывается призовой фонд. Следите за объявлениями!<br>
+                Чем больше вы отвечаете, комментируете и получаете реакции, тем выше ваш рейтинг.
+            </div>
             <div class="glass">
                 <div class="top-tabs" id="topTabs">
                     <button class="active" data-period="day">День</button>
@@ -496,6 +526,12 @@
         <!-- Сеть -->
         <div id="page-set" class="page">
             <div class="center-piece"><div class="symbol" style="color:#00d4ff;">🧠</div><div class="label" style="color:#00d4ff;">Сеть</div></div>
+            <div class="info-hint">
+                🧠 <strong>Задавайте вопросы сообществу и отвечайте на чужие.</strong><br>
+                За каждые 5 ответов на вопросы вы получаете +1 бонусный балл.<br>
+                За каждый первый комментарий в день – +1 балл.<br>
+                Если ваш ответ или комментарий собирает 5 реакций (👍 ❤️ 🔥 😂), вы получаете +1 дополнительный балл.
+            </div>
             <div class="glass">
                 <div class="card-title" style="color:#00d4ff;">Вопросы сообщества</div>
                 <div id="p2pList"><div class="loading">Загрузка...</div></div>
@@ -510,12 +546,22 @@
         <!-- Отражения -->
         <div id="page-otrazhenie" class="page">
             <div class="center-piece"><div class="symbol" style="color:#8a2be2;">👁</div><div class="label" style="color:#8a2be2;">Отражения</div></div>
+            <div class="info-hint">
+                👁 <strong>Просмотрите ответы других пользователей</strong> на текущий вопрос дня.<br>
+                Вы можете поставить реакции (👍 ❤️ 🔥 😂) на понравившиеся ответы – это помогает авторам получать дополнительные баллы.
+            </div>
             <div class="glass"><div class="card-title" style="color:#8a2be2;">Ответы на текущий вопрос</div><div id="galleryList"><div class="loading">Загрузка...</div></div></div>
         </div>
 
         <!-- Искры -->
         <div id="page-iskry" class="page">
             <div class="center-piece"><div class="symbol" style="color:#ff0033;">🔥</div><div class="label" style="color:#ff0033;">Искры</div></div>
+            <div class="info-hint">
+                🔥 <strong>Вечерние откровения</strong> (вопросы доступны с 20:00 до 08:00).<br>
+                Отвечайте анонимно, комментируйте ответы других и ставьте реакции.<br>
+                За каждый первый комментарий в день – +1 балл.<br>
+                Если ваш комментарий собирает 5 реакций, вы получаете +1 бонусный балл.
+            </div>
             <div class="glass evening-mode" id="iskryContainer">
                 <div class="icon">🌙</div>
                 <h2 style="color:#ff0033;">Вечерний режим</h2>
@@ -536,6 +582,11 @@
         <!-- Встреча -->
         <div id="page-vstrecha" class="page">
             <div class="center-piece"><div class="symbol" style="color:#b388ff;">🔮</div><div class="label" style="color:#b388ff;">Встреча</div></div>
+            <div class="info-hint">
+                🔮 <strong>Найдите случайного собеседника</strong> для анонимного общения.<br>
+                Нажмите «Найти собеседника», и система подберёт вам пару.<br>
+                Сообщения доставляются мгновенно. Если передумали, нажмите «Отменить поиск».
+            </div>
             <div class="glass" id="chatContainer">
                 <div id="chatStatus" style="text-align:center; color:rgba(255,255,255,0.3); padding:20px;">Нажмите «Найти собеседника»</div>
                 <div id="chatMessages" class="chat-container" style="display:none;"></div>
@@ -551,6 +602,14 @@
         <!-- Планер -->
         <div id="page-planer" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">📋</div><div class="label" style="color:#d4af37;">Планер</div></div>
+            <div class="info-hint">
+                📋 <strong>Управляйте задачами, бюджетом и календарём</strong> в одном месте.<br>
+                – Задачи: добавляйте, отмечайте выполненные, задавайте приоритет и дедлайн.<br>
+                – Бюджет: распределяйте доход по категориям, задавайте фиксированные суммы.<br>
+                – Календарь: отмечайте важные даты и события.<br>
+                Полный функционал доступен по подписке (250 Stars/мес).<br>
+                В демо-режиме можно посмотреть интерфейс, но редактирование отключено.
+            </div>
             <div class="glass" id="planerContainer">
                 <!-- Блок "Подписка" (по умолчанию видим) -->
                 <div id="planerLocked" style="display:block; text-align:center; padding:20px;">
@@ -652,7 +711,6 @@
                     <div class="profile-stat-item"><span class="number" id="profileScore">0</span><span class="label">Очков</span></div>
                     <div class="profile-stat-item"><span class="number" id="profileStreak">0/5</span><span class="label">Серия</span></div>
                 </div>
-                <!-- Убрана секция с кнопками видимости (маска/аноним/открыто) – она есть только на главной странице -->
                 <div style="margin-bottom:12px;">
                     <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">Ваша маска (псевдоним)</div>
                     <input type="text" id="profileMaskInput" placeholder="Введите псевдоним..." style="width:100%; padding:10px 16px; background:rgba(245,222,179,0.05); border:1px solid rgba(245,222,179,0.1); border-radius:30px; color:#f5deb3; font-size:16px;" />
@@ -672,7 +730,24 @@
     </div>
 
     <!-- ===== МОДАЛЬНЫЕ ОКНА ===== -->
-    <!-- Модалка для ответа в сети -->
+    <!-- Модалка для комментариев (универсальная) -->
+    <div class="modal-overlay" id="modalComments">
+        <div class="modal-card">
+            <div class="modal-title" id="modalCommentsTitle">💬 Комментарии</div>
+            <div id="modalCommentsList" style="max-height:300px; overflow-y:auto; margin-bottom:12px;">
+                <div style="color:rgba(255,255,255,0.3); text-align:center;">Нет комментариев</div>
+            </div>
+            <div style="margin-bottom:10px;">
+                <textarea id="modalCommentsInput" placeholder="Напишите комментарий..." rows="2" style="width:100%; padding:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:16px; color:#fff; font-size:15px; resize:vertical; font-family:inherit;"></textarea>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-submit" id="modalCommentsSubmit">Отправить</button>
+                <button class="modal-cancel" id="modalCommentsCancel">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка для ответа на вопрос (P2P) -->
     <div class="modal-overlay" id="modalP2P">
         <div class="modal-card">
             <div class="modal-title">💬 Ответить на вопрос</div>
@@ -685,22 +760,7 @@
         </div>
     </div>
 
-    <!-- Модалка для искр – ответ на ответ -->
-    <div class="modal-overlay" id="modalIskryReply">
-        <div class="modal-card">
-            <div class="modal-title">🔥 Ответить на ответ</div>
-            <div class="modal-question" id="modalIskryReplyQuestion">Загрузка...</div>
-            <div style="font-size:14px; color:rgba(255,255,255,0.4); margin-bottom:8px;">Ответ:</div>
-            <div id="modalIskryReplyOriginal" style="padding:8px 12px; background:rgba(255,255,255,0.04); border-radius:12px; margin-bottom:12px; color:rgba(255,255,255,0.6);"></div>
-            <textarea id="modalIskryReplyInput" placeholder="Ваш ответ..." rows="3"></textarea>
-            <div class="modal-buttons">
-                <button class="modal-submit" id="modalIskryReplySubmit">Отправить</button>
-                <button class="modal-cancel" id="modalIskryReplyCancel">Отмена</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модалка для искр – ответ на вопрос -->
+    <!-- Модалка для ответа на вопрос 18+ -->
     <div class="modal-overlay" id="modalIskry">
         <div class="modal-card">
             <div class="modal-title">🔥 Ответить на вопрос 18+</div>
@@ -827,8 +887,8 @@
         let calendarMarks = [];
         let selectedCalendarDate = null;
 
-        // Переменные для модалок
-        let modalIskryReplyAnswerId = null;
+        // Переменные для комментариев
+        let currentCommentsTarget = null; // { type, id }
 
         // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
         async function callApi(action, data = {}) {
@@ -976,7 +1036,7 @@
                 let html = '';
                 data.top.forEach((item, idx) => {
                     const medal = idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':`${idx+1}.`;
-                    html += `<div class="top-item"><span class="medal">${medal}</span><span class="name">${escHtml(item.name)}</span><span class="score">${item.answers}</span></div>`;
+                    html += `<div class="top-item"><span class="medal">${medal}</span><span class="name">${escHtml(item.name)}</span><span class="score">${item.score || 0}</span></div>`;
                 });
                 container.innerHTML = html;
             }
@@ -994,25 +1054,36 @@
                 let html = '';
                 data.questions.forEach(q => {
                     html += `
-                        <div class="p2p-item">
+                        <div class="p2p-item" data-id="${q.id}">
                             <div class="question-text">${escHtml(q.text)}</div>
                             <div class="type">Тип: ${q.type} · Ответов: ${q.answers_count||0}</div>
-                            <button class="answer-btn" data-id="${q.id}">Ответить</button>
+                            <div class="actions">
+                                <button class="p2p-answer-btn" data-id="${q.id}">💬 Ответить</button>
+                                <button class="p2p-comments-btn" data-type="p2p_question" data-id="${q.id}">💬 Комментарии (${q.comments_count||0})</button>
+                            </div>
                         </div>
                     `;
                 });
                 container.innerHTML = html;
-                container.querySelectorAll('.answer-btn').forEach(btn => {
+                container.querySelectorAll('.p2p-answer-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const qid = this.dataset.id;
                         openModalP2P(qid);
+                    });
+                });
+                container.querySelectorAll('.p2p-comments-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const targetType = this.dataset.type;
+                        const targetId = this.dataset.id;
+                        openCommentsModal(targetType, targetId);
                     });
                 });
             }
         }
 
         function openModalP2P(questionId) {
-            const item = document.querySelector(`.p2p-item .answer-btn[data-id="${questionId}"]`).closest('.p2p-item');
+            const item = document.querySelector(`.p2p-item[data-id="${questionId}"]`);
+            if (!item) return;
             const questionText = item.querySelector('.question-text').textContent;
             document.getElementById('modalP2PQuestion').textContent = questionText;
             document.getElementById('modalP2PInput').value = '';
@@ -1025,7 +1096,7 @@
         document.getElementById('modalP2PSubmit').addEventListener('click', async function() {
             const answer = document.getElementById('modalP2PInput').value.trim();
             if (!answer) { tg.showAlert('Напишите ответ!'); return; }
-            const qid = parseInt(document.querySelector('.p2p-item .answer-btn')?.dataset.id);
+            const qid = parseInt(document.querySelector('.p2p-item .p2p-answer-btn')?.dataset.id);
             if (!qid) { tg.showAlert('Ошибка'); return; }
             this.disabled = true; this.textContent = 'Отправка...';
             const result = await callApi('add_p2p_answer', {
@@ -1043,7 +1114,7 @@
             }
         });
 
-        // ===== ГАЛЕРЕЯ =====
+        // ===== ГАЛЕРЕЯ (Отражения) =====
         async function loadGallery() {
             const data = await callApi('get_gallery');
             if (data?.answers) {
@@ -1053,11 +1124,27 @@
                     return;
                 }
                 let html = '';
-                data.answers.forEach(a => {
+                data.answers.forEach((a, idx) => {
                     const author = a.visibility === 0 ? 'Аноним' : a.visibility === 1 ? `🎭 ${a.mask||'Маска'}` : a.name;
-                    html += `<div class="history-item"><div style="color:rgba(255,255,255,0.4); font-size:13px;">${author}</div><div class="answer">${escHtml(a.answer)}</div><div class="meta">❤️ ${a.likes||0}</div></div>`;
+                    html += `
+                        <div class="history-item" data-id="${idx}">
+                            <div style="color:rgba(255,255,255,0.4); font-size:13px;">${author}</div>
+                            <div class="answer">${escHtml(a.answer)}</div>
+                            <div class="meta">❤️ ${a.likes||0}</div>
+                            <div class="actions" style="margin-top:6px;">
+                                <button class="gallery-comments-btn" data-type="p2p_answer" data-id="${idx}">💬 Комментарии (${a.comments_count||0})</button>
+                            </div>
+                        </div>
+                    `;
                 });
                 container.innerHTML = html;
+                container.querySelectorAll('.gallery-comments-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const targetType = this.dataset.type;
+                        const targetId = this.dataset.id;
+                        openCommentsModal(targetType, targetId);
+                    });
+                });
             }
         }
 
@@ -1122,45 +1209,6 @@
             }
         });
 
-        // ===== ИСКРЫ: ОТВЕТ НА ОТВЕТ =====
-        function openModalIskryReply(answerId, questionText, originalAnswer) {
-            modalIskryReplyAnswerId = answerId;
-            document.getElementById('modalIskryReplyQuestion').textContent = questionText;
-            document.getElementById('modalIskryReplyOriginal').textContent = originalAnswer;
-            document.getElementById('modalIskryReplyInput').value = '';
-            document.getElementById('modalIskryReply').classList.add('active');
-        }
-
-        document.getElementById('modalIskryReplyCancel').addEventListener('click', function() {
-            document.getElementById('modalIskryReply').classList.remove('active');
-            modalIskryReplyAnswerId = null;
-        });
-        document.getElementById('modalIskryReplySubmit').addEventListener('click', async function() {
-            const reply = document.getElementById('modalIskryReplyInput').value.trim();
-            if (!reply) { tg.showAlert('Напишите ответ!'); return; }
-            if (!modalIskryReplyAnswerId) { tg.showAlert('Ошибка: ответ не выбран'); return; }
-            this.disabled = true; this.textContent = 'Отправка...';
-            // Здесь нужно сохранить ответ на ответ – у вас пока нет такого эндпоинта,
-            // поэтому я отправляю как новый ответ на вопрос (временно)
-            // В будущем можно добавить отдельный эндпоинт для ответов на ответы.
-            // Для демонстрации используем существующий.
-            const question = document.getElementById('modalIskryReplyQuestion').textContent;
-            const result = await callApi('submit_iskry_answer', {
-                question: question,
-                answer: reply,
-                visibility: 0
-            });
-            this.disabled = false; this.textContent = 'Отправить';
-            if (result?.success) {
-                tg.showAlert('✅ Ответ опубликован!');
-                document.getElementById('modalIskryReply').classList.remove('active');
-                modalIskryReplyAnswerId = null;
-                loadIskryGallery();
-            } else {
-                tg.showAlert('Ошибка публикации.');
-            }
-        });
-
         async function loadIskryGallery() {
             const data = await callApi('get_iskry_gallery');
             if (data?.answers) {
@@ -1173,25 +1221,132 @@
                 data.answers.forEach((a, idx) => {
                     const author = a.visibility === 0 ? 'Аноним' : a.visibility === 1 ? `🎭 ${a.mask||'Маска'}` : a.name;
                     html += `
-                        <div class="iskry-gallery-item" data-id="${a.id || idx}">
+                        <div class="iskry-gallery-item" data-id="${idx}">
                             <div class="question">${escHtml(a.question)}</div>
                             <div class="answer">${escHtml(a.answer)}</div>
                             <div class="meta">от ${author} ❤️ ${a.likes||0}</div>
-                            <button class="reply-btn" data-id="${a.id || idx}" data-question="${escHtml(a.question)}" data-answer="${escHtml(a.answer)}">Ответить</button>
+                            <div class="actions">
+                                <button class="iskry-comments-btn" data-type="iskry_answer" data-id="${idx}">💬 Комментарии (${a.comments_count||0})</button>
+                            </div>
                         </div>
                     `;
                 });
                 container.innerHTML = html;
-                container.querySelectorAll('.reply-btn').forEach(btn => {
+                container.querySelectorAll('.iskry-comments-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
-                        const answerId = this.dataset.id;
-                        const questionText = this.dataset.question;
-                        const originalAnswer = this.dataset.answer;
-                        openModalIskryReply(answerId, questionText, originalAnswer);
+                        const targetType = this.dataset.type;
+                        const targetId = this.dataset.id;
+                        openCommentsModal(targetType, targetId);
                     });
                 });
             }
         }
+
+        // ===== КОММЕНТАРИИ (УНИВЕРСАЛЬНАЯ МОДАЛКА) =====
+        async function openCommentsModal(targetType, targetId) {
+            currentCommentsTarget = { type: targetType, id: targetId };
+            const container = document.getElementById('modalCommentsList');
+            container.innerHTML = '<div class="loading">Загрузка...</div>';
+            document.getElementById('modalComments').classList.add('active');
+
+            // Загружаем комментарии
+            const data = await callApi('get_comments', { target_type: targetType, target_id: targetId });
+            if (data?.comments) {
+                if (data.comments.length === 0) {
+                    container.innerHTML = '<div style="color:rgba(255,255,255,0.3); text-align:center;">Нет комментариев</div>';
+                } else {
+                    let html = '';
+                    // Строим дерево: сначала корневые
+                    const rootComments = data.comments.filter(c => !c.parent_id);
+                    const commentMap = {};
+                    data.comments.forEach(c => commentMap[c.id] = c);
+                    rootComments.forEach(c => {
+                        html += renderCommentTree(c, commentMap, 0);
+                    });
+                    container.innerHTML = html;
+                    // Добавляем обработчики для реакций и ответов
+                    container.querySelectorAll('.comment-reaction-btn').forEach(btn => {
+                        btn.addEventListener('click', async function() {
+                            const commentId = this.dataset.commentId;
+                            const type = this.dataset.type;
+                            const result = await callApi('toggle_reaction', { comment_id: commentId, type: type });
+                            if (result) {
+                                openCommentsModal(targetType, targetId);
+                            }
+                        });
+                    });
+                    container.querySelectorAll('.comment-reply-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const parentId = this.dataset.commentId;
+                            // Прокручиваем к полю ввода и устанавливаем placeholder
+                            const input = document.getElementById('modalCommentsInput');
+                            input.placeholder = `Ответить на комментарий #${parentId}`;
+                            input.dataset.parentId = parentId;
+                            input.focus();
+                        });
+                    });
+                }
+            } else {
+                container.innerHTML = '<div style="color:rgba(255,255,255,0.3); text-align:center;">Ошибка загрузки</div>';
+            }
+        }
+
+        function renderCommentTree(comment, map, depth) {
+            const reactions = comment.reactions || {};
+            const userReactions = comment.user_reactions || [];
+            const indent = depth * 20;
+            let html = `
+                <div style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); margin-left:${indent}px;">
+                    <div style="font-weight:600; font-size:13px; color:#f5deb3;">${escHtml(comment.user_name)}</div>
+                    <div style="color:rgba(255,255,255,0.7); font-size:14px;">${escHtml(comment.text)}</div>
+                    <div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; align-items:center;">
+                        ${['like','heart','fire','laugh'].map(type => {
+                            const count = reactions[type] || 0;
+                            const active = userReactions.includes(type) ? 'active' : '';
+                            const emoji = {like:'👍', heart:'❤️', fire:'🔥', laugh:'😂'}[type];
+                            return `<button class="comment-reaction-btn" data-comment-id="${comment.id}" data-type="${type}" style="background:${active ? 'rgba(78,205,196,0.15)' : 'transparent'}; border:1px solid ${active ? '#4ecdc4' : 'rgba(255,255,255,0.1)'}; border-radius:30px; padding:2px 8px; font-size:12px; color:#fff; cursor:pointer;">${emoji} ${count}</button>`;
+                        }).join('')}
+                        <button class="comment-reply-btn" data-comment-id="${comment.id}" style="background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:30px; padding:2px 8px; font-size:12px; color:rgba(255,255,255,0.5); cursor:pointer;">Ответить</button>
+                    </div>
+                </div>
+            `;
+            // Добавляем дочерние комментарии
+            const children = Object.values(map).filter(c => c.parent_id === comment.id);
+            children.forEach(child => {
+                html += renderCommentTree(child, map, depth + 1);
+            });
+            return html;
+        }
+
+        document.getElementById('modalCommentsCancel').addEventListener('click', function() {
+            document.getElementById('modalComments').classList.remove('active');
+            currentCommentsTarget = null;
+        });
+
+        document.getElementById('modalCommentsSubmit').addEventListener('click', async function() {
+            const input = document.getElementById('modalCommentsInput');
+            const text = input.value.trim();
+            if (!text) { tg.showAlert('Напишите комментарий!'); return; }
+            if (!currentCommentsTarget) { tg.showAlert('Ошибка'); return; }
+            const parentId = input.dataset.parentId ? parseInt(input.dataset.parentId) : null;
+            this.disabled = true; this.textContent = 'Отправка...';
+            const result = await callApi('add_comment', {
+                target_type: currentCommentsTarget.type,
+                target_id: currentCommentsTarget.id,
+                text: text,
+                parent_id: parentId
+            });
+            this.disabled = false; this.textContent = 'Отправить';
+            if (result?.success) {
+                tg.showAlert('✅ Комментарий добавлен!');
+                input.value = '';
+                input.placeholder = 'Напишите комментарий...';
+                delete input.dataset.parentId;
+                openCommentsModal(currentCommentsTarget.type, currentCommentsTarget.id);
+            } else {
+                tg.showAlert('Ошибка');
+            }
+        });
 
         // ===== ПЛАНЕР =====
         async function checkPlanerStatus() {
@@ -1250,10 +1405,31 @@
                 const section = this.dataset.planer;
                 document.querySelectorAll('.planer-section').forEach(s => s.classList.remove('active'));
                 document.getElementById(`planer-${section}`).classList.add('active');
-                if (section === 'tasks') loadTasks();
-                else if (section === 'budget') loadBudget();
-                else if (section === 'calendar') loadCalendar();
-                else if (section === 'stats') loadTaskStats(document.querySelector('.stats-period-btn.active')?.dataset.period || 'day');
+                if (section === 'tasks') {
+                    if (document.getElementById('planerContent').classList.contains('demo-mode')) {
+                        loadDemoTasks();
+                    } else {
+                        loadTasks();
+                    }
+                } else if (section === 'budget') {
+                    if (document.getElementById('planerContent').classList.contains('demo-mode')) {
+                        loadDemoBudget();
+                    } else {
+                        loadBudget();
+                    }
+                } else if (section === 'calendar') {
+                    if (document.getElementById('planerContent').classList.contains('demo-mode')) {
+                        loadDemoCalendar();
+                    } else {
+                        loadCalendar();
+                    }
+                } else if (section === 'stats') {
+                    if (document.getElementById('planerContent').classList.contains('demo-mode')) {
+                        loadDemoStats();
+                    } else {
+                        loadTaskStats(document.querySelector('.stats-period-btn.active')?.dataset.period || 'day');
+                    }
+                }
             });
         });
 
@@ -1833,8 +2009,7 @@
 
         document.getElementById('profileSaveBtn').addEventListener('click', async function() {
             const mask = document.getElementById('profileMaskInput').value.trim();
-            // Убрали выбор видимости из профиля – используем текущую из глобальной переменной
-            const visibility = 0; // или currentVisibility, но мы её не показываем
+            const visibility = 0; // убрали выбор из профиля
             const result = await callApi('save_profile', { mask, visibility });
             if (result?.success) {
                 tg.showAlert('✅ Настройки сохранены!');
@@ -1865,8 +2040,15 @@
 
         // ===== ДЕМО-ДАННЫЕ ДЛЯ ПРЕДПРОСМОТРА =====
         function loadDemoData() {
-            // Задачи
-            const tasksContainer = document.getElementById('tasksList');
+            loadDemoTasks();
+            loadDemoBudget();
+            loadDemoCalendar();
+            loadDemoStats();
+            document.getElementById('planerContent').classList.add('demo-mode');
+        }
+
+        function loadDemoTasks() {
+            const container = document.getElementById('tasksList');
             const demoTasks = [
                 { id: 1, title: 'Утренняя зарядка', time: '08:00', done: true, priority: 'low', category: 'Здоровье' },
                 { id: 2, title: 'Работа над проектом', time: '10:00–13:00', done: false, priority: 'high', category: 'Работа' },
@@ -1874,12 +2056,12 @@
                 { id: 4, title: 'Встреча с клиентом', time: '15:00', done: false, priority: 'high', category: 'Работа', overdue: true },
                 { id: 5, title: 'Тренировка', time: '18:00', done: false, priority: 'medium', category: 'Здоровье' },
             ];
-            let tasksHtml = '';
+            let html = '';
             demoTasks.forEach(t => {
                 const doneClass = t.done ? 'done' : '';
                 const priorityClass = t.priority;
                 const overdueHtml = t.overdue ? ' <span class="task-deadline-overdue">Просрочено!</span>' : '';
-                tasksHtml += `
+                html += `
                     <div class="task-item" data-id="${t.id}">
                         <div class="task-check ${doneClass}"></div>
                         <div class="task-info">
@@ -1894,10 +2076,11 @@
                     </div>
                 `;
             });
-            tasksContainer.innerHTML = tasksHtml;
+            container.innerHTML = html;
+        }
 
-            // Бюджет
-            const budgetContainer = document.getElementById('budgetCategories');
+        function loadDemoBudget() {
+            const container = document.getElementById('budgetCategories');
             const demoCategories = [
                 { name: 'Жильё', percent: 25, active: true },
                 { name: 'Еда', percent: 20, active: true },
@@ -1908,14 +2091,14 @@
                 { name: 'Развлечения', percent: 10, active: true },
                 { name: 'Накопления', percent: 20, active: true },
             ];
-            let budgetHtml = '';
             const income = 50000;
             document.getElementById('incomeInput').value = income;
-            demoCategories.forEach((cat, idx) => {
+            let html = '';
+            demoCategories.forEach((cat) => {
                 const amount = (income * cat.percent / 100).toFixed(0);
                 const activeClass = cat.active ? 'active' : '';
-                budgetHtml += `
-                    <div class="budget-category" data-idx="${idx}">
+                html += `
+                    <div class="budget-category">
                         <span class="cat-name">${cat.name}</span>
                         <input type="number" class="cat-percent-input" value="${cat.percent}" min="0" max="100" step="0.1" disabled />
                         <span class="cat-percent">${cat.percent}%</span>
@@ -1925,9 +2108,15 @@
                     </div>
                 `;
             });
-            budgetContainer.innerHTML = budgetHtml;
+            container.innerHTML = html;
+            // Блокируем кнопки
+            document.querySelector('#budgetSaveBtn').style.pointerEvents = 'none';
+            document.querySelector('#budgetSaveBtn').style.opacity = '0.6';
+            document.querySelector('#incomeSaveBtn').style.pointerEvents = 'none';
+            document.querySelector('#incomeSaveBtn').style.opacity = '0.6';
+        }
 
-            // Календарь
+        function loadDemoCalendar() {
             const today = new Date();
             const year = today.getFullYear();
             const month = today.getMonth();
@@ -1938,19 +2127,13 @@
             ];
             calendarMarks = demoMarks.map(m => ({ id: null, date: m.date, type: m.type, note: m.note }));
             loadCalendar();
+        }
 
-            // Статистика
+        function loadDemoStats() {
             document.getElementById('statTotal').textContent = '12';
             document.getElementById('statCompleted').textContent = '5';
             document.getElementById('statPending').textContent = '4';
             document.getElementById('statOverdue').textContent = '3';
-
-            // Блокировка кнопок
-            document.querySelector('#budgetSaveBtn').style.pointerEvents = 'none';
-            document.querySelector('#budgetSaveBtn').style.opacity = '0.6';
-            document.querySelector('#incomeSaveBtn').style.pointerEvents = 'none';
-            document.querySelector('#incomeSaveBtn').style.opacity = '0.6';
-            document.getElementById('planerContent').classList.add('demo-mode');
         }
 
         // ===== ЗАПУСК =====
