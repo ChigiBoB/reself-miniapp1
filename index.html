@@ -7,7 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
-        /* ===== БАЗОВЫЕ СТИЛИ (без изменений) ===== */
+        /* ===== БАЗОВЫЕ СТИЛИ ===== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -87,6 +87,8 @@
         .card-title {
             font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:12px;
         }
+
+        /* ===== ИНФОРМАЦИОННЫЕ ПОЛЯ ===== */
         .info-hint {
             font-size:13px;
             color:rgba(255,255,255,0.5);
@@ -96,7 +98,29 @@
             margin-bottom:16px;
             border-left:3px solid rgba(78,205,196,0.3);
             line-height:1.5;
+            position: relative;
+            cursor: pointer;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            overflow: hidden;
+            max-height: 200px;
         }
+        .info-hint.collapsed {
+            max-height: 36px;
+            opacity: 0.7;
+        }
+        .info-hint .hint-toggle {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.3);
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+            padding: 0 4px;
+        }
+        .info-hint .hint-toggle:hover { color: #fff; }
         .info-hint strong { color:#d4af37; }
 
         .center-piece {
@@ -290,7 +314,7 @@
         .planer-section { display:none; animation:fadeIn 0.4s ease; }
         .planer-section.active { display:block; }
 
-        /* Демо-режим – блокировка только для интерактивных элементов, но не для вкладок */
+        /* Демо-режим – блокировка только для интерактивных элементов */
         .demo-mode .task-check,
         .demo-mode .task-edit,
         .demo-mode .task-delete,
@@ -317,7 +341,6 @@
             pointer-events: none !important;
             opacity: 0.6 !important;
         }
-        /* Вкладки в демо-режиме должны работать */
         .demo-mode .planer-tabs button {
             pointer-events: auto !important;
             opacity: 1 !important;
@@ -485,7 +508,8 @@
 
         <!-- Момент -->
         <div id="page-moment" class="page active">
-            <div class="info-hint">
+            <div class="info-hint" data-hint="moment">
+                <button class="hint-toggle" data-target="moment">−</button>
                 📌 <strong>Ответьте на вопрос дня.</strong><br>
                 Чем длиннее и глубже ваш ответ, тем больше баллов вы получите:<br>
                 ⏱ Скорость (до 1 балла) · 📏 Длина (от 200 символов – +2) · 📝 Развёрнутость (3+ предложений – +1) · 🧠 Глубина (упоминание чувств – +2) · ❓ Саморефлексия (есть вопрос – +1)<br>
@@ -508,7 +532,8 @@
         <!-- Вершина -->
         <div id="page-verhina" class="page">
             <div class="center-piece"><div class="symbol" style="color:#ffd700;">🏆</div><div class="label" style="color:#d4af37;">Вершина</div></div>
-            <div class="info-hint">
+            <div class="info-hint" data-hint="verhina">
+                <button class="hint-toggle" data-target="verhina">−</button>
                 🏆 <strong>Топ пользователей</strong> по набранным баллам за выбранный период.<br>
                 Каждый месяц среди лидеров разыгрывается призовой фонд. Следите за объявлениями!<br>
                 Чем больше вы отвечаете, комментируете и получаете реакции, тем выше ваш рейтинг.
@@ -526,7 +551,8 @@
         <!-- Сеть -->
         <div id="page-set" class="page">
             <div class="center-piece"><div class="symbol" style="color:#00d4ff;">🧠</div><div class="label" style="color:#00d4ff;">Сеть</div></div>
-            <div class="info-hint">
+            <div class="info-hint" data-hint="set">
+                <button class="hint-toggle" data-target="set">−</button>
                 🧠 <strong>Задавайте вопросы сообществу и отвечайте на чужие.</strong><br>
                 За каждые 5 ответов на вопросы вы получаете +1 бонусный балл.<br>
                 За каждый первый комментарий в день – +1 балл.<br>
@@ -546,7 +572,8 @@
         <!-- Отражения -->
         <div id="page-otrazhenie" class="page">
             <div class="center-piece"><div class="symbol" style="color:#8a2be2;">👁</div><div class="label" style="color:#8a2be2;">Отражения</div></div>
-            <div class="info-hint">
+            <div class="info-hint" data-hint="otrazhenie">
+                <button class="hint-toggle" data-target="otrazhenie">−</button>
                 👁 <strong>Просмотрите ответы других пользователей</strong> на текущий вопрос дня.<br>
                 Вы можете поставить реакции (👍 ❤️ 🔥 😂) на понравившиеся ответы – это помогает авторам получать дополнительные баллы.
             </div>
@@ -556,7 +583,8 @@
         <!-- Искры -->
         <div id="page-iskry" class="page">
             <div class="center-piece"><div class="symbol" style="color:#ff0033;">🔥</div><div class="label" style="color:#ff0033;">Искры</div></div>
-            <div class="info-hint">
+            <div class="info-hint" data-hint="iskry">
+                <button class="hint-toggle" data-target="iskry">−</button>
                 🔥 <strong>Вечерние откровения</strong> (вопросы доступны с 20:00 до 08:00).<br>
                 Отвечайте анонимно, комментируйте ответы других и ставьте реакции.<br>
                 За каждый первый комментарий в день – +1 балл.<br>
@@ -582,7 +610,8 @@
         <!-- Встреча -->
         <div id="page-vstrecha" class="page">
             <div class="center-piece"><div class="symbol" style="color:#b388ff;">🔮</div><div class="label" style="color:#b388ff;">Встреча</div></div>
-            <div class="info-hint">
+            <div class="info-hint" data-hint="vstrecha">
+                <button class="hint-toggle" data-target="vstrecha">−</button>
                 🔮 <strong>Найдите случайного собеседника</strong> для анонимного общения.<br>
                 Нажмите «Найти собеседника», и система подберёт вам пару.<br>
                 Сообщения доставляются мгновенно. Если передумали, нажмите «Отменить поиск».
@@ -602,7 +631,8 @@
         <!-- Планер -->
         <div id="page-planer" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">📋</div><div class="label" style="color:#d4af37;">Планер</div></div>
-            <div class="info-hint">
+            <div class="info-hint" data-hint="planer">
+                <button class="hint-toggle" data-target="planer">−</button>
                 📋 <strong>Управляйте задачами, бюджетом и календарём</strong> в одном месте.<br>
                 – Задачи: добавляйте, отмечайте выполненные, задавайте приоритет и дедлайн.<br>
                 – Бюджет: распределяйте доход по категориям, задавайте фиксированные суммы.<br>
@@ -678,8 +708,9 @@
                             <div class="stats-card overdue"><span class="number" id="statOverdue">0</span><span class="label">Просрочено</span></div>
                         </div>
                     </div>
-                    <button class="btn-primary" id="planerCloseDemoBtn" style="margin-top:16px; background:rgba(255,255,255,0.1); display:none;">Закрыть предпросмотр</button>
                 </div>
+                <!-- Кнопка "Закрыть предпросмотр" вынесена за пределы planerContent -->
+                <button class="btn-primary" id="planerCloseDemoBtn" style="margin-top:16px; background:rgba(255,255,255,0.1); display:none;">Закрыть предпросмотр</button>
             </div>
         </div>
 
@@ -693,7 +724,7 @@
             </div>
         </div>
 
-        <!-- Профиль (без настроек видимости) -->
+        <!-- Профиль -->
         <div id="page-profile" class="page">
             <div class="glass">
                 <div class="card-title" style="color:#f5deb3;">Профиль</div>
@@ -730,7 +761,7 @@
     </div>
 
     <!-- ===== МОДАЛЬНЫЕ ОКНА ===== -->
-    <!-- Модалка для комментариев (универсальная) -->
+    <!-- Модалка для комментариев -->
     <div class="modal-overlay" id="modalComments">
         <div class="modal-card">
             <div class="modal-title" id="modalCommentsTitle">💬 Комментарии</div>
@@ -773,7 +804,7 @@
         </div>
     </div>
 
-    <!-- Модалка для создания/редактирования задачи -->
+    <!-- Модалка для задачи -->
     <div class="modal-overlay" id="modalTask">
         <div class="modal-card">
             <div class="modal-title" id="modalTaskTitle">➕ Новая задача</div>
@@ -886,9 +917,7 @@
         let calendarDate = new Date();
         let calendarMarks = [];
         let selectedCalendarDate = null;
-
-        // Переменные для комментариев
-        let currentCommentsTarget = null; // { type, id }
+        let currentCommentsTarget = null;
 
         // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
         async function callApi(action, data = {}) {
@@ -926,6 +955,26 @@
             d.setHours(0,0,0,0);
             return Math.floor(d.getTime() / 1000);
         }
+
+        // ===== СВОРАЧИВАНИЕ ИНФОРМАЦИОННЫХ ПОЛЕЙ =====
+        document.querySelectorAll('.info-hint').forEach(el => {
+            const key = el.dataset.hint;
+            const toggle = el.querySelector('.hint-toggle');
+            if (toggle) {
+                // Восстанавливаем состояние
+                if (localStorage.getItem('hint_collapsed_' + key) === 'true') {
+                    el.classList.add('collapsed');
+                    toggle.textContent = '+';
+                }
+                toggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    el.classList.toggle('collapsed');
+                    const isCollapsed = el.classList.contains('collapsed');
+                    this.textContent = isCollapsed ? '+' : '−';
+                    localStorage.setItem('hint_collapsed_' + key, isCollapsed);
+                });
+            }
+        });
 
         // ===== ПЕРЕКЛЮЧЕНИЕ СТРАНИЦ =====
         function showPage(pageId) {
@@ -1011,6 +1060,8 @@
             if (qData?.question) {
                 currentQuestion = qData.question;
                 document.getElementById('questionDisplay').textContent = qData.question;
+            } else {
+                document.getElementById('questionDisplay').textContent = '❌ Вопрос не загружен. Попробуйте позже.';
             }
 
             loadTop('day');
@@ -1242,21 +1293,19 @@
             }
         }
 
-        // ===== КОММЕНТАРИИ (УНИВЕРСАЛЬНАЯ МОДАЛКА) =====
+        // ===== КОММЕНТАРИИ =====
         async function openCommentsModal(targetType, targetId) {
             currentCommentsTarget = { type: targetType, id: targetId };
             const container = document.getElementById('modalCommentsList');
             container.innerHTML = '<div class="loading">Загрузка...</div>';
             document.getElementById('modalComments').classList.add('active');
 
-            // Загружаем комментарии
             const data = await callApi('get_comments', { target_type: targetType, target_id: targetId });
             if (data?.comments) {
                 if (data.comments.length === 0) {
                     container.innerHTML = '<div style="color:rgba(255,255,255,0.3); text-align:center;">Нет комментариев</div>';
                 } else {
                     let html = '';
-                    // Строим дерево: сначала корневые
                     const rootComments = data.comments.filter(c => !c.parent_id);
                     const commentMap = {};
                     data.comments.forEach(c => commentMap[c.id] = c);
@@ -1264,7 +1313,6 @@
                         html += renderCommentTree(c, commentMap, 0);
                     });
                     container.innerHTML = html;
-                    // Добавляем обработчики для реакций и ответов
                     container.querySelectorAll('.comment-reaction-btn').forEach(btn => {
                         btn.addEventListener('click', async function() {
                             const commentId = this.dataset.commentId;
@@ -1278,7 +1326,6 @@
                     container.querySelectorAll('.comment-reply-btn').forEach(btn => {
                         btn.addEventListener('click', function() {
                             const parentId = this.dataset.commentId;
-                            // Прокручиваем к полю ввода и устанавливаем placeholder
                             const input = document.getElementById('modalCommentsInput');
                             input.placeholder = `Ответить на комментарий #${parentId}`;
                             input.dataset.parentId = parentId;
@@ -1310,7 +1357,6 @@
                     </div>
                 </div>
             `;
-            // Добавляем дочерние комментарии
             const children = Object.values(map).filter(c => c.parent_id === comment.id);
             children.forEach(child => {
                 html += renderCommentTree(child, map, depth + 1);
@@ -1354,11 +1400,12 @@
             if (data) {
                 const locked = document.getElementById('planerLocked');
                 const content = document.getElementById('planerContent');
+                const closeBtn = document.getElementById('planerCloseDemoBtn');
                 if (data.subscribed) {
                     locked.style.display = 'none';
                     content.style.display = 'block';
                     content.classList.remove('demo-mode');
-                    document.getElementById('planerCloseDemoBtn').style.display = 'none';
+                    closeBtn.style.display = 'none';
                     await loadTasks();
                     await loadBudget();
                     await loadCalendar();
@@ -1366,6 +1413,7 @@
                 } else {
                     locked.style.display = 'block';
                     content.style.display = 'none';
+                    closeBtn.style.display = 'none';
                 }
             }
         }
@@ -1373,20 +1421,22 @@
         document.getElementById('planerPreviewBtn').addEventListener('click', function() {
             const locked = document.getElementById('planerLocked');
             const content = document.getElementById('planerContent');
+            const closeBtn = document.getElementById('planerCloseDemoBtn');
             locked.style.display = 'none';
             content.style.display = 'block';
             content.classList.add('demo-mode');
-            document.getElementById('planerCloseDemoBtn').style.display = 'block';
+            closeBtn.style.display = 'block';
             loadDemoData();
         });
 
         document.getElementById('planerCloseDemoBtn').addEventListener('click', function() {
             const locked = document.getElementById('planerLocked');
             const content = document.getElementById('planerContent');
+            const closeBtn = document.getElementById('planerCloseDemoBtn');
             locked.style.display = 'block';
             content.style.display = 'none';
             content.classList.remove('demo-mode');
-            document.getElementById('planerCloseDemoBtn').style.display = 'none';
+            closeBtn.style.display = 'none';
         });
 
         document.getElementById('planerSubscribeBtn').addEventListener('click', async function() {
@@ -2009,7 +2059,7 @@
 
         document.getElementById('profileSaveBtn').addEventListener('click', async function() {
             const mask = document.getElementById('profileMaskInput').value.trim();
-            const visibility = 0; // убрали выбор из профиля
+            const visibility = 0;
             const result = await callApi('save_profile', { mask, visibility });
             if (result?.success) {
                 tg.showAlert('✅ Настройки сохранены!');
@@ -2038,7 +2088,7 @@
             });
         });
 
-        // ===== ДЕМО-ДАННЫЕ ДЛЯ ПРЕДПРОСМОТРА =====
+        // ===== ДЕМО-ДАННЫЕ =====
         function loadDemoData() {
             loadDemoTasks();
             loadDemoBudget();
@@ -2109,7 +2159,6 @@
                 `;
             });
             container.innerHTML = html;
-            // Блокируем кнопки
             document.querySelector('#budgetSaveBtn').style.pointerEvents = 'none';
             document.querySelector('#budgetSaveBtn').style.opacity = '0.6';
             document.querySelector('#incomeSaveBtn').style.pointerEvents = 'none';
