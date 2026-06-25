@@ -291,214 +291,84 @@
         .placeholder h2 { font-size:22px; color:#fff; margin-bottom:8px; }
         .placeholder p { color:rgba(255,255,255,0.3); font-size:15px; }
 
-        /* ===== МОДАЛЬНЫЕ ОКНА ===== */
-        .modal-overlay {
-            position: fixed;
-            top:0; left:0;
-            width:100%; height:100%;
-            background:rgba(0,0,0,0.7);
-            backdrop-filter:blur(6px);
-            display:none;
-            align-items:center;
-            justify-content:center;
-            z-index:200;
-            padding:20px;
+        /* ===== ДОСТИЖЕНИЯ ===== */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 8px;
         }
-        .modal-overlay.active { display:flex; }
-        .modal-card {
-            background:#1a1f2a;
-            border-radius:24px;
-            padding:20px;
-            max-width:500px;
-            width:100%;
-            max-height:90vh;
-            overflow-y:auto;
-            box-shadow:0 20px 60px rgba(0,0,0,0.6);
-            border:1px solid rgba(255,255,255,0.08);
+        .achievement-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            opacity: 0.4;
+            filter: grayscale(1);
+            transition: 0.3s;
         }
-        .modal-card .modal-title { font-weight:600; font-size:16px; margin-bottom:8px; color:#fff; }
-        .modal-card .modal-question { font-size:15px; color:rgba(255,255,255,0.7); margin-bottom:16px; padding:12px; background:rgba(255,255,255,0.04); border-radius:12px; }
-        .modal-card input, .modal-card select, .modal-card textarea {
-            width:100%;
-            padding:10px 14px;
-            background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.08);
-            border-radius:16px;
-            color:#fff;
-            font-size:15px;
-            font-family:inherit;
-            margin-bottom:10px;
+        .achievement-item.achieved {
+            opacity: 1;
+            filter: grayscale(0);
         }
-        .modal-card input:focus, .modal-card select:focus, .modal-card textarea:focus {
-            outline:none;
-            border-color:#4ecdc4;
-        }
-        .modal-card textarea { resize:vertical; min-height:60px; }
-        .modal-card select option { background:#1a1f2a; }
-        .modal-card .modal-buttons { display:flex; gap:10px; }
-        .modal-card .modal-buttons button {
-            flex:1; padding:12px; border:none; border-radius:30px; font-size:15px; font-weight:600; cursor:pointer; transition:0.3s; font-family:inherit;
-        }
-        .modal-card .modal-buttons .modal-submit { background:linear-gradient(135deg, #4ecdc4, #38bdf8); color:#fff; }
-        .modal-card .modal-buttons .modal-cancel { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.6); }
-
-        /* ===== ПЛАНЕР ===== */
-        .planer-tabs {
-            display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;
-        }
-        .planer-tabs button {
-            flex:1; min-width:60px; padding:8px; background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.08); border-radius:16px;
-            color:rgba(255,255,255,0.5); cursor:pointer; font-weight:500; transition:0.3s; font-family:inherit;
-        }
-        .planer-tabs button.active { background:rgba(212,175,55,0.15); border-color:#d4af37; color:#d4af37; }
-
-        .planer-section { display:none; animation:fadeIn 0.4s ease; }
-        .planer-section.active { display:block; }
-
-        /* Демо-режим – блокировка только для интерактивных элементов */
-        .demo-mode .task-check,
-        .demo-mode .task-edit,
-        .demo-mode .task-delete,
-        .demo-mode #taskAddBtn,
-        .demo-mode .budget-category input,
-        .demo-mode .budget-category .cat-active,
-        .demo-mode .budget-mode-toggle button,
-        .demo-mode .stats-period-btn,
-        .demo-mode .cal-mark-btn-modal,
-        .demo-mode .cal-mark-btn,
-        .demo-mode .delete-mark-btn,
-        .demo-mode .budget-income-row button,
-        .demo-mode #budgetSaveBtn,
-        .demo-mode #incomeSaveBtn,
-        .demo-mode .task-item .task-check,
-        .demo-mode .task-item .task-actions button,
-        .demo-mode .modal-buttons button,
-        .demo-mode .btn-primary {
-            pointer-events: none !important;
-            opacity: 0.6 !important;
-            cursor: default !important;
-        }
-        .demo-mode input, .demo-mode select, .demo-mode textarea, .demo-mode button {
-            pointer-events: none !important;
-            opacity: 0.6 !important;
-        }
-        .demo-mode .planer-tabs button {
-            pointer-events: auto !important;
-            opacity: 1 !important;
-            cursor: pointer !important;
-        }
-        #planerContent {
+        .achievement-item .icon-circle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border: 2px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            transition: 0.3s;
             position: relative;
         }
-        .demo-mode #planerContent::before {
-            content: "🔒 Демо-версия. Редактирование отключено";
+        .achievement-item.achieved .icon-circle {
+            background: rgba(212,175,55,0.15);
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212,175,55,0.15);
+        }
+        .achievement-item .icon-circle .lock {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.7);
+            font-size: 14px;
+            bottom: -4px;
+            right: -4px;
+        }
+        .achievement-item .ach-name {
+            font-size: 10px;
+            color: rgba(255,255,255,0.3);
+            margin-top: 2px;
+            line-height: 1.2;
+            max-width: 60px;
+            word-wrap: break-word;
+        }
+        .achievement-item.achieved .ach-name {
             color: #d4af37;
-            padding: 16px 24px;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: 700;
-            z-index: 10;
-            pointer-events: none;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(212,175,55,0.3);
         }
-
-        /* Задачи */
-        .task-item {
-            display:flex; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05);
-            gap:8px; flex-wrap:wrap;
+        .achievement-item .ach-progress {
+            font-size: 9px;
+            color: rgba(255,255,255,0.2);
+            margin-top: 2px;
+            width: 100%;
         }
-        .task-item:last-child { border-bottom:none; }
-        .task-item .task-check { width:24px; height:24px; border-radius:50%; border:2px solid rgba(255,255,255,0.2); background:transparent; cursor:pointer; flex-shrink:0; transition:0.3s; }
-        .task-item .task-check.done { background:#4ecdc4; border-color:#4ecdc4; position:relative; }
-        .task-item .task-check.done::after { content:'✓'; color:#fff; font-size:16px; display:flex; align-items:center; justify-content:center; width:100%; height:100%; }
-        .task-item .task-info { flex:1; min-width:0; }
-        .task-item .task-info .task-title { font-weight:500; color:#fff; }
-        .task-item .task-info .task-title.done { text-decoration:line-through; color:rgba(255,255,255,0.3); }
-        .task-item .task-info .task-meta { font-size:12px; color:rgba(255,255,255,0.3); }
-        .task-item .task-priority { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-        .task-item .task-priority.low { background:#4caf50; }
-        .task-item .task-priority.medium { background:#ffeb3b; }
-        .task-item .task-priority.high { background:#f44336; }
-        .task-item .task-actions { display:flex; gap:6px; }
-        .task-item .task-actions button {
-            background:rgba(255,255,255,0.05); border:none; border-radius:30px;
-            padding:4px 10px; color:rgba(255,255,255,0.5); cursor:pointer; font-size:12px; font-family:inherit; transition:0.3s;
+        .achievement-item .progress-bar {
+            width: 100%;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin-top: 2px;
+            overflow: hidden;
         }
-        .task-item .task-actions button:hover { background:rgba(255,255,255,0.1); color:#fff; }
-        .task-item .task-deadline-overdue { color:#f44336; font-size:12px; }
-
-        /* Бюджет */
-        .budget-mode-toggle { display:flex; gap:8px; margin-bottom:12px; }
-        .budget-mode-toggle button {
-            flex:1; padding:8px; background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.08); border-radius:16px;
-            color:rgba(255,255,255,0.5); cursor:pointer; transition:0.3s; font-family:inherit;
+        .achievement-item .progress-bar .fill {
+            height: 100%;
+            background: #4ecdc4;
+            border-radius: 2px;
+            transition: width 0.5s;
         }
-        .budget-mode-toggle button.active { background:rgba(212,175,55,0.15); border-color:#d4af37; color:#d4af37; }
-        .budget-income-row {
-            display:flex; gap:10px; align-items:center; margin-bottom:16px;
+        .achievement-item.achieved .progress-bar .fill {
+            background: #d4af37;
         }
-        .budget-income-row label {
-            color:rgba(255,255,255,0.5); font-size:14px; white-space:nowrap;
-        }
-        .budget-income-row input {
-            flex:1; padding:8px 14px; background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.08); border-radius:16px; color:#fff; font-size:16px; font-family:inherit;
-        }
-        .budget-income-row input:focus { outline:none; border-color:#d4af37; }
-        .budget-income-row button {
-            padding:8px 16px; background:rgba(212,175,55,0.2); border:1px solid #d4af37;
-            border-radius:30px; color:#d4af37; cursor:pointer; font-family:inherit; font-weight:600;
-        }
-        .budget-category {
-            display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);
-            flex-wrap:wrap;
-        }
-        .budget-category:last-child { border-bottom:none; }
-        .budget-category .cat-name { flex:1; font-weight:500; color:#fff; min-width:80px; }
-        .budget-category .cat-percent { width:60px; text-align:right; color:#d4af37; font-weight:600; }
-        .budget-category .cat-amount { min-width:80px; text-align:right; color:rgba(255,255,255,0.6); font-size:14px; }
-        .budget-category .cat-active { width:40px; text-align:center; cursor:pointer; color:rgba(255,255,255,0.3); font-size:18px; }
-        .budget-category .cat-active.active { color:#4ecdc4; }
-        .budget-category input[type="number"] {
-            width:70px; padding:4px 6px; background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.08); border-radius:12px; color:#fff; font-size:14px;
-        }
-        .budget-category input[type="number"]:focus { outline:none; border-color:#d4af37; }
-
-        /* Календарь */
-        .calendar-nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-        .calendar-nav button { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:6px 16px; color:#fff; cursor:pointer; font-family:inherit; }
-        .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
-        .calendar-grid .day {
-            aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
-            background:rgba(255,255,255,0.02); border-radius:12px; font-size:14px; color:rgba(255,255,255,0.6);
-            cursor:pointer; transition:0.3s; position:relative;
-        }
-        .calendar-grid .day:hover { background:rgba(255,255,255,0.06); }
-        .calendar-grid .day.today { border:1px solid #4ecdc4; color:#fff; }
-        .calendar-grid .day.has-mark { background:rgba(212,175,55,0.1); color:#d4af37; }
-        .calendar-grid .day .mark-dot { width:6px; height:6px; border-radius:50%; background:#d4af37; margin-top:2px; }
-        .calendar-grid .day .mark-dot.work { background:#4caf50; }
-        .calendar-grid .day .mark-dot.important { background:#f44336; }
-        .calendar-grid .day .mark-dot.custom { background:#ff9800; }
-
-        /* Статистика задач */
-        .stats-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-        .stats-card { text-align:center; padding:16px; background:rgba(255,255,255,0.04); border-radius:16px; border:1px solid rgba(255,255,255,0.06); }
-        .stats-card .number { font-size:32px; font-weight:700; display:block; }
-        .stats-card .label { font-size:12px; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px; }
-        .stats-card.total .number { color:#fff; }
-        .stats-card.completed .number { color:#4ecdc4; }
-        .stats-card.pending .number { color:#ffeb3b; }
-        .stats-card.overdue .number { color:#f44336; }
 
         .tab-bar {
             position:fixed; bottom:0; left:0; right:0;
@@ -531,6 +401,9 @@
             .budget-income-row { flex-wrap:wrap; }
             .budget-income-row input { min-width:120px; }
             .budget-category input[type="number"] { width:60px; }
+            .achievements-grid { gap:4px; }
+            .achievement-item .icon-circle { width:44px; height:44px; font-size:22px; }
+            .achievement-item .ach-name { font-size:8px; max-width:44px; }
         }
     </style>
 </head>
@@ -754,7 +627,7 @@
             </div>
         </div>
 
-        <!-- Профиль -->
+        <!-- Профиль с достижениями -->
         <div id="page-profile" class="page">
             <div class="glass">
                 <div class="card-title" style="color:#f5deb3;">Профиль</div>
@@ -780,7 +653,9 @@
                 <button class="btn-primary" id="profileSaveBtn" style="background:linear-gradient(135deg, #8b7355, #f5deb3);">Сохранить настройки</button>
                 <div style="margin-top:12px;">
                     <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">Мои достижения</div>
-                    <div id="achievementsList" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+                    <div id="achievementsContainer">
+                        <div class="loading">Загрузка достижений...</div>
+                    </div>
                 </div>
                 <div style="margin-top:12px;">
                     <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">История ответов</div>
@@ -1018,6 +893,8 @@
                 loadIskryGallery();
             } else if (pageId === 'page-planer') {
                 checkPlanerStatus();
+            } else if (pageId === 'page-profile') {
+                loadAchievements();
             }
         }
 
@@ -1046,8 +923,7 @@
                     document.getElementById('profileStreak').textContent = `${profileStatus.stats.today_answers || 0}/5`;
                 }
                 if (profileStatus.achievements) {
-                    const container = document.getElementById('achievementsList');
-                    container.innerHTML = profileStatus.achievements.map(a => `<span style="background:rgba(245,222,179,0.1); padding:4px 12px; border-radius:20px; font-size:12px; color:#f5deb3;">🏅 ${a[0]}</span>`).join('');
+                    // Достижения загружаются отдельно
                 }
                 const historyData = await callApi('get_history');
                 if (historyData?.history) {
@@ -1095,6 +971,9 @@
             loadIskryGallery();
             if (document.getElementById('page-planer').classList.contains('active')) {
                 checkPlanerStatus();
+            }
+            if (document.getElementById('page-profile').classList.contains('active')) {
+                loadAchievements();
             }
         }
 
@@ -2028,6 +1907,7 @@
         document.getElementById('profileBtn').addEventListener('click', function() {
             showPage('page-profile');
             loadData();
+            loadAchievements();
         });
 
         document.querySelectorAll('#visibilityButtons button').forEach(btn => {
@@ -2095,6 +1975,60 @@
                 tg.showAlert('Ошибка сохранения.');
             }
         });
+
+        // ===== ДОСТИЖЕНИЯ =====
+        async function loadAchievements() {
+            const container = document.getElementById('achievementsContainer');
+            container.innerHTML = '<div class="loading">Загрузка...</div>';
+            const data = await callApi('get_achievements');
+            if (data?.achievements) {
+                let html = '<div class="achievements-grid">';
+                data.achievements.forEach(ach => {
+                    const achieved = ach.achieved;
+                    const icon = ach.icon || '❓';
+                    const name = ach.name || '???';
+                    const desc = ach.description || '';
+                    let progressHtml = '';
+                    let maxProg = ach.max_progress;
+                    let prog = ach.progress;
+
+                    if (ach.category === 'reflection' || ach.category === 'discipline') {
+                        const pct = Math.min(100, (prog / maxProg) * 100);
+                        progressHtml = `<div class="progress-bar"><div class="fill" style="width:${pct}%;"></div></div>`;
+                    } else if (ach.category === 'social') {
+                        if (prog && typeof prog === 'object') {
+                            progressHtml = `<div class="ach-progress">💬 ${prog.comments} ❤️ ${prog.likes} 🌐 ${prog.p2p}</div>`;
+                        }
+                    } else if (ach.category === 'planner') {
+                        if (prog && typeof prog === 'object') {
+                            progressHtml = `<div class="ach-progress">📋 ${prog.tasks} 💰 ${prog.budget_saves}</div>`;
+                        }
+                    } else if (ach.category === 'unique') {
+                        if (achieved) {
+                            progressHtml = `<div class="ach-progress">✅ Получено</div>`;
+                        } else {
+                            progressHtml = `<div class="ach-progress">🔒 Скрыто</div>`;
+                        }
+                    }
+
+                    const cls = achieved ? 'achievement-item achieved' : 'achievement-item';
+                    html += `
+                        <div class="${cls}" title="${desc}">
+                            <div class="icon-circle">
+                                ${icon}
+                                ${!achieved ? '<span class="lock">🔒</span>' : ''}
+                            </div>
+                            <div class="ach-name">${name}</div>
+                            ${progressHtml}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '<div class="empty">Не удалось загрузить достижения</div>';
+            }
+        }
 
         // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
         document.querySelectorAll('.tab-item').forEach(tab => {
