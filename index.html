@@ -50,9 +50,10 @@
             display:flex; align-items:center; gap:8px;
         }
         .header .user-info {
-            font-size:14px; color:rgba(255,255,255,0.5);
+            font-size:14px; color:rgba(255,255,255,0.8);
             background:rgba(255,255,255,0.06); padding:4px 14px;
             border-radius:30px; border:1px solid rgba(255,255,255,0.06);
+            min-width:60px; text-align:center;
         }
         .top-icon-btn {
             width:36px; height:36px; border-radius:50%;
@@ -63,6 +64,18 @@
             cursor:pointer; transition:0.3s; padding:0;
         }
         .top-icon-btn:active { transform:scale(0.9); background:rgba(255,255,255,0.12); }
+        .top-icon-btn.premium-btn {
+            background:rgba(212,175,55,0.1);
+            border-color:rgba(212,175,55,0.2);
+            color:#d4af37;
+            font-weight:700;
+            font-size:14px;
+        }
+        .top-icon-btn.premium-btn.active {
+            background:rgba(78,205,196,0.15);
+            border-color:#4ecdc4;
+            color:#4ecdc4;
+        }
         .avatar-btn {
             width:36px; height:36px; border-radius:50%;
             background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15);
@@ -129,9 +142,9 @@
         .center-piece .label { margin-top:8px; font-size:18px; font-weight:500; letter-spacing:0.5px; opacity:0.7; }
         @keyframes pulse-soft { 0%{transform:scale(1); opacity:0.7;} 50%{transform:scale(1.05); opacity:1;} 100%{transform:scale(1); opacity:0.7;} }
 
-        .question-wrapper { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:70vh; text-align:center; }
+        .question-wrapper { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:65vh; text-align:center; }
         .question-text { font-size:clamp(22px,5vw,32px); font-weight:600; line-height:1.5; color:#fff; text-shadow:0 0 30px rgba(78,205,196,0.1); margin-bottom:24px; max-width:90%; word-wrap:break-word; }
-        .visibility-buttons { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; justify-content:center; }
+        .visibility-buttons { display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap; justify-content:center; }
         .visibility-buttons button {
             padding:8px 18px; background:rgba(255,255,255,0.04);
             border:1px solid rgba(255,255,255,0.08); color:rgba(255,255,255,0.5);
@@ -139,6 +152,12 @@
             transition:all .3s; font-family:inherit;
         }
         .visibility-buttons button.active { background:rgba(78,205,196,0.2); border-color:#4ecdc4; color:#fff; }
+        .visibility-preview {
+            font-size:14px; color:rgba(255,255,255,0.4); margin-bottom:16px;
+            background:rgba(255,255,255,0.03); padding:6px 16px; border-radius:30px;
+            border:1px dashed rgba(255,255,255,0.06);
+        }
+        .visibility-preview strong { color:#fff; }
         .answer-input {
             width:100%; padding:14px 20px; background:rgba(255,255,255,0.04);
             border:1px solid rgba(255,255,255,0.08); border-radius:30px; color:#fff;
@@ -151,6 +170,42 @@
         }
         .btn-primary:active { transform:scale(.98); }
         .btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+
+        /* Реакции на ответы */
+        .reaction-bar {
+            display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; align-items:center;
+        }
+        .reaction-btn {
+            background:rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:30px;
+            padding:4px 10px;
+            font-size:14px;
+            color:rgba(255,255,255,0.5);
+            cursor:pointer;
+            transition:.3s;
+            font-family:inherit;
+            display:inline-flex;
+            align-items:center;
+            gap:4px;
+        }
+        .reaction-btn:hover { background:rgba(255,255,255,0.08); }
+        .reaction-btn.active { background:rgba(78,205,196,0.15); border-color:#4ecdc4; color:#fff; }
+        .reaction-btn .count { font-size:12px; color:rgba(255,255,255,0.3); }
+        .reaction-btn.active .count { color:#fff; }
+
+        .reaction-picker {
+            display:flex; gap:6px; flex-wrap:wrap; margin-top:4px;
+            background:rgba(10,11,31,0.95); padding:8px 12px; border-radius:30px;
+            border:1px solid rgba(255,255,255,0.08);
+            backdrop-filter:blur(10px);
+            animation:fadeIn 0.2s ease;
+        }
+        .reaction-picker button {
+            background:transparent; border:none; font-size:24px; cursor:pointer;
+            padding:4px 6px; transition:0.2s; border-radius:10px;
+        }
+        .reaction-picker button:hover { background:rgba(255,255,255,0.1); transform:scale(1.2); }
 
         .top-tabs { display:flex; gap:8px; margin-bottom:16px; }
         .top-tabs button {
@@ -204,7 +259,7 @@
         .history-item { padding:14px 0; border-bottom:1px solid rgba(138,43,226,0.06); }
         .history-item:last-child { border-bottom:none; }
         .history-item .answer { color:rgba(255,255,255,0.5); margin-top:4px; font-size:14px; }
-        .history-item .meta { font-size:12px; color:rgba(255,255,255,0.2); margin-top:6px; }
+        .history-item .meta { font-size:12px; color:rgba(255,255,255,0.2); margin-top:6px; display:flex; gap:12px; flex-wrap:wrap; }
         .history-item .actions { margin-top:6px; display:flex; gap:8px; flex-wrap:wrap; }
         .history-item .actions button {
             background:rgba(255,255,255,0.05);
@@ -387,20 +442,15 @@
         .tab-item .tab-icon { font-size:16px; display:block; margin-bottom:1px; transition:0.3s; }
         .tab-item.active { color:#4ecdc4; }
         .tab-item.active .tab-icon { transform:scale(1.1); }
-        .tab-item.pro { position:relative; }
-        .tab-item.pro::after { content:'PRO'; position:absolute; top:-4px; right:-4px; font-size:6px; background:#ffd700; color:#1a140e; padding:1px 4px; border-radius:10px; }
 
         .empty { text-align:center; color:rgba(255,255,255,0.2); padding:30px 0; }
         .loading { text-align:center; padding:30px 0; color:rgba(255,255,255,0.2); }
+
         @media (max-width:480px) {
             .profile-stats { grid-template-columns:1fr 1fr; }
-            .stats-cards { grid-template-columns:1fr 1fr; }
             .header h1 { font-size:20px; }
             .tab-item { font-size:8px; min-width:28px; }
             .tab-item .tab-icon { font-size:14px; }
-            .budget-income-row { flex-wrap:wrap; }
-            .budget-income-row input { min-width:120px; }
-            .budget-category input[type="number"] { width:60px; }
             .achievements-grid { gap:4px; }
             .achievement-item .icon-circle { width:44px; height:44px; font-size:22px; }
             .achievement-item .ach-name { font-size:8px; max-width:44px; }
@@ -436,119 +486,54 @@
         .modal-card input:focus, .modal-card select:focus { outline:none; border-color:#4ecdc4; }
         .modal-card select option { background:#1a1c2e; }
 
-        /* Планер */
-        .planer-tabs { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
-        .planer-tabs button {
-            flex:1; padding:8px 4px; background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.06); border-radius:30px;
-            color:rgba(255,255,255,0.4); cursor:pointer; font-weight:500; font-size:13px;
-            transition:0.3s; font-family:inherit; min-width:60px;
+        /* PRO страница */
+        .pro-grid {
+            display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;
+            margin-top:8px;
         }
-        .planer-tabs button.active { background:rgba(212,175,55,0.15); border-color:#d4af37; color:#d4af37; }
-        .planer-section { display:none; }
-        .planer-section.active { display:block; }
+        .pro-card {
+            background:rgba(255,255,255,0.03); border-radius:16px;
+            padding:16px 12px; text-align:center;
+            border:1px solid rgba(255,255,255,0.06);
+            transition:0.3s;
+            cursor:pointer;
+            text-decoration:none;
+            color:#fff;
+        }
+        .pro-card:hover { background:rgba(255,255,255,0.06); }
+        .pro-card .icon { font-size:32px; display:block; margin-bottom:6px; }
+        .pro-card .label { font-size:13px; font-weight:500; }
+        .pro-card.locked { opacity:0.5; pointer-events:none; filter:grayscale(0.5); }
+        .pro-card.locked .label::after { content:' 🔒'; font-size:10px; }
 
-        .task-item {
-            display:flex; align-items:center; gap:10px; padding:10px 0;
-            border-bottom:1px solid rgba(255,255,255,0.04);
+        .pro-buy {
+            text-align:center; padding:20px 0;
         }
-        .task-item:last-child { border-bottom:none; }
-        .task-check {
-            width:24px; height:24px; border-radius:50%; border:2px solid rgba(255,255,255,0.2);
-            cursor:pointer; flex-shrink:0; transition:0.3s;
-            display:flex; align-items:center; justify-content:center;
-            font-size:14px;
+        .pro-buy .price {
+            font-size:32px; font-weight:700; color:#d4af37;
         }
-        .task-check.done { background:#4ecdc4; border-color:#4ecdc4; }
-        .task-check.done::after { content:"✓"; color:#fff; font-weight:700; }
-        .task-info { flex:1; }
-        .task-title { font-weight:500; color:#fff; }
-        .task-title.done { text-decoration:line-through; opacity:0.5; }
-        .task-meta { font-size:12px; color:rgba(255,255,255,0.3); }
-        .task-deadline-overdue { color:#ff4444; }
-        .task-priority { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-        .task-priority.low { background:#4caf50; }
-        .task-priority.medium { background:#ff9800; }
-        .task-priority.high { background:#f44336; }
-        .task-actions { display:flex; gap:6px; }
-        .task-actions button {
-            background:transparent; border:none; color:rgba(255,255,255,0.3);
-            cursor:pointer; font-size:16px; transition:0.3s; padding:0 4px;
+        .pro-buy .desc {
+            color:rgba(255,255,255,0.5); margin:8px 0 16px;
         }
-        .task-actions button:hover { color:#fff; }
 
-        .budget-mode-toggle { display:flex; gap:8px; margin-bottom:12px; }
-        .budget-mode-toggle button {
-            padding:6px 16px; background:rgba(255,255,255,0.04);
-            border:1px solid rgba(255,255,255,0.08); border-radius:30px;
-            color:rgba(255,255,255,0.5); cursor:pointer; font-weight:500; font-family:inherit;
+        /* онбординг */
+        .onboarding-overlay {
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.85); backdrop-filter:blur(12px);
+            display:none; align-items:center; justify-content:center;
+            z-index:300; padding:20px;
         }
-        .budget-mode-toggle button.active { background:rgba(212,175,55,0.15); border-color:#d4af37; color:#d4af37; }
-
-        .budget-income-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
-        .budget-income-row label { color:rgba(255,255,255,0.5); font-size:14px; }
-        .budget-income-row input { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:8px 14px; color:#fff; width:120px; font-family:inherit; }
-        .budget-income-row input:focus { outline:none; border-color:#d4af37; }
-        .budget-income-row button { padding:8px 20px; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.2); border-radius:30px; color:#d4af37; cursor:pointer; font-weight:500; font-family:inherit; }
-
-        .budget-category { display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.04); flex-wrap:wrap; }
-        .budget-category .cat-name { flex:1; min-width:80px; color:#fff; font-weight:500; }
-        .budget-category input[type="number"] { width:70px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:4px 8px; color:#fff; font-family:inherit; }
-        .budget-category .cat-percent { color:rgba(255,255,255,0.4); font-size:13px; width:50px; text-align:right; }
-        .budget-category .cat-amount { color:#d4af37; font-weight:600; width:70px; text-align:right; }
-        .budget-category .cat-active { cursor:pointer; width:24px; text-align:center; color:rgba(255,255,255,0.2); }
-        .budget-category .cat-active.active { color:#4ecdc4; }
-
-        .calendar-grid {
-            display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-top:8px;
+        .onboarding-overlay.active { display:flex; }
+        .onboarding-card {
+            background:#1a1c2e; border-radius:24px; padding:32px 24px;
+            max-width:420px; width:100%; text-align:center;
+            border:1px solid rgba(255,255,255,0.06);
+            box-shadow:0 20px 60px rgba(0,0,0,0.8);
         }
-        .calendar-grid .day {
-            aspect-ratio:1; display:flex; align-items:center; justify-content:center;
-            background:rgba(255,255,255,0.03); border-radius:8px; font-size:14px;
-            color:rgba(255,255,255,0.6); cursor:pointer; position:relative;
-            transition:0.2s;
-        }
-        .calendar-grid .day:hover { background:rgba(255,255,255,0.08); }
-        .calendar-grid .day.today { border:2px solid #d4af37; color:#d4af37; font-weight:700; }
-        .calendar-grid .day.has-mark { background:rgba(212,175,55,0.1); }
-        .calendar-grid .day .mark-dot {
-            position:absolute; bottom:4px; width:6px; height:6px; border-radius:50%;
-        }
-        .calendar-grid .day .mark-dot.work { background:#4caf50; }
-        .calendar-grid .day .mark-dot.important { background:#f44336; }
-        .calendar-grid .day .mark-dot.custom { background:#ff9800; }
-        .calendar-nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
-        .calendar-nav button { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:4px 14px; color:rgba(255,255,255,0.5); cursor:pointer; font-family:inherit; }
-        .calendar-nav span { font-weight:600; color:#fff; }
-
-        .stats-cards {
-            display:grid; grid-template-columns:1fr 1fr; gap:10px;
-        }
-        .stats-card {
-            padding:16px; text-align:center; border-radius:16px;
-            background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
-        }
-        .stats-card .number { font-size:28px; font-weight:700; display:block; }
-        .stats-card .label { font-size:12px; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px; }
-        .stats-card.total .number { color:#4ecdc4; }
-        .stats-card.completed .number { color:#4caf50; }
-        .stats-card.pending .number { color:#ff9800; }
-        .stats-card.overdue .number { color:#f44336; }
-
-        .planer-section.demo-mode .task-actions button,
-        .planer-section.demo-mode .task-check,
-        .planer-section.demo-mode .budget-category input,
-        .planer-section.demo-mode .budget-category .cat-active,
-        .planer-section.demo-mode .budget-income-row button,
-        .planer-section.demo-mode #budgetSaveBtn,
-        .planer-section.demo-mode #incomeSaveBtn,
-        .planer-section.demo-mode #taskAddBtn,
-        .planer-section.demo-mode .cal-mark-btn-modal,
-        .planer-section.demo-mode .calendar-grid .day {
-            pointer-events:none !important;
-            opacity:0.6;
-        }
-        .planer-section.demo-mode .modal-overlay { display:none !important; }
+        .onboarding-card .step-icon { font-size:48px; margin-bottom:12px; }
+        .onboarding-card h2 { font-size:22px; color:#fff; margin-bottom:8px; }
+        .onboarding-card p { color:rgba(255,255,255,0.5); font-size:15px; margin-bottom:20px; line-height:1.6; }
+        .onboarding-card .btn-primary { background:linear-gradient(135deg, #4ecdc4, #38bdf8); }
 
         /* Реферальный блок */
         .referral-block {
@@ -620,6 +605,18 @@
             color:rgba(255,255,255,0.3);
             margin-top:8px;
         }
+
+        /* Дневник (заглушка) */
+        .diary-placeholder { text-align:center; padding:30px 20px; }
+        .diary-placeholder .icon { font-size:48px; margin-bottom:16px; opacity:0.3; }
+        .diary-placeholder h2 { color:#fff; font-size:20px; margin-bottom:8px; }
+        .diary-placeholder p { color:rgba(255,255,255,0.3); font-size:14px; }
+
+        /* Знакомства (заглушка) */
+        .dating-placeholder { text-align:center; padding:30px 20px; }
+        .dating-placeholder .icon { font-size:48px; margin-bottom:16px; opacity:0.3; }
+        .dating-placeholder h2 { color:#fff; font-size:20px; margin-bottom:8px; }
+        .dating-placeholder p { color:rgba(255,255,255,0.3); font-size:14px; }
     </style>
 </head>
 <body>
@@ -630,8 +627,7 @@
             <h1>✦ Re:Self</h1>
             <div class="header-right">
                 <span class="user-info" id="userInfo">Загрузка...</span>
-                <button class="top-icon-btn" id="topPlanerBtn" title="Планер">📋</button>
-                <button class="top-icon-btn" id="topShopBtn" title="Магазин">🛍️</button>
+                <button class="top-icon-btn premium-btn" id="topPremiumBtn" title="PRO">⭐ PRO</button>
                 <button class="avatar-btn" id="profileBtn"><span id="avatarPlaceholder">👤</span></button>
             </div>
         </div>
@@ -653,29 +649,22 @@
                         <button data-visibility="1">🎭 Маска</button>
                         <button data-visibility="2">👤 Открыто</button>
                     </div>
+                    <div class="visibility-preview" id="visibilityPreview">Вы будете отображаться как: <strong>Аноним</strong></div>
                     <textarea class="answer-input" id="answerInput" placeholder="Напишите ответ..." rows="2"></textarea>
                     <button class="btn-primary" id="submitAnswerBtn" style="background:linear-gradient(135deg, #ff6b6b, #4ecdc4);">Отправить ответ</button>
                 </div>
             </div>
         </div>
 
-        <!-- Вершина -->
-        <div id="page-verhina" class="page">
-            <div class="center-piece"><div class="symbol" style="color:#ffd700;">🏆</div><div class="label" style="color:#d4af37;">Вершина</div></div>
-            <div class="info-hint" data-hint="verhina">
-                <button class="hint-toggle" data-target="verhina">−</button>
-                🏆 <strong>Топ пользователей</strong> по набранным баллам за выбранный период.<br>
-                Каждый месяц среди лидеров разыгрывается призовой фонд. Следите за объявлениями!<br>
-                Чем больше вы отвечаете, комментируете и получаете реакции, тем выше ваш рейтинг.
+        <!-- Отражения -->
+        <div id="page-otrazhenie" class="page">
+            <div class="center-piece"><div class="symbol" style="color:#8a2be2;">👁</div><div class="label" style="color:#8a2be2;">Отражения</div></div>
+            <div class="info-hint" data-hint="otrazhenie">
+                <button class="hint-toggle" data-target="otrazhenie">−</button>
+                👁 <strong>Просмотрите ответы других пользователей</strong> на текущий вопрос дня.<br>
+                Вы можете ставить реакции (👍❤️🔥😍🤯😢😱😂😈👀) на понравившиеся ответы – это помогает авторам получать дополнительные баллы.
             </div>
-            <div class="glass">
-                <div class="top-tabs" id="topTabs">
-                    <button class="active" data-period="day">День</button>
-                    <button data-period="week">Неделя</button>
-                    <button data-period="month">Месяц</button>
-                </div>
-                <div id="topList"><div class="loading">Загрузка...</div></div>
-            </div>
+            <div class="glass"><div class="card-title" style="color:#8a2be2;">Ответы на текущий вопрос</div><div id="galleryList"><div class="loading">Загрузка...</div></div></div>
         </div>
 
         <!-- Сеть -->
@@ -697,17 +686,6 @@
                 <textarea id="p2pQuestionInput" placeholder="Напишите ваш вопрос (не более 500 символов)..."></textarea>
                 <button class="btn-primary" id="p2pAskBtn" style="background:linear-gradient(135deg, #0066ff, #00d4ff);">Опубликовать (стоит 5 очков)</button>
             </div>
-        </div>
-
-        <!-- Отражения -->
-        <div id="page-otrazhenie" class="page">
-            <div class="center-piece"><div class="symbol" style="color:#8a2be2;">👁</div><div class="label" style="color:#8a2be2;">Отражения</div></div>
-            <div class="info-hint" data-hint="otrazhenie">
-                <button class="hint-toggle" data-target="otrazhenie">−</button>
-                👁 <strong>Просмотрите ответы других пользователей</strong> на текущий вопрос дня.<br>
-                Вы можете поставить реакции (👍 ❤️ 🔥 😂) на понравившиеся ответы – это помогает авторам получать дополнительные баллы.
-            </div>
-            <div class="glass"><div class="card-title" style="color:#8a2be2;">Ответы на текущий вопрос</div><div id="galleryList"><div class="loading">Загрузка...</div></div></div>
         </div>
 
         <!-- Искры -->
@@ -737,7 +715,7 @@
             </div>
         </div>
 
-        <!-- Встреча -->
+        <!-- Встреча (бесплатный анонимный чат) -->
         <div id="page-vstrecha" class="page">
             <div class="center-piece"><div class="symbol" style="color:#b388ff;">🔮</div><div class="label" style="color:#b388ff;">Встреча</div></div>
             <div class="info-hint" data-hint="vstrecha">
@@ -758,91 +736,50 @@
             </div>
         </div>
 
-        <!-- Планер -->
-        <div id="page-planer" class="page">
-            <div class="center-piece"><div class="symbol" style="color:#d4af37;">📋</div><div class="label" style="color:#d4af37;">Планер</div></div>
-            <div class="info-hint" data-hint="planer">
-                <button class="hint-toggle" data-target="planer">−</button>
-                📋 <strong>Управляйте задачами, бюджетом и календарём</strong> в одном месте.<br>
-                – Задачи: добавляйте, отмечайте выполненные, задавайте приоритет и дедлайн.<br>
-                – Бюджет: распределяйте доход по категориям, задавайте фиксированные суммы.<br>
-                – Календарь: отмечайте важные даты и события.<br>
-                Полный функционал доступен по подписке (250 Stars/мес).<br>
-                В демо-режиме можно посмотреть интерфейс, но редактирование отключено.
-            </div>
-            <div class="glass" id="planerContainer">
-                <div id="planerLocked" style="display:block; text-align:center; padding:20px;">
-                    <div style="font-size:48px;">🔒</div>
-                    <h2 style="color:#d4af37; margin:12px 0;">Планер доступен по подписке</h2>
-                    <p style="color:rgba(255,255,255,0.3);">Оформите подписку, чтобы управлять задачами, бюджетом и календарём.</p>
-                    <button class="btn-primary" id="planerSubscribeBtn" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e; margin-top:16px; max-width:300px; margin-left:auto; margin-right:auto;">Подписаться (250 Stars/мес)</button>
-                    <button class="btn-primary" id="planerPreviewBtn" style="background:rgba(255,255,255,0.1); margin-top:8px; max-width:300px; margin-left:auto; margin-right:auto;">Предпросмотр</button>
-                    <div style="margin-top:12px; font-size:12px; color:rgba(255,255,255,0.2);">Админам доступ бесплатно</div>
+        <!-- Страница PRO (открывается по кнопке PRO в шапке) -->
+        <div id="page-premium" class="page">
+            <div class="center-piece"><div class="symbol" style="color:#d4af37;">⭐</div><div class="label" style="color:#d4af37;">PRO</div></div>
+            <div class="glass" id="premiumContainer">
+                <div id="premiumLocked" style="display:block; text-align:center; padding:20px;">
+                    <div style="font-size:48px;">🌟</div>
+                    <h2 style="color:#d4af37; margin:12px 0;">PRO-доступ</h2>
+                    <p style="color:rgba(255,255,255,0.5);">Откройте все возможности приложения:</p>
+                    <div style="display:flex; justify-content:center; gap:20px; margin:16px 0; flex-wrap:wrap;">
+                        <div><span style="font-size:24px;">📔</span><br>Дневник</div>
+                        <div><span style="font-size:24px;">📋</span><br>Планер</div>
+                        <div><span style="font-size:24px;">❤️</span><br>Знакомства</div>
+                    </div>
+                    <p style="color:rgba(255,255,255,0.3); font-size:14px;">Стоимость: <strong style="color:#d4af37; font-size:22px;">500 Stars</strong> (навсегда)</p>
+                    <button class="btn-primary" id="premiumBuyBtn" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e; margin-top:16px; max-width:300px; margin-left:auto; margin-right:auto;">Купить PRO</button>
                 </div>
-                <div id="planerContent" style="display:none;">
-                    <div class="planer-tabs">
-                        <button class="active" data-planer="tasks">📌 Задачи</button>
-                        <button data-planer="budget">💰 Бюджет</button>
-                        <button data-planer="calendar">📅 Календарь</button>
-                        <button data-planer="stats">📊 Статистика</button>
+                <div id="premiumContent" style="display:none;">
+                    <div style="text-align:center; margin-bottom:16px;">
+                        <div style="font-size:48px;">⭐</div>
+                        <h2 style="color:#d4af37; margin:8px 0;">PRO активирован</h2>
+                        <p style="color:rgba(255,255,255,0.3);">Вам доступны все функции</p>
                     </div>
-                    <div class="planer-section active" id="planer-tasks">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                            <span style="font-weight:600; color:rgba(255,255,255,0.5);">Задачи на сегодня</span>
-                            <button id="taskAddBtn" style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.2); border-radius:30px; padding:6px 16px; color:#d4af37; cursor:pointer; font-family:inherit;">+ Добавить</button>
+                    <div class="pro-grid">
+                        <div class="pro-card" id="proDiary">
+                            <span class="icon">📔</span>
+                            <span class="label">Дневник</span>
                         </div>
-                        <div id="tasksList"><div class="loading">Загрузка...</div></div>
+                        <div class="pro-card" id="proPlanner">
+                            <span class="icon">📋</span>
+                            <span class="label">Планер</span>
+                        </div>
+                        <div class="pro-card" id="proDating">
+                            <span class="icon">❤️</span>
+                            <span class="label">Знакомства</span>
+                        </div>
                     </div>
-                    <div class="planer-section" id="planer-budget">
-                        <div class="budget-mode-toggle">
-                            <button class="active" data-mode="0">Без кредитов</button>
-                            <button data-mode="1">С кредитами</button>
-                        </div>
-                        <div class="budget-income-row">
-                            <label for="incomeInput">💰 Доход (руб/мес):</label>
-                            <input type="number" id="incomeInput" value="0" min="0" step="100" />
-                            <button id="incomeSaveBtn">Сохранить</button>
-                        </div>
-                        <div id="budgetCategories"><div class="loading">Загрузка...</div></div>
-                        <button id="budgetSaveBtn" class="btn-primary" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e; margin-top:12px;">Сохранить бюджет</button>
-                    </div>
-                    <div class="planer-section" id="planer-calendar">
-                        <div class="calendar-nav">
-                            <button id="calPrev">◀</button>
-                            <span id="calMonthYear" style="font-weight:600; color:#fff;">Январь 2025</span>
-                            <button id="calNext">▶</button>
-                        </div>
-                        <div class="calendar-grid" id="calendarGrid"></div>
-                    </div>
-                    <div class="planer-section" id="planer-stats">
-                        <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
-                            <button class="stats-period-btn active" data-period="day" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:6px 16px; color:rgba(255,255,255,0.5); cursor:pointer; font-family:inherit;">День</button>
-                            <button class="stats-period-btn" data-period="week" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:6px 16px; color:rgba(255,255,255,0.5); cursor:pointer; font-family:inherit;">Неделя</button>
-                            <button class="stats-period-btn" data-period="month" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:6px 16px; color:rgba(255,255,255,0.5); cursor:pointer; font-family:inherit;">Месяц</button>
-                        </div>
-                        <div class="stats-cards" id="statsCards">
-                            <div class="stats-card total"><span class="number" id="statTotal">0</span><span class="label">Всего</span></div>
-                            <div class="stats-card completed"><span class="number" id="statCompleted">0</span><span class="label">Выполнено</span></div>
-                            <div class="stats-card pending"><span class="number" id="statPending">0</span><span class="label">Ожидает</span></div>
-                            <div class="stats-card overdue"><span class="number" id="statOverdue">0</span><span class="label">Просрочено</span></div>
-                        </div>
+                    <div style="margin-top:12px; text-align:center;">
+                        <button class="btn-primary" id="premiumCloseBtn" style="background:rgba(255,255,255,0.1); max-width:200px; margin-left:auto; margin-right:auto;">Закрыть</button>
                     </div>
                 </div>
-                <button class="btn-primary" id="planerCloseDemoBtn" style="margin-top:16px; background:rgba(255,255,255,0.1); display:none;">Закрыть предпросмотр</button>
             </div>
         </div>
 
-        <!-- Магазин -->
-        <div id="page-shop" class="page">
-            <div class="center-piece"><div class="symbol" style="color:#d4af37;">🛍️</div><div class="label" style="color:#d4af37;">Магазин</div></div>
-            <div class="glass placeholder">
-                <div class="icon">🛒</div>
-                <h2>Скоро здесь будут товары</h2>
-                <p>Маски, темы и другие бонусы за Stars. Следите за обновлениями!</p>
-            </div>
-        </div>
-
-        <!-- Профиль с достижениями и рефералами -->
+        <!-- Профиль -->
         <div id="page-profile" class="page">
             <div class="glass">
                 <div class="card-title" style="color:#f5deb3;">Профиль</div>
@@ -867,7 +804,7 @@
                 </div>
                 <button class="btn-primary" id="profileSaveBtn" style="background:linear-gradient(135deg, #8b7355, #f5deb3);">Сохранить настройки</button>
 
-                <!-- ===== ДОСТИЖЕНИЯ ===== -->
+                <!-- Достижения -->
                 <div style="margin-top:12px;">
                     <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">Мои достижения</div>
                     <div id="achievementsContainer">
@@ -875,19 +812,48 @@
                     </div>
                 </div>
 
-                <!-- ===== РЕФЕРАЛЬНАЯ ПРОГРАММА ===== -->
+                <!-- Рефералы -->
                 <div class="referral-block" id="referralBlock">
                     <div class="ref-title">🌟 Реферальная программа</div>
                     <div id="referralStats">
                         <div class="loading" style="font-size:14px; color:rgba(255,255,255,0.3); padding:8px 0;">Загрузка...</div>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- ===== ИСТОРИЯ ===== -->
-                <div style="margin-top:12px;">
-                    <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">История ответов</div>
-                    <div id="profileHistory"><div class="loading" style="color:rgba(245,222,179,0.2);">Загрузка...</div></div>
+        <!-- Дневник (PRO, пока заглушка) -->
+        <div id="page-diary" class="page">
+            <div class="center-piece"><div class="symbol" style="color:#d4af37;">📔</div><div class="label" style="color:#d4af37;">Дневник</div></div>
+            <div class="glass diary-placeholder">
+                <div class="icon">📝</div>
+                <h2>Ваш личный дневник</h2>
+                <p>Записывайте мысли, добавляйте фото, ведите теги.<br>Скоро здесь появится полноценный инструмент.</p>
+                <div style="margin-top:12px; color:rgba(255,255,255,0.2); font-size:12px;">Доступно только в PRO</div>
+            </div>
+        </div>
+
+        <!-- Планер (PRO) -->
+        <div id="page-planner" class="page">
+            <div class="center-piece"><div class="symbol" style="color:#d4af37;">📋</div><div class="label" style="color:#d4af37;">Планер</div></div>
+            <div class="glass">
+                <div style="text-align:center; padding:30px 0;">
+                    <div style="font-size:48px;">📋</div>
+                    <h2 style="color:#fff; margin:12px 0;">Планер</h2>
+                    <p style="color:rgba(255,255,255,0.3);">Задачи, бюджет, календарь – всё в одном месте.</p>
+                    <p style="color:rgba(255,255,255,0.2); font-size:12px; margin-top:8px;">Доступно только в PRO</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- Знакомства (PRO) -->
+        <div id="page-dating" class="page">
+            <div class="center-piece"><div class="symbol" style="color:#ff6b6b;">❤️</div><div class="label" style="color:#ff6b6b;">Знакомства</div></div>
+            <div class="glass dating-placeholder">
+                <div class="icon">💕</div>
+                <h2>Знакомства для встреч</h2>
+                <p>Анкеты, поиск по городу, чаты – всё анонимно и безопасно.</p>
+                <div style="margin-top:12px; color:rgba(255,255,255,0.2); font-size:12px;">Доступно только в PRO</div>
             </div>
         </div>
     </div>
@@ -933,65 +899,23 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="modalTask">
-        <div class="modal-card">
-            <div class="modal-title" id="modalTaskTitle">➕ Новая задача</div>
-            <input type="text" id="taskTitle" placeholder="Название задачи" />
-            <input type="text" id="taskDescription" placeholder="Описание (необязательно)" />
-            <input type="datetime-local" id="taskScheduled" />
-            <input type="number" id="taskDuration" placeholder="Длительность (мин)" value="60" />
-            <input type="text" id="taskCategory" placeholder="Категория (например, Работа)" />
-            <select id="taskPriority">
-                <option value="0">Низкий</option>
-                <option value="1" selected>Средний</option>
-                <option value="2">Высокий</option>
-            </select>
-            <input type="datetime-local" id="taskDeadline" placeholder="Дедлайн (необязательно)" />
-            <select id="taskRepeat">
-                <option value="none">Нет</option>
-                <option value="daily">Ежедневно</option>
-                <option value="weekly">Еженедельно</option>
-                <option value="monthly">Ежемесячно</option>
-            </select>
-            <input type="datetime-local" id="taskRepeatEnd" placeholder="Дата окончания повторений" />
-            <div class="modal-buttons">
-                <button class="modal-submit" id="modalTaskSubmit">Сохранить</button>
-                <button class="modal-cancel" id="modalTaskCancel">Отмена</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalCalendar">
-        <div class="modal-card">
-            <div class="modal-title" id="modalCalendarTitle">📅 Отметки на дату</div>
-            <div id="modalCalendarDate" style="color:rgba(255,255,255,0.5); margin-bottom:8px;"></div>
-            <div id="modalCalendarMarks" style="margin-bottom:12px; max-height:150px; overflow-y:auto;">
-                <div style="color:rgba(255,255,255,0.2); text-align:center;">Нет отметок</div>
-            </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-                <button class="cal-mark-btn-modal" data-type="work" style="background:rgba(76,175,80,0.1); border:1px solid #4caf50; border-radius:30px; padding:4px 12px; color:#4caf50; cursor:pointer;">✔ Работа</button>
-                <button class="cal-mark-btn-modal" data-type="important" style="background:rgba(244,67,54,0.1); border:1px solid #f44336; border-radius:30px; padding:4px 12px; color:#f44336; cursor:pointer;">❗ Важно</button>
-                <button class="cal-mark-btn-modal" data-type="custom" style="background:rgba(255,152,0,0.1); border:1px solid #ff9800; border-radius:30px; padding:4px 12px; color:#ff9800; cursor:pointer;">📝 Своё</button>
-            </div>
-            <input type="text" id="modalCalendarNote" placeholder="Заметка (необязательно)" />
-            <div class="modal-buttons">
-                <button class="modal-submit" id="modalCalendarSubmit">Добавить</button>
-                <button class="modal-cancel" id="modalCalendarCancel">Закрыть</button>
-            </div>
+    <!-- ===== Онбординг ===== -->
+    <div class="onboarding-overlay" id="onboardingOverlay">
+        <div class="onboarding-card" id="onboardingCard">
+            <div class="step-icon" id="onboardingIcon">🌱</div>
+            <h2 id="onboardingTitle">Добро пожаловать!</h2>
+            <p id="onboardingDesc">Давайте познакомимся с приложением за 3 простых шага.</p>
+            <button class="btn-primary" id="onboardingNextBtn">Далее</button>
         </div>
     </div>
 
     <!-- Нижнее меню -->
     <div class="tab-bar">
         <button class="tab-item active" data-page="page-moment"><span class="tab-icon">✦</span>Момент</button>
-        <button class="tab-item" data-page="page-verhina"><span class="tab-icon">🏆</span>Вершина</button>
-        <button class="tab-item" data-page="page-set"><span class="tab-icon">🧠</span>Сеть</button>
         <button class="tab-item" data-page="page-otrazhenie"><span class="tab-icon">👁</span>Отражения</button>
+        <button class="tab-item" data-page="page-set"><span class="tab-icon">🧠</span>Сеть</button>
         <button class="tab-item" data-page="page-iskry"><span class="tab-icon">🔥</span>Искры</button>
         <button class="tab-item" data-page="page-vstrecha"><span class="tab-icon">🔮</span>Встреча</button>
-        <!-- Планер и Магазин скрыты в нижней панели, доступны через верхние иконки -->
-        <button class="tab-item pro" data-page="page-planer" style="display:none;"><span class="tab-icon">📋</span>Планер</button>
-        <button class="tab-item" data-page="page-shop" style="display:none;"><span class="tab-icon">🛍️</span>Магазин</button>
     </div>
 
     <script>
@@ -1019,14 +943,14 @@
         const userId = user.id || 0;
         const firstName = user.first_name || 'Пользователь';
         const photoUrl = user.photo_url || null;
-        document.getElementById('userInfo').textContent = firstName;
         document.getElementById('profileName').textContent = firstName;
         document.getElementById('profileId').textContent = `ID: ${userId}`;
 
         if (photoUrl) {
             const img = document.createElement('img');
             img.src = photoUrl; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
-            document.getElementById('avatarPlaceholder').parentElement.replaceChild(img, document.getElementById('avatarPlaceholder'));
+            const placeholder = document.getElementById('avatarPlaceholder');
+            placeholder.parentElement.replaceChild(img, placeholder);
             const img2 = document.createElement('img');
             img2.src = photoUrl; img2.style.width='100%'; img2.style.height='100%'; img2.style.objectFit='cover';
             document.getElementById('profileAvatar').parentElement.replaceChild(img2, document.getElementById('profileAvatar'));
@@ -1040,12 +964,10 @@
         let chatSessionId = null;
         let chatPartner = null;
         let chatPollInterval = null;
-        let editingTaskId = null;
-        let currentBudgetMode = 0;
-        let calendarDate = new Date();
-        let calendarMarks = [];
-        let selectedCalendarDate = null;
         let currentCommentsTarget = null;
+        let isPremium = false;
+        let onboardingStep = 0;
+        let userMask = '';
 
         // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
         async function callApi(action, data = {}) {
@@ -1084,6 +1006,41 @@
             return Math.floor(d.getTime() / 1000);
         }
 
+        // ===== ДИНАМИЧЕСКОЕ ИМЯ В ШАПКЕ =====
+        function updateHeaderName(visibility) {
+            const nameEl = document.getElementById('userInfo');
+            if (visibility === 0) {
+                nameEl.textContent = 'Аноним';
+            } else if (visibility === 1) {
+                const mask = userMask || 'Маска';
+                nameEl.textContent = '🎭 ' + mask;
+            } else {
+                nameEl.textContent = firstName;
+            }
+        }
+
+        // ===== ПРЕДПРОСМОТР ИМЕНИ =====
+        function updateVisibilityPreview(visibility) {
+            const preview = document.getElementById('visibilityPreview');
+            let displayName = '';
+            if (visibility === 0) displayName = 'Аноним';
+            else if (visibility === 1) displayName = '🎭 ' + (userMask || 'Маска');
+            else displayName = firstName;
+            preview.innerHTML = `Вы будете отображаться как: <strong>${displayName}</strong>`;
+            // Обновляем имя в шапке
+            updateHeaderName(visibility);
+        }
+
+        // ===== КНОПКИ ВИДИМОСТИ =====
+        document.querySelectorAll('#visibilityButtons button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#visibilityButtons button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentVisibility = parseInt(this.dataset.visibility);
+                updateVisibilityPreview(currentVisibility);
+            });
+        });
+
         // ===== СВОРАЧИВАНИЕ ИНФОРМАЦИОННЫХ ПОЛЕЙ =====
         document.querySelectorAll('.info-hint').forEach(el => {
             const key = el.dataset.hint;
@@ -1110,65 +1067,55 @@
             document.querySelectorAll('.tab-item').forEach(t => {
                 t.classList.toggle('active', t.dataset.page === pageId);
             });
-            if (pageId === 'page-verhina') {
-                loadTop(document.querySelector('#topTabs .active')?.dataset.period || 'day');
+            if (pageId === 'page-otrazhenie') {
+                loadGallery();
             } else if (pageId === 'page-set') {
                 loadP2P();
-            } else if (pageId === 'page-otrazhenie') {
-                loadGallery();
             } else if (pageId === 'page-iskry') {
                 checkIskry();
                 loadIskryGallery();
-            } else if (pageId === 'page-planer') {
-                checkPlanerStatus();
+            } else if (pageId === 'page-vstrecha') {
+                // nothing special
+            } else if (pageId === 'page-premium') {
+                loadPremiumStatus();
             } else if (pageId === 'page-profile') {
-                loadData();
+                loadProfile();
                 loadAchievements();
-                loadReferralStats(); // <-- загружаем реферальные данные
+                loadReferralStats();
+            } else if (pageId === 'page-moment') {
+                loadQuestion();
             }
         }
 
         // ===== ВЕРХНИЕ ИКОНКИ =====
-        document.getElementById('topPlanerBtn').addEventListener('click', function() {
-            showPage('page-planer');
+        document.getElementById('topPremiumBtn').addEventListener('click', function() {
+            showPage('page-premium');
         });
-        document.getElementById('topShopBtn').addEventListener('click', function() {
-            showPage('page-shop');
+        document.getElementById('profileBtn').addEventListener('click', function() {
+            showPage('page-profile');
         });
 
-        // ===== ЗАГРУЗКА ДАННЫХ =====
-        async function loadData() {
-            const profileStatus = await callApi('get_profile_status');
-            if (profileStatus?.completed !== undefined) {
-                profileCompleted = profileStatus.completed;
-                const btn = document.getElementById('submitAnswerBtn');
-                if (!profileCompleted) {
-                    btn.disabled = true; btn.textContent = '❌ Заполните профиль';
-                } else {
-                    btn.disabled = false; btn.textContent = 'Отправить ответ';
+        // ===== ЗАГРУЗКА ВОПРОСА =====
+        async function loadQuestion() {
+            const data = await callApi('get_question');
+            if (data?.question) {
+                currentQuestion = data.question;
+                document.getElementById('questionDisplay').textContent = data.question;
+            } else {
+                document.getElementById('questionDisplay').textContent = '❌ Вопрос не загружен. Попробуйте позже.';
+            }
+        }
+
+        // ===== ЗАГРУЗКА ПРОФИЛЯ =====
+        async function loadProfile() {
+            const data = await callApi('get_profile_status');
+            if (data) {
+                if (data.stats) {
+                    document.getElementById('profileAnswers').textContent = data.stats.total_answers || 0;
+                    document.getElementById('profileScore').textContent = data.stats.total_score || 0;
+                    document.getElementById('profileStreak').textContent = `${data.stats.today_answers || 0}/5`;
                 }
-                if (profileStatus.stats) {
-                    document.getElementById('profileAnswers').textContent = profileStatus.stats.total_answers || 0;
-                    document.getElementById('profileScore').textContent = profileStatus.stats.total_score || 0;
-                    document.getElementById('profileStreak').textContent = `${profileStatus.stats.today_answers || 0}/5`;
-                }
-                if (profileStatus.achievements) {
-                    // Достижения загружаются отдельно
-                }
-                const historyData = await callApi('get_history');
-                if (historyData?.history) {
-                    const container = document.getElementById('profileHistory');
-                    if (historyData.history.length === 0) {
-                        container.innerHTML = '<div style="color:rgba(245,222,179,0.2); text-align:center;">Пока нет ответов</div>';
-                    } else {
-                        let html = '';
-                        historyData.history.slice(0,10).forEach(item => {
-                            html += `<div style="padding:6px 0; border-bottom:1px solid rgba(245,222,179,0.05);"><div style="font-weight:500; color:#f5deb3;">${escHtml(item.question)}</div><div style="color:rgba(245,222,179,0.5); font-size:14px;">${escHtml(item.answer)}</div></div>`;
-                        });
-                        container.innerHTML = html;
-                    }
-                }
-                if (profileStatus.mask_set) {
+                if (data.mask_set) {
                     document.getElementById('profileMaskInput').disabled = true;
                     document.getElementById('profileMaskInput').style.opacity = '0.5';
                     document.getElementById('maskLockedMessage').style.display = 'block';
@@ -1177,54 +1124,202 @@
                     document.getElementById('profileMaskInput').style.opacity = '1';
                     document.getElementById('maskLockedMessage').style.display = 'none';
                 }
-                if (profileStatus.budget_mode !== undefined) {
-                    currentBudgetMode = profileStatus.budget_mode;
-                    updateBudgetModeUI();
+                if (data.mask !== undefined) {
+                    document.getElementById('profileMaskInput').value = data.mask || '';
+                    userMask = data.mask || '';
+                    updateVisibilityPreview(currentVisibility);
                 }
-                if (profileStatus.income !== undefined) {
-                    document.getElementById('incomeInput').value = profileStatus.income || 0;
+                if (data.completed !== undefined) {
+                    profileCompleted = data.completed;
+                    const btn = document.getElementById('submitAnswerBtn');
+                    if (!profileCompleted) {
+                        btn.disabled = true;
+                        btn.textContent = '❌ Заполните профиль';
+                    } else {
+                        btn.disabled = false;
+                        btn.textContent = 'Отправить ответ';
+                    }
                 }
-            }
-
-            const qData = await callApi('get_question');
-            if (qData?.question) {
-                currentQuestion = qData.question;
-                document.getElementById('questionDisplay').textContent = qData.question;
-            } else {
-                document.getElementById('questionDisplay').textContent = '❌ Вопрос не загружен. Попробуйте позже.';
-            }
-
-            loadTop('day');
-            loadP2P();
-            loadGallery();
-            checkIskry();
-            loadIskryGallery();
-            if (document.getElementById('page-planer').classList.contains('active')) {
-                checkPlanerStatus();
-            }
-            if (document.getElementById('page-profile').classList.contains('active')) {
-                loadAchievements();
-                loadReferralStats();
+                if (data.premium_until !== undefined) {
+                    isPremium = data.premium_until > Math.floor(Date.now()/1000);
+                    updatePremiumUI();
+                }
+                if (data.onboarding_completed !== undefined && !data.onboarding_completed) {
+                    startOnboarding();
+                }
             }
         }
 
-        // ===== ТОП =====
-        async function loadTop(period) {
-            document.getElementById('topList').innerHTML = '<div class="loading">Загрузка...</div>';
-            const data = await callApi('get_top', { period });
-            if (data?.top) {
-                const container = document.getElementById('topList');
-                if (data.top.length === 0) {
-                    container.innerHTML = '<div class="empty">Нет данных за этот период</div>';
+        // ===== СОХРАНЕНИЕ ПРОФИЛЯ =====
+        document.getElementById('profileSaveBtn').addEventListener('click', async function() {
+            const mask = document.getElementById('profileMaskInput').value.trim();
+            const visibility = 0;
+            const result = await callApi('save_profile', { mask, visibility });
+            if (result?.success) {
+                tg.showAlert('✅ Настройки сохранены!');
+                profileCompleted = true;
+                document.getElementById('submitAnswerBtn').disabled = false;
+                document.getElementById('submitAnswerBtn').textContent = 'Отправить ответ';
+                userMask = mask;
+                updateVisibilityPreview(currentVisibility);
+                loadProfile();
+                // Если онбординг активен, завершаем его
+                if (document.getElementById('onboardingOverlay').classList.contains('active')) {
+                    finishOnboarding();
+                }
+            } else {
+                tg.showAlert('Ошибка сохранения.');
+            }
+        });
+
+        // ===== ОТПРАВКА ОТВЕТА =====
+        document.getElementById('submitAnswerBtn').addEventListener('click', async function() {
+            if (!profileCompleted) {
+                tg.showAlert('❌ Сначала заполните профиль (нажмите на аватарку)');
+                return;
+            }
+            const answer = document.getElementById('answerInput').value.trim();
+            if (!answer) { tg.showAlert('Напишите ответ!'); return; }
+            if (!currentQuestion) { tg.showAlert('Нет активного вопроса.'); return; }
+            this.disabled = true; this.textContent = 'Отправка...';
+            const result = await callApi('submit_answer', {
+                answer: answer,
+                visibility: currentVisibility
+            });
+            this.disabled = false; this.textContent = 'Отправить ответ';
+            if (result?.success) {
+                tg.showAlert(`✅ Ответ сохранён! +${result.score||0} очков.`);
+                document.getElementById('answerInput').value = '';
+                loadProfile();
+                loadGallery();
+                // Если онбординг активен, переходим к следующему шагу
+                if (document.getElementById('onboardingOverlay').classList.contains('active') && onboardingStep === 0) {
+                    onboardingStep = 1;
+                    showOnboardingStep();
+                }
+            } else {
+                tg.showAlert(result?.error || 'Ошибка сохранения.');
+            }
+        });
+
+        // ===== ГАЛЕРЕЯ (Отражения) с реакциями =====
+        async function loadGallery() {
+            const data = await callApi('get_gallery');
+            if (data?.answers) {
+                const container = document.getElementById('galleryList');
+                if (data.answers.length === 0) {
+                    container.innerHTML = '<div class="empty">Пока никто не ответил</div>';
                     return;
                 }
                 let html = '';
-                data.top.forEach((item, idx) => {
-                    const medal = idx===0?'🥇':idx===1?'🥈':idx===2?'🥉':`${idx+1}.`;
-                    html += `<div class="top-item"><span class="medal">${medal}</span><span class="name">${escHtml(item.name)}</span><span class="score">${item.score || 0}</span></div>`;
+                data.answers.forEach((a) => {
+                    const author = a.visibility === 0 ? 'Аноним' : a.visibility === 1 ? `🎭 ${a.mask||'Маска'}` : a.name;
+                    const reactions = a.reactions || {};
+                    const userReaction = a.user_reaction || null;
+                    // Собираем кнопки реакций
+                    let reactionsHtml = '';
+                    const reactionEmojis = ['👍','❤️','🔥','😍','🤯','😢','😱','😂','😈','👀'];
+                    reactionEmojis.forEach(emoji => {
+                        const count = reactions[emoji] || 0;
+                        const active = userReaction === emoji ? 'active' : '';
+                        reactionsHtml += `<button class="reaction-btn ${active}" data-answer-id="${a.id}" data-reaction="${emoji}">${emoji} <span class="count">${count}</span></button>`;
+                    });
+                    html += `
+                        <div class="history-item" data-id="${a.id}">
+                            <div style="color:rgba(255,255,255,0.4); font-size:13px;">${author}</div>
+                            <div class="answer">${escHtml(a.answer)}</div>
+                            <div class="meta">
+                                <span>❤️ ${Object.values(reactions).reduce((sum, c) => sum + c, 0)} реакций</span>
+                                <span>💬 ${a.comments_count||0}</span>
+                            </div>
+                            <div class="reaction-bar" data-answer-id="${a.id}">
+                                ${reactionsHtml}
+                            </div>
+                            <div class="actions">
+                                <button class="gallery-comments-btn" data-type="daily_answer" data-id="${a.id}">💬 Комментарии <span class="badge">${a.comments_count||0}</span></button>
+                            </div>
+                        </div>
+                    `;
                 });
                 container.innerHTML = html;
+
+                // Обработчики реакций
+                container.querySelectorAll('.reaction-btn').forEach(btn => {
+                    btn.addEventListener('click', async function(e) {
+                        e.stopPropagation();
+                        const answerId = this.dataset.answerId;
+                        const reaction = this.dataset.reaction;
+                        const result = await callApi('toggle_answer_reaction', { answer_id: answerId, reaction_type: reaction });
+                        if (result) {
+                            loadGallery();
+                        }
+                    });
+                    // Долгое нажатие для открытия палитры (на мобиле)
+                    let pressTimer = null;
+                    btn.addEventListener('touchstart', function(e) {
+                        pressTimer = setTimeout(() => {
+                            e.preventDefault();
+                            const answerId = this.dataset.answerId;
+                            showReactionPicker(this, answerId);
+                        }, 500);
+                    });
+                    btn.addEventListener('touchend', function() {
+                        clearTimeout(pressTimer);
+                    });
+                    btn.addEventListener('touchmove', function() {
+                        clearTimeout(pressTimer);
+                    });
+                    // Для десктопа – правый клик
+                    btn.addEventListener('contextmenu', function(e) {
+                        e.preventDefault();
+                        const answerId = this.dataset.answerId;
+                        showReactionPicker(this, answerId);
+                    });
+                });
+
+                container.querySelectorAll('.gallery-comments-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const targetType = this.dataset.type;
+                        const targetId = this.dataset.id;
+                        openCommentsModal(targetType, targetId);
+                    });
+                });
             }
+        }
+
+        // ===== ПАЛИТРА РЕАКЦИЙ =====
+        function showReactionPicker(btn, answerId) {
+            // Удаляем старую палитру, если есть
+            const oldPicker = document.querySelector('.reaction-picker');
+            if (oldPicker) oldPicker.remove();
+
+            const picker = document.createElement('div');
+            picker.className = 'reaction-picker';
+            const emojis = ['👍','❤️','🔥','😍','🤯','😢','😱','😂','😈','👀'];
+            emojis.forEach(emoji => {
+                const b = document.createElement('button');
+                b.textContent = emoji;
+                b.addEventListener('click', async function(e) {
+                    e.stopPropagation();
+                    const result = await callApi('toggle_answer_reaction', { answer_id: answerId, reaction_type: emoji });
+                    if (result) {
+                        loadGallery();
+                    }
+                    picker.remove();
+                });
+                picker.appendChild(b);
+            });
+            // Закрытие по клику вне
+            const closePicker = function(e) {
+                if (!picker.contains(e.target)) {
+                    picker.remove();
+                    document.removeEventListener('click', closePicker);
+                }
+            };
+            document.addEventListener('click', closePicker);
+
+            // Вставляем после кнопки
+            btn.parentNode.insertBefore(picker, btn.nextSibling);
         }
 
         // ===== P2P =====
@@ -1299,39 +1394,25 @@
             }
         });
 
-        // ===== ГАЛЕРЕЯ (Отражения) =====
-        async function loadGallery() {
-            const data = await callApi('get_gallery');
-            if (data?.answers) {
-                const container = document.getElementById('galleryList');
-                if (data.answers.length === 0) {
-                    container.innerHTML = '<div class="empty">Пока никто не ответил</div>';
-                    return;
-                }
-                let html = '';
-                data.answers.forEach((a) => {
-                    const author = a.visibility === 0 ? 'Аноним' : a.visibility === 1 ? `🎭 ${a.mask||'Маска'}` : a.name;
-                    html += `
-                        <div class="history-item" data-id="${a.id}">
-                            <div style="color:rgba(255,255,255,0.4); font-size:13px;">${author}</div>
-                            <div class="answer">${escHtml(a.answer)}</div>
-                            <div class="meta">❤️ ${a.likes||0}</div>
-                            <div class="actions">
-                                <button class="gallery-comments-btn" data-type="daily_answer" data-id="${a.id}">💬 Комментарии <span class="badge">${a.comments_count||0}</span></button>
-                            </div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-                container.querySelectorAll('.gallery-comments-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const targetType = this.dataset.type;
-                        const targetId = this.dataset.id;
-                        openCommentsModal(targetType, targetId);
-                    });
-                });
+        document.getElementById('p2pAskBtn').addEventListener('click', async function() {
+            if (!profileCompleted) {
+                tg.showAlert('❌ Сначала заполните профиль');
+                return;
             }
-        }
+            const text = document.getElementById('p2pQuestionInput').value.trim();
+            if (!text) { tg.showAlert('Напишите вопрос.'); return; }
+            if (text.length > 500) { tg.showAlert('Максимум 500 символов.'); return; }
+            this.disabled = true; this.textContent = 'Публикация...';
+            const result = await callApi('ask_p2p', { text });
+            this.disabled = false; this.textContent = 'Опубликовать (стоит 5 очков)';
+            if (result?.success) {
+                tg.showAlert('✅ Вопрос опубликован!');
+                document.getElementById('p2pQuestionInput').value = '';
+                loadP2P();
+            } else {
+                tg.showAlert(result?.error || 'Ошибка публикации.');
+            }
+        });
 
         // ===== ИСКРЫ =====
         function checkIskry() {
@@ -1394,7 +1475,6 @@
             }
         });
 
-        // ===== ИСКРЫ ГАЛЕРЕЯ =====
         async function loadIskryGallery() {
             const data = await callApi('get_iskry_gallery');
             if (data?.answers) {
@@ -1405,12 +1485,25 @@
                 }
                 let html = '';
                 data.answers.forEach((a) => {
-                    const author = a.visibility === 0 ? 'Аноним' : a.visibility === 1 ? `🎭 ${a.mask||'Маска'}` : a.name;
+                    // Всегда анонимно
+                    const author = 'Аноним';
+                    const reactions = a.reactions || {};
+                    const userReaction = a.user_reaction || null;
+                    let reactionsHtml = '';
+                    const reactionEmojis = ['👍','❤️','🔥','😍','🤯','😢','😱','😂','😈','👀'];
+                    reactionEmojis.forEach(emoji => {
+                        const count = reactions[emoji] || 0;
+                        const active = userReaction === emoji ? 'active' : '';
+                        reactionsHtml += `<button class="reaction-btn ${active}" data-answer-id="${a.id}" data-reaction="${emoji}">${emoji} <span class="count">${count}</span></button>`;
+                    });
                     html += `
                         <div class="iskry-gallery-item" data-id="${a.id}">
                             <div class="question">${escHtml(a.question)}</div>
                             <div class="answer">${escHtml(a.answer)}</div>
-                            <div class="meta">от ${author} ❤️ ${a.likes||0}</div>
+                            <div class="meta">от ${author} · ❤️ ${Object.values(reactions).reduce((sum, c) => sum + c, 0)} реакций</div>
+                            <div class="reaction-bar" data-answer-id="${a.id}">
+                                ${reactionsHtml}
+                            </div>
                             <div class="actions">
                                 <button class="iskry-comments-btn" data-type="iskry_answer" data-id="${a.id}">💬 Комментарии <span class="badge">${a.comments_count||0}</span></button>
                             </div>
@@ -1418,6 +1511,35 @@
                     `;
                 });
                 container.innerHTML = html;
+
+                // Обработчики реакций (аналогично галерее)
+                container.querySelectorAll('.reaction-btn').forEach(btn => {
+                    btn.addEventListener('click', async function(e) {
+                        e.stopPropagation();
+                        const answerId = this.dataset.answerId;
+                        const reaction = this.dataset.reaction;
+                        const result = await callApi('toggle_answer_reaction', { answer_id: answerId, reaction_type: reaction });
+                        if (result) {
+                            loadIskryGallery();
+                        }
+                    });
+                    let pressTimer = null;
+                    btn.addEventListener('touchstart', function(e) {
+                        pressTimer = setTimeout(() => {
+                            e.preventDefault();
+                            const answerId = this.dataset.answerId;
+                            showReactionPickerIskry(this, answerId);
+                        }, 500);
+                    });
+                    btn.addEventListener('touchend', function() { clearTimeout(pressTimer); });
+                    btn.addEventListener('touchmove', function() { clearTimeout(pressTimer); });
+                    btn.addEventListener('contextmenu', function(e) {
+                        e.preventDefault();
+                        const answerId = this.dataset.answerId;
+                        showReactionPickerIskry(this, answerId);
+                    });
+                });
+
                 container.querySelectorAll('.iskry-comments-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const targetType = this.dataset.type;
@@ -1426,6 +1548,37 @@
                     });
                 });
             }
+        }
+
+        function showReactionPickerIskry(btn, answerId) {
+            const oldPicker = document.querySelector('.reaction-picker');
+            if (oldPicker) oldPicker.remove();
+
+            const picker = document.createElement('div');
+            picker.className = 'reaction-picker';
+            const emojis = ['👍','❤️','🔥','😍','🤯','😢','😱','😂','😈','👀'];
+            emojis.forEach(emoji => {
+                const b = document.createElement('button');
+                b.textContent = emoji;
+                b.addEventListener('click', async function(e) {
+                    e.stopPropagation();
+                    const result = await callApi('toggle_answer_reaction', { answer_id: answerId, reaction_type: emoji });
+                    if (result) {
+                        loadIskryGallery();
+                    }
+                    picker.remove();
+                });
+                picker.appendChild(b);
+            });
+            const closePicker = function(e) {
+                if (!picker.contains(e.target)) {
+                    picker.remove();
+                    document.removeEventListener('click', closePicker);
+                }
+            };
+            document.addEventListener('click', closePicker);
+
+            btn.parentNode.insertBefore(picker, btn.nextSibling);
         }
 
         // ===== КОММЕНТАРИИ =====
@@ -1529,536 +1682,6 @@
             }
         });
 
-        // ===== ПЛАНЕР =====
-        async function checkPlanerStatus() {
-            const data = await callApi('planer_status');
-            if (data) {
-                const locked = document.getElementById('planerLocked');
-                const content = document.getElementById('planerContent');
-                const closeBtn = document.getElementById('planerCloseDemoBtn');
-                if (data.subscribed) {
-                    locked.style.display = 'none';
-                    content.style.display = 'block';
-                    content.classList.remove('demo-mode');
-                    closeBtn.style.display = 'none';
-                    await loadTasks();
-                    await loadBudget();
-                    await loadCalendar();
-                    await loadTaskStats('day');
-                } else {
-                    locked.style.display = 'block';
-                    content.style.display = 'none';
-                    closeBtn.style.display = 'none';
-                }
-            }
-        }
-
-        document.getElementById('planerPreviewBtn').addEventListener('click', function() {
-            const locked = document.getElementById('planerLocked');
-            const content = document.getElementById('planerContent');
-            const closeBtn = document.getElementById('planerCloseDemoBtn');
-            locked.style.display = 'none';
-            content.style.display = 'block';
-            content.classList.add('demo-mode');
-            closeBtn.style.display = 'block';
-            loadDemoData();
-        });
-
-        document.getElementById('planerCloseDemoBtn').addEventListener('click', function() {
-            const locked = document.getElementById('planerLocked');
-            const content = document.getElementById('planerContent');
-            const closeBtn = document.getElementById('planerCloseDemoBtn');
-            locked.style.display = 'block';
-            content.style.display = 'none';
-            content.classList.remove('demo-mode');
-            closeBtn.style.display = 'none';
-        });
-
-        document.getElementById('planerSubscribeBtn').addEventListener('click', async function() {
-            const result = await callApi('subscribe_planer');
-            if (result?.success) {
-                tg.showAlert('✅ Запрос на оплату отправлен в бот. Проверьте чат.');
-            } else {
-                tg.showAlert(result?.error || 'Ошибка при создании счёта.');
-            }
-        });
-
-        document.querySelectorAll('.planer-tabs button').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.planer-tabs button').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const section = this.dataset.planer;
-                document.querySelectorAll('.planer-section').forEach(s => s.classList.remove('active'));
-                document.getElementById(`planer-${section}`).classList.add('active');
-                if (section === 'tasks') {
-                    if (document.getElementById('planerContent').classList.contains('demo-mode')) {
-                        loadDemoTasks();
-                    } else {
-                        loadTasks();
-                    }
-                } else if (section === 'budget') {
-                    if (document.getElementById('planerContent').classList.contains('demo-mode')) {
-                        loadDemoBudget();
-                    } else {
-                        loadBudget();
-                    }
-                } else if (section === 'calendar') {
-                    if (document.getElementById('planerContent').classList.contains('demo-mode')) {
-                        loadDemoCalendar();
-                    } else {
-                        loadCalendar();
-                    }
-                } else if (section === 'stats') {
-                    if (document.getElementById('planerContent').classList.contains('demo-mode')) {
-                        loadDemoStats();
-                    } else {
-                        loadTaskStats(document.querySelector('.stats-period-btn.active')?.dataset.period || 'day');
-                    }
-                }
-            });
-        });
-
-        // ===== ЗАДАЧИ =====
-        async function loadTasks() {
-            const container = document.getElementById('tasksList');
-            container.innerHTML = '<div class="loading">Загрузка...</div>';
-            const today = getTodayTimestamp();
-            const data = await callApi('get_tasks', { date: today });
-            if (data?.tasks) {
-                if (data.tasks.length === 0) {
-                    container.innerHTML = '<div class="empty">Нет задач на сегодня</div>';
-                    return;
-                }
-                let html = '';
-                const now = Math.floor(Date.now() / 1000);
-                data.tasks.forEach(t => {
-                    const done = t.status === 1;
-                    const priorityClass = t.priority === 0 ? 'low' : t.priority === 2 ? 'high' : 'medium';
-                    const overdue = t.deadline && t.deadline < now && !done;
-                    html += `
-                        <div class="task-item" data-id="${t.id}">
-                            <div class="task-check ${done?'done':''}" data-id="${t.id}"></div>
-                            <div class="task-info">
-                                <div class="task-title ${done?'done':''}">${escHtml(t.title)}</div>
-                                <div class="task-meta">${formatDate(t.scheduled_time)} · ${t.category||'Без категории'} ${t.repeat_type!=='none'?' 🔁'+t.repeat_type:''} ${overdue?' <span class="task-deadline-overdue">Просрочено!</span>':''}</div>
-                            </div>
-                            <div class="task-priority ${priorityClass}"></div>
-                            <div class="task-actions">
-                                <button class="task-edit" data-id="${t.id}">✎</button>
-                                <button class="task-delete" data-id="${t.id}">✕</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-
-                container.querySelectorAll('.task-check').forEach(el => {
-                    el.addEventListener('click', async function() {
-                        const id = parseInt(this.dataset.id);
-                        const done = this.classList.contains('done');
-                        const newStatus = done ? 0 : 1;
-                        const result = await callApi('update_task_status', { task_id: id, status: newStatus });
-                        if (result?.success) loadTasks();
-                    });
-                });
-
-                container.querySelectorAll('.task-edit').forEach(el => {
-                    el.addEventListener('click', function() {
-                        const id = parseInt(this.dataset.id);
-                        openTaskModal(id);
-                    });
-                });
-
-                container.querySelectorAll('.task-delete').forEach(el => {
-                    el.addEventListener('click', async function() {
-                        if (!confirm('Удалить задачу?')) return;
-                        const id = parseInt(this.dataset.id);
-                        const result = await callApi('delete_task', { task_id: id });
-                        if (result?.success) loadTasks();
-                    });
-                });
-            }
-        }
-
-        document.getElementById('taskAddBtn').addEventListener('click', function() {
-            editingTaskId = null;
-            document.getElementById('modalTaskTitle').textContent = '➕ Новая задача';
-            document.getElementById('taskTitle').value = '';
-            document.getElementById('taskDescription').value = '';
-            document.getElementById('taskScheduled').value = '';
-            document.getElementById('taskDuration').value = '60';
-            document.getElementById('taskCategory').value = '';
-            document.getElementById('taskPriority').value = '1';
-            document.getElementById('taskDeadline').value = '';
-            document.getElementById('taskRepeat').value = 'none';
-            document.getElementById('taskRepeatEnd').value = '';
-            document.getElementById('modalTask').classList.add('active');
-        });
-
-        document.getElementById('modalTaskCancel').addEventListener('click', function() {
-            document.getElementById('modalTask').classList.remove('active');
-        });
-
-        document.getElementById('modalTaskSubmit').addEventListener('click', async function() {
-            const title = document.getElementById('taskTitle').value.trim();
-            if (!title) { tg.showAlert('Введите название задачи'); return; }
-            const description = document.getElementById('taskDescription').value.trim();
-            let scheduled = document.getElementById('taskScheduled').value;
-            if (!scheduled) {
-                const now = new Date();
-                scheduled = now.toISOString().slice(0,16);
-            }
-            const scheduledTs = Math.floor(new Date(scheduled).getTime() / 1000);
-            const duration = parseInt(document.getElementById('taskDuration').value) || 60;
-            const category = document.getElementById('taskCategory').value.trim() || 'Работа';
-            const priority = parseInt(document.getElementById('taskPriority').value);
-            let deadline = document.getElementById('taskDeadline').value;
-            const deadlineTs = deadline ? Math.floor(new Date(deadline).getTime() / 1000) : null;
-            const repeat_type = document.getElementById('taskRepeat').value;
-            let repeat_end = document.getElementById('taskRepeatEnd').value;
-            const repeatEndTs = repeat_end ? Math.floor(new Date(repeat_end).getTime() / 1000) : null;
-            const date = getTodayTimestamp();
-
-            const payload = {
-                title, description, scheduled_time: scheduledTs, duration, category, date,
-                priority, deadline: deadlineTs, repeat_type, repeat_end: repeatEndTs
-            };
-
-            let result;
-            if (editingTaskId) {
-                payload.task_id = editingTaskId;
-                result = await callApi('update_task', payload);
-            } else {
-                result = await callApi('add_task', payload);
-            }
-            if (result?.success) {
-                tg.showAlert('✅ Задача сохранена');
-                document.getElementById('modalTask').classList.remove('active');
-                loadTasks();
-            } else {
-                tg.showAlert('Ошибка сохранения.');
-            }
-        });
-
-        async function openTaskModal(taskId) {
-            editingTaskId = taskId;
-            document.getElementById('modalTaskTitle').textContent = '✎ Редактировать задачу';
-            const data = await callApi('get_tasks', { date: getTodayTimestamp() });
-            if (data?.tasks) {
-                const task = data.tasks.find(t => t.id === taskId);
-                if (task) {
-                    document.getElementById('taskTitle').value = task.title;
-                    document.getElementById('taskDescription').value = task.description || '';
-                    const scheduled = new Date(task.scheduled_time * 1000);
-                    document.getElementById('taskScheduled').value = scheduled.toISOString().slice(0,16);
-                    document.getElementById('taskDuration').value = task.duration || 60;
-                    document.getElementById('taskCategory').value = task.category || '';
-                    document.getElementById('taskPriority').value = task.priority !== undefined ? task.priority : 1;
-                    if (task.deadline) {
-                        const dl = new Date(task.deadline * 1000);
-                        document.getElementById('taskDeadline').value = dl.toISOString().slice(0,16);
-                    } else {
-                        document.getElementById('taskDeadline').value = '';
-                    }
-                    document.getElementById('taskRepeat').value = task.repeat_type || 'none';
-                    if (task.repeat_end) {
-                        const re = new Date(task.repeat_end * 1000);
-                        document.getElementById('taskRepeatEnd').value = re.toISOString().slice(0,16);
-                    } else {
-                        document.getElementById('taskRepeatEnd').value = '';
-                    }
-                    document.getElementById('modalTask').classList.add('active');
-                }
-            }
-        }
-
-        // ===== БЮДЖЕТ =====
-        async function loadBudget() {
-            const container = document.getElementById('budgetCategories');
-            container.innerHTML = '<div class="loading">Загрузка...</div>';
-
-            const incomeData = await callApi('get_income');
-            if (incomeData?.income !== undefined) {
-                document.getElementById('incomeInput').value = incomeData.income || 0;
-            }
-
-            const data = await callApi('get_budget');
-            if (data?.categories) {
-                const income = parseFloat(document.getElementById('incomeInput').value) || 0;
-                let html = '';
-                data.categories.forEach((cat, idx) => {
-                    const amount = cat.amount || 0;
-                    html += `
-                        <div class="budget-category" data-idx="${idx}">
-                            <span class="cat-name">${escHtml(cat.name)}</span>
-                            <input type="number" class="cat-percent-input" data-idx="${idx}" value="${cat.percent}" min="0" max="100" step="0.1" />
-                            <span class="cat-percent">${cat.percent}%</span>
-                            <input type="number" class="cat-amount-input" data-idx="${idx}" value="${amount}" min="0" step="100" placeholder="Сумма" />
-                            <span class="cat-amount">${amount} ₽</span>
-                            <span class="cat-active ${cat.active?'active':''}" data-idx="${idx}">${cat.active?'✔':'✕'}</span>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-
-                container.querySelectorAll('.cat-percent-input').forEach(inp => {
-                    inp.addEventListener('input', function() {
-                        const idx = parseInt(this.dataset.idx);
-                        const val = parseFloat(this.value) || 0;
-                        const percentSpan = this.parentElement.querySelector('.cat-percent');
-                        const amountInput = this.parentElement.querySelector('.cat-amount-input');
-                        const amountSpan = this.parentElement.querySelector('.cat-amount');
-                        percentSpan.textContent = val + '%';
-                        amountInput.value = '';
-                        amountSpan.textContent = '0 ₽';
-                    });
-                });
-
-                container.querySelectorAll('.cat-amount-input').forEach(inp => {
-                    inp.addEventListener('input', function() {
-                        const idx = parseInt(this.dataset.idx);
-                        const val = parseFloat(this.value) || 0;
-                        const amountSpan = this.parentElement.querySelector('.cat-amount');
-                        amountSpan.textContent = val + ' ₽';
-                    });
-                });
-
-                container.querySelectorAll('.cat-active').forEach(el => {
-                    el.addEventListener('click', function() {
-                        this.classList.toggle('active');
-                        this.textContent = this.classList.contains('active') ? '✔' : '✕';
-                    });
-                });
-            }
-        }
-
-        document.getElementById('budgetSaveBtn').addEventListener('click', async function() {
-            const container = document.getElementById('budgetCategories');
-            const inputs = container.querySelectorAll('.budget-category');
-            const categories = [];
-            const income = parseFloat(document.getElementById('incomeInput').value) || 0;
-            inputs.forEach(el => {
-                const name = el.querySelector('.cat-name').textContent;
-                const percent = parseFloat(el.querySelector('.cat-percent-input').value) || 0;
-                const active = el.querySelector('.cat-active').classList.contains('active');
-                const amountInput = el.querySelector('.cat-amount-input');
-                const fixed_amount = parseFloat(amountInput.value) || 0;
-                categories.push({ name, percent, active, fixed_amount });
-            });
-            const result = await callApi('update_budget', { categories, income });
-            if (result?.success) {
-                tg.showAlert('✅ Бюджет сохранён');
-                loadBudget();
-            } else if (result?.error) {
-                tg.showAlert(`❌ Ошибка: ${result.error}. Фиксированные расходы: ${result.fixed_total} ₽, доход: ${result.income} ₽. Уменьшите фиксированные суммы.`);
-            } else {
-                tg.showAlert('Ошибка сохранения');
-            }
-        });
-
-        // ===== РЕЖИМ БЮДЖЕТА =====
-        function updateBudgetModeUI() {
-            document.querySelectorAll('.budget-mode-toggle button').forEach(btn => {
-                btn.classList.toggle('active', parseInt(btn.dataset.mode) === currentBudgetMode);
-            });
-        }
-
-        document.querySelectorAll('.budget-mode-toggle button').forEach(btn => {
-            btn.addEventListener('click', async function() {
-                const mode = parseInt(this.dataset.mode);
-                const result = await callApi('set_budget_mode', { mode });
-                if (result?.success) {
-                    currentBudgetMode = mode;
-                    updateBudgetModeUI();
-                    loadBudget();
-                    tg.showAlert('Режим изменён');
-                } else {
-                    tg.showAlert('Ошибка');
-                }
-            });
-        });
-
-        // ===== ДОХОД =====
-        document.getElementById('incomeSaveBtn').addEventListener('click', async function() {
-            const income = parseInt(document.getElementById('incomeInput').value) || 0;
-            const result = await callApi('set_income', { income });
-            if (result?.success) {
-                tg.showAlert('✅ Доход сохранён');
-                loadBudget();
-            } else {
-                tg.showAlert('Ошибка сохранения');
-            }
-        });
-
-        // ===== КАЛЕНДАРЬ =====
-        async function loadCalendar() {
-            const year = calendarDate.getFullYear();
-            const month = calendarDate.getMonth();
-            document.getElementById('calMonthYear').textContent = `${new Intl.DateTimeFormat('ru-RU', { month:'long', year:'numeric' }).format(calendarDate)}`;
-
-            const start = new Date(year, month, 1);
-            const end = new Date(year, month + 1, 0);
-            const startTs = Math.floor(start.getTime() / 1000);
-            const endTs = Math.floor(end.getTime() / 1000);
-            const marksData = await callApi('get_calendar_marks', { start_date: startTs, end_date: endTs });
-            calendarMarks = marksData?.marks || [];
-
-            const grid = document.getElementById('calendarGrid');
-            grid.innerHTML = '';
-
-            const daysOfWeek = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
-            daysOfWeek.forEach(d => {
-                const div = document.createElement('div');
-                div.style.textAlign = 'center';
-                div.style.fontSize = '12px';
-                div.style.color = 'rgba(255,255,255,0.3)';
-                div.style.padding = '4px';
-                div.textContent = d;
-                grid.appendChild(div);
-            });
-
-            const firstDay = start.getDay();
-            const offset = firstDay === 0 ? 6 : firstDay - 1;
-            const daysInMonth = end.getDate();
-            const today = new Date();
-
-            for (let i = 0; i < offset; i++) {
-                const empty = document.createElement('div');
-                grid.appendChild(empty);
-            }
-
-            for (let d = 1; d <= daysInMonth; d++) {
-                const dateObj = new Date(year, month, d);
-                const ts = Math.floor(dateObj.getTime() / 1000);
-                const div = document.createElement('div');
-                div.className = 'day';
-                if (dateObj.toDateString() === today.toDateString()) {
-                    div.classList.add('today');
-                }
-                div.textContent = d;
-
-                const marks = calendarMarks.filter(m => {
-                    const mDate = new Date(m.date * 1000);
-                    return mDate.getDate() === d && mDate.getMonth() === month && mDate.getFullYear() === year;
-                });
-                if (marks.length > 0) {
-                    div.classList.add('has-mark');
-                    const dot = document.createElement('div');
-                    dot.className = `mark-dot ${marks[0].type}`;
-                    div.appendChild(dot);
-                }
-
-                div.addEventListener('click', function() {
-                    const selectedDate = new Date(year, month, d);
-                    selectedCalendarDate = Math.floor(selectedDate.getTime() / 1000);
-                    openCalendarModal(selectedDate);
-                });
-
-                grid.appendChild(div);
-            }
-        }
-
-        function openCalendarModal(dateObj) {
-            const dateStr = dateObj.toLocaleDateString('ru-RU', { day:'2-digit', month:'long', year:'numeric' });
-            document.getElementById('modalCalendarDate').textContent = dateStr;
-            const ts = Math.floor(dateObj.getTime() / 1000);
-            const marks = calendarMarks.filter(m => {
-                const mDate = new Date(m.date * 1000);
-                return mDate.getFullYear() === dateObj.getFullYear() &&
-                       mDate.getMonth() === dateObj.getMonth() &&
-                       mDate.getDate() === dateObj.getDate();
-            });
-            const marksContainer = document.getElementById('modalCalendarMarks');
-            if (marks.length === 0) {
-                marksContainer.innerHTML = '<div style="color:rgba(255,255,255,0.2); text-align:center;">Нет отметок</div>';
-            } else {
-                let html = '';
-                marks.forEach(m => {
-                    const typeLabel = m.type === 'work' ? 'Работа' : m.type === 'important' ? 'Важно' : 'Своё';
-                    html += `
-                        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
-                            <div><strong>${typeLabel}</strong>: ${escHtml(m.note || 'Без заметки')}</div>
-                            <button class="delete-mark-btn" data-id="${m.id}" style="background:rgba(255,0,0,0.1); border:none; border-radius:30px; padding:2px 8px; color:#ff4444; cursor:pointer;">✕</button>
-                        </div>
-                    `;
-                });
-                marksContainer.innerHTML = html;
-                marksContainer.querySelectorAll('.delete-mark-btn').forEach(btn => {
-                    btn.addEventListener('click', async function(e) {
-                        e.stopPropagation();
-                        const markId = parseInt(this.dataset.id);
-                        if (!confirm('Удалить эту отметку?')) return;
-                        const result = await callApi('delete_calendar_mark', { mark_id: markId });
-                        if (result?.success) {
-                            tg.showAlert('✅ Отметка удалена');
-                            const currentDate = new Date(selectedCalendarDate * 1000);
-                            openCalendarModal(currentDate);
-                            loadCalendar();
-                        } else {
-                            tg.showAlert('Ошибка удаления.');
-                        }
-                    });
-                });
-            }
-            document.getElementById('modalCalendarNote').value = '';
-            document.getElementById('modalCalendar').dataset.selectedDate = ts;
-            document.getElementById('modalCalendar').classList.add('active');
-        }
-
-        document.getElementById('modalCalendarCancel').addEventListener('click', function() {
-            document.getElementById('modalCalendar').classList.remove('active');
-        });
-
-        document.querySelectorAll('.cal-mark-btn-modal').forEach(btn => {
-            btn.addEventListener('click', async function() {
-                const type = this.dataset.type;
-                const note = document.getElementById('modalCalendarNote').value.trim();
-                const dateTs = parseInt(document.getElementById('modalCalendar').dataset.selectedDate);
-                if (!dateTs) { tg.showAlert('Ошибка даты'); return; }
-                const result = await callApi('add_calendar_mark', {
-                    date: dateTs,
-                    mark_type: type,
-                    note: note || ''
-                });
-                if (result?.success) {
-                    tg.showAlert('✅ Отметка добавлена');
-                    const currentDate = new Date(dateTs * 1000);
-                    openCalendarModal(currentDate);
-                    loadCalendar();
-                } else {
-                    tg.showAlert('Ошибка добавления');
-                }
-            });
-        });
-
-        document.getElementById('calPrev').addEventListener('click', function() {
-            calendarDate.setMonth(calendarDate.getMonth() - 1);
-            loadCalendar();
-        });
-        document.getElementById('calNext').addEventListener('click', function() {
-            calendarDate.setMonth(calendarDate.getMonth() + 1);
-            loadCalendar();
-        });
-
-        // ===== СТАТИСТИКА ЗАДАЧ =====
-        async function loadTaskStats(period) {
-            const data = await callApi('get_task_stats', { period });
-            if (data?.stats) {
-                document.getElementById('statTotal').textContent = data.stats.total || 0;
-                document.getElementById('statCompleted').textContent = data.stats.completed || 0;
-                document.getElementById('statPending').textContent = data.stats.pending || 0;
-                document.getElementById('statOverdue').textContent = data.stats.overdue || 0;
-            }
-        }
-
-        document.querySelectorAll('.stats-period-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.stats-period-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                loadTaskStats(this.dataset.period);
-            });
-        });
-
         // ===== ЧАТ =====
         document.getElementById('chatJoinBtn').addEventListener('click', async function() {
             if (chatSessionId) {
@@ -2135,78 +1758,66 @@
             container.scrollTop = container.scrollHeight;
         });
 
-        // ===== ПРОФИЛЬ =====
-        document.getElementById('profileBtn').addEventListener('click', function() {
-            showPage('page-profile');
-            loadData();
-            loadAchievements();
-            loadReferralStats();
+        // ===== PRO СТРАНИЦА =====
+        async function loadPremiumStatus() {
+            const data = await callApi('get_premium_status');
+            if (data) {
+                isPremium = data.premium;
+                updatePremiumUI();
+            }
+        }
+
+        function updatePremiumUI() {
+            const locked = document.getElementById('premiumLocked');
+            const content = document.getElementById('premiumContent');
+            const btn = document.getElementById('topPremiumBtn');
+            if (isPremium) {
+                locked.style.display = 'none';
+                content.style.display = 'block';
+                btn.classList.add('active');
+                btn.textContent = '⭐ PRO';
+            } else {
+                locked.style.display = 'block';
+                content.style.display = 'none';
+                btn.classList.remove('active');
+                btn.textContent = '⭐ PRO';
+            }
+        }
+
+        document.getElementById('premiumBuyBtn').addEventListener('click', async function() {
+            const result = await callApi('purchase_premium');
+            if (result?.success) {
+                tg.showAlert('✅ Запрос на оплату отправлен в бот. Проверьте чат.');
+            } else {
+                tg.showAlert(result?.error || 'Ошибка при создании счёта.');
+            }
         });
 
-        document.querySelectorAll('#visibilityButtons button').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('#visibilityButtons button').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                currentVisibility = parseInt(this.dataset.visibility);
-            });
+        document.getElementById('premiumCloseBtn').addEventListener('click', function() {
+            showPage('page-moment');
         });
 
-        document.getElementById('submitAnswerBtn').addEventListener('click', async function() {
-            if (!profileCompleted) {
-                tg.showAlert('❌ Сначала заполните профиль (нажмите на аватарку)');
+        // Клики по карточкам PRO
+        document.getElementById('proDiary').addEventListener('click', function() {
+            if (!isPremium) {
+                tg.showAlert('Доступно только в PRO. Купите подписку.');
                 return;
             }
-            const answer = document.getElementById('answerInput').value.trim();
-            if (!answer) { tg.showAlert('Напишите ответ!'); return; }
-            if (!currentQuestion) { tg.showAlert('Нет активного вопроса.'); return; }
-            this.disabled = true; this.textContent = 'Отправка...';
-            const result = await callApi('submit_answer', {
-                answer: answer,
-                visibility: currentVisibility
-            });
-            this.disabled = false; this.textContent = 'Отправить ответ';
-            if (result?.success) {
-                tg.showAlert(`✅ Ответ сохранён! +${result.score||0} очков.`);
-                document.getElementById('answerInput').value = '';
-                loadData();
-            } else {
-                tg.showAlert(result?.error || 'Ошибка сохранения.');
-            }
+            showPage('page-diary');
         });
-
-        document.getElementById('p2pAskBtn').addEventListener('click', async function() {
-            if (!profileCompleted) {
-                tg.showAlert('❌ Сначала заполните профиль');
+        document.getElementById('proPlanner').addEventListener('click', function() {
+            if (!isPremium) {
+                tg.showAlert('Доступно только в PRO. Купите подписку.');
                 return;
             }
-            const text = document.getElementById('p2pQuestionInput').value.trim();
-            if (!text) { tg.showAlert('Напишите вопрос.'); return; }
-            if (text.length > 500) { tg.showAlert('Максимум 500 символов.'); return; }
-            this.disabled = true; this.textContent = 'Публикация...';
-            const result = await callApi('ask_p2p', { text });
-            this.disabled = false; this.textContent = 'Опубликовать (стоит 5 очков)';
-            if (result?.success) {
-                tg.showAlert('✅ Вопрос опубликован!');
-                document.getElementById('p2pQuestionInput').value = '';
-                loadP2P();
-            } else {
-                tg.showAlert(result?.error || 'Ошибка публикации.');
-            }
+            showPage('page-planner');
         });
-
-        document.getElementById('profileSaveBtn').addEventListener('click', async function() {
-            const mask = document.getElementById('profileMaskInput').value.trim();
-            const visibility = 0;
-            const result = await callApi('save_profile', { mask, visibility });
-            if (result?.success) {
-                tg.showAlert('✅ Настройки сохранены!');
-                profileCompleted = true;
-                document.getElementById('submitAnswerBtn').disabled = false;
-                document.getElementById('submitAnswerBtn').textContent = 'Отправить ответ';
-                loadData();
-            } else {
-                tg.showAlert('Ошибка сохранения.');
+        document.getElementById('proDating').addEventListener('click', function() {
+            if (!isPremium) {
+                tg.showAlert('Доступно только в PRO. Купите подписку.');
+                return;
             }
+            showPage('page-dating');
         });
 
         // ===== ДОСТИЖЕНИЯ =====
@@ -2288,7 +1899,6 @@
                         navigator.clipboard.writeText(link).then(() => {
                             tg.showAlert('✅ Ссылка скопирована!');
                         }).catch(() => {
-                            // fallback
                             const textarea = document.createElement('textarea');
                             textarea.value = link;
                             document.body.appendChild(textarea);
@@ -2312,6 +1922,66 @@
             }
         }
 
+        // ===== ОНБОРДИНГ =====
+        function startOnboarding() {
+            onboardingStep = 0;
+            document.getElementById('onboardingOverlay').classList.add('active');
+            showOnboardingStep();
+        }
+
+        function showOnboardingStep() {
+            const steps = [
+                {
+                    icon: '🌱',
+                    title: 'Ответьте на вопрос дня',
+                    desc: 'Напишите свой ответ в поле ввода и нажмите "Отправить ответ". Это поможет вам начать рефлексию.'
+                },
+                {
+                    icon: '🎭',
+                    title: 'Выберите видимость',
+                    desc: 'Нажмите на одну из кнопок: Анонимно, Маска или Открыто. Это определит, как ваше имя будет отображаться для других.'
+                },
+                {
+                    icon: '📝',
+                    title: 'Заполните профиль',
+                    desc: 'Перейдите в профиль (нажмите на аватарку) и придумайте себе псевдоним (маску). Это сделает ваше общение более персонализированным.'
+                }
+            ];
+            const step = steps[onboardingStep];
+            document.getElementById('onboardingIcon').textContent = step.icon;
+            document.getElementById('onboardingTitle').textContent = step.title;
+            document.getElementById('onboardingDesc').textContent = step.desc;
+            const btn = document.getElementById('onboardingNextBtn');
+            if (onboardingStep === steps.length - 1) {
+                btn.textContent = 'Завершить';
+            } else {
+                btn.textContent = 'Далее';
+            }
+        }
+
+        document.getElementById('onboardingNextBtn').addEventListener('click', function() {
+            if (onboardingStep === 2) {
+                finishOnboarding();
+            } else {
+                onboardingStep++;
+                showOnboardingStep();
+                // Подсвечиваем соответствующий элемент
+                if (onboardingStep === 1) {
+                    document.getElementById('visibilityButtons').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else if (onboardingStep === 2) {
+                    document.getElementById('profileBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+
+        async function finishOnboarding() {
+            document.getElementById('onboardingOverlay').classList.remove('active');
+            await callApi('set_onboarding_completed');
+            tg.showAlert('🎉 Онбординг пройден! Вы получили +5 бонусных очков.');
+            // Добавляем очки (бэкенд добавит при завершении)
+            loadProfile();
+        }
+
         // ===== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК =====
         document.querySelectorAll('.tab-item').forEach(tab => {
             tab.addEventListener('click', function() {
@@ -2320,114 +1990,24 @@
             });
         });
 
-        document.querySelectorAll('#topTabs button').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('#topTabs button').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                loadTop(this.dataset.period);
-            });
-        });
-
-        // ===== ДЕМО-ДАННЫЕ =====
-        function loadDemoData() {
-            loadDemoTasks();
-            loadDemoBudget();
-            loadDemoCalendar();
-            loadDemoStats();
-            document.getElementById('planerContent').classList.add('demo-mode');
-        }
-
-        function loadDemoTasks() {
-            const container = document.getElementById('tasksList');
-            const demoTasks = [
-                { id: 1, title: 'Утренняя зарядка', time: '08:00', done: true, priority: 'low', category: 'Здоровье' },
-                { id: 2, title: 'Работа над проектом', time: '10:00–13:00', done: false, priority: 'high', category: 'Работа' },
-                { id: 3, title: 'Обед', time: '13:00', done: true, priority: 'medium', category: 'Личное' },
-                { id: 4, title: 'Встреча с клиентом', time: '15:00', done: false, priority: 'high', category: 'Работа', overdue: true },
-                { id: 5, title: 'Тренировка', time: '18:00', done: false, priority: 'medium', category: 'Здоровье' },
-            ];
-            let html = '';
-            demoTasks.forEach(t => {
-                const doneClass = t.done ? 'done' : '';
-                const priorityClass = t.priority;
-                const overdueHtml = t.overdue ? ' <span class="task-deadline-overdue">Просрочено!</span>' : '';
-                html += `
-                    <div class="task-item" data-id="${t.id}">
-                        <div class="task-check ${doneClass}"></div>
-                        <div class="task-info">
-                            <div class="task-title ${doneClass}">${t.title}</div>
-                            <div class="task-meta">${t.time} · ${t.category} ${overdueHtml}</div>
-                        </div>
-                        <div class="task-priority ${priorityClass}"></div>
-                        <div class="task-actions">
-                            <button class="task-edit">✎</button>
-                            <button class="task-delete">✕</button>
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        function loadDemoBudget() {
-            const container = document.getElementById('budgetCategories');
-            const demoCategories = [
-                { name: 'Жильё', percent: 25, active: true },
-                { name: 'Еда', percent: 20, active: true },
-                { name: 'Транспорт', percent: 10, active: true },
-                { name: 'Здоровье', percent: 5, active: true },
-                { name: 'Связь', percent: 5, active: true },
-                { name: 'Одежда', percent: 5, active: true },
-                { name: 'Развлечения', percent: 10, active: true },
-                { name: 'Накопления', percent: 20, active: true },
-            ];
-            const income = 50000;
-            document.getElementById('incomeInput').value = income;
-            let html = '';
-            demoCategories.forEach((cat) => {
-                const amount = (income * cat.percent / 100).toFixed(0);
-                const activeClass = cat.active ? 'active' : '';
-                html += `
-                    <div class="budget-category">
-                        <span class="cat-name">${cat.name}</span>
-                        <input type="number" class="cat-percent-input" value="${cat.percent}" min="0" max="100" step="0.1" disabled />
-                        <span class="cat-percent">${cat.percent}%</span>
-                        <input type="number" class="cat-amount-input" value="${amount}" min="0" step="100" disabled />
-                        <span class="cat-amount">${amount} ₽</span>
-                        <span class="cat-active ${activeClass}">${cat.active ? '✔' : '✕'}</span>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-            document.querySelector('#budgetSaveBtn').style.pointerEvents = 'none';
-            document.querySelector('#budgetSaveBtn').style.opacity = '0.6';
-            document.querySelector('#incomeSaveBtn').style.pointerEvents = 'none';
-            document.querySelector('#incomeSaveBtn').style.opacity = '0.6';
-        }
-
-        function loadDemoCalendar() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = today.getMonth();
-            const demoMarks = [
-                { date: new Date(year, month, 5).getTime() / 1000, type: 'work', note: 'Работа над проектом' },
-                { date: new Date(year, month, 10).getTime() / 1000, type: 'important', note: 'Дедлайн' },
-                { date: new Date(year, month, 20).getTime() / 1000, type: 'custom', note: 'Встреча' },
-            ];
-            calendarMarks = demoMarks.map(m => ({ id: null, date: m.date, type: m.type, note: m.note }));
-            loadCalendar();
-        }
-
-        function loadDemoStats() {
-            document.getElementById('statTotal').textContent = '12';
-            document.getElementById('statCompleted').textContent = '5';
-            document.getElementById('statPending').textContent = '4';
-            document.getElementById('statOverdue').textContent = '3';
-        }
-
         // ===== ЗАПУСК =====
-        loadData();
-        setInterval(() => loadData(), 3600000);
+        async function init() {
+            await loadQuestion();
+            await loadProfile();
+            await loadGallery();
+            await loadP2P();
+            checkIskry();
+            await loadIskryGallery();
+            // Обновляем каждую минуту
+            setInterval(() => {
+                loadQuestion();
+                if (document.getElementById('page-otrazhenie').classList.contains('active')) loadGallery();
+                if (document.getElementById('page-set').classList.contains('active')) loadP2P();
+                if (document.getElementById('page-iskry').classList.contains('active')) { checkIskry(); loadIskryGallery(); }
+            }, 60000);
+        }
+
+        init();
     </script>
 </body>
 </html>
