@@ -503,8 +503,9 @@
         .pro-card:hover { background:rgba(255,255,255,0.06); }
         .pro-card .icon { font-size:32px; display:block; margin-bottom:6px; }
         .pro-card .label { font-size:13px; font-weight:500; }
-        .pro-card.locked { opacity:0.5; pointer-events:none; filter:grayscale(0.5); }
+        .pro-card.locked { opacity:0.5; pointer-events:auto; filter:grayscale(0.5); }
         .pro-card.locked .label::after { content:' 🔒'; font-size:10px; }
+        .pro-card.locked:hover { opacity:0.7; filter:grayscale(0.3); }
 
         .pro-buy {
             text-align:center; padding:20px 0;
@@ -606,17 +607,29 @@
             margin-top:8px;
         }
 
-        /* Дневник (заглушка) */
-        .diary-placeholder { text-align:center; padding:30px 20px; }
-        .diary-placeholder .icon { font-size:48px; margin-bottom:16px; opacity:0.3; }
-        .diary-placeholder h2 { color:#fff; font-size:20px; margin-bottom:8px; }
-        .diary-placeholder p { color:rgba(255,255,255,0.3); font-size:14px; }
-
-        /* Знакомства (заглушка) */
-        .dating-placeholder { text-align:center; padding:30px 20px; }
-        .dating-placeholder .icon { font-size:48px; margin-bottom:16px; opacity:0.3; }
-        .dating-placeholder h2 { color:#fff; font-size:20px; margin-bottom:8px; }
-        .dating-placeholder p { color:rgba(255,255,255,0.3); font-size:14px; }
+        /* Страницы PRO-функций (демо) */
+        .pro-demo-placeholder {
+            text-align:center; padding:20px 10px;
+        }
+        .pro-demo-placeholder .icon { font-size:48px; margin-bottom:12px; }
+        .pro-demo-placeholder h2 { font-size:20px; color:#fff; margin-bottom:8px; }
+        .pro-demo-placeholder p { color:rgba(255,255,255,0.3); font-size:14px; line-height:1.6; }
+        .pro-demo-placeholder .btn-back {
+            background:rgba(255,255,255,0.1);
+            border:none; border-radius:30px; padding:8px 20px;
+            color:#fff; font-size:14px; cursor:pointer;
+            font-family:inherit; transition:0.3s;
+            display:inline-block; margin-bottom:16px;
+        }
+        .pro-demo-placeholder .btn-back:hover { background:rgba(255,255,255,0.2); }
+        .pro-demo-placeholder .btn-buy {
+            background:linear-gradient(135deg, #d4af37, #ffd700);
+            color:#1a140e; border:none; border-radius:30px;
+            padding:12px 30px; font-weight:600; font-size:16px;
+            cursor:pointer; font-family:inherit; transition:0.3s;
+            margin-top:12px;
+        }
+        .pro-demo-placeholder .btn-buy:hover { transform:scale(1.02); }
     </style>
 </head>
 <body>
@@ -751,6 +764,23 @@
                     </div>
                     <p style="color:rgba(255,255,255,0.3); font-size:14px;">Стоимость: <strong style="color:#d4af37; font-size:22px;">500 Stars</strong> (навсегда)</p>
                     <button class="btn-primary" id="premiumBuyBtn" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e; margin-top:16px; max-width:300px; margin-left:auto; margin-right:auto;">Купить PRO</button>
+                    
+                    <!-- Демо-карточки для не-PRO -->
+                    <div class="pro-grid" style="margin-top:20px;">
+                        <div class="pro-card locked" id="demoDiary">
+                            <span class="icon">📔</span>
+                            <span class="label">Дневник 🔒</span>
+                        </div>
+                        <div class="pro-card locked" id="demoPlanner">
+                            <span class="icon">📋</span>
+                            <span class="label">Планер 🔒</span>
+                        </div>
+                        <div class="pro-card locked" id="demoDating">
+                            <span class="icon">❤️</span>
+                            <span class="label">Знакомства 🔒</span>
+                        </div>
+                    </div>
+                    <p style="color:rgba(255,255,255,0.3); font-size:12px; margin-top:12px;">Нажмите на любую карточку, чтобы увидеть демо-версию</p>
                 </div>
                 <div id="premiumContent" style="display:none;">
                     <div style="text-align:center; margin-bottom:16px;">
@@ -822,14 +852,11 @@
             </div>
         </div>
 
-        <!-- Дневник (PRO, пока заглушка) -->
+        <!-- Дневник (PRO) -->
         <div id="page-diary" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">📔</div><div class="label" style="color:#d4af37;">Дневник</div></div>
-            <div class="glass diary-placeholder">
-                <div class="icon">📝</div>
-                <h2>Ваш личный дневник</h2>
-                <p>Записывайте мысли, добавляйте фото, ведите теги.<br>Скоро здесь появится полноценный инструмент.</p>
-                <div style="margin-top:12px; color:rgba(255,255,255,0.2); font-size:12px;">Доступно только в PRO</div>
+            <div class="glass">
+                <div id="diaryContent"></div>
             </div>
         </div>
 
@@ -837,23 +864,15 @@
         <div id="page-planner" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">📋</div><div class="label" style="color:#d4af37;">Планер</div></div>
             <div class="glass">
-                <div style="text-align:center; padding:30px 0;">
-                    <div style="font-size:48px;">📋</div>
-                    <h2 style="color:#fff; margin:12px 0;">Планер</h2>
-                    <p style="color:rgba(255,255,255,0.3);">Задачи, бюджет, календарь – всё в одном месте.</p>
-                    <p style="color:rgba(255,255,255,0.2); font-size:12px; margin-top:8px;">Доступно только в PRO</p>
-                </div>
+                <div id="plannerContent"></div>
             </div>
         </div>
 
         <!-- Знакомства (PRO) -->
         <div id="page-dating" class="page">
             <div class="center-piece"><div class="symbol" style="color:#ff6b6b;">❤️</div><div class="label" style="color:#ff6b6b;">Знакомства</div></div>
-            <div class="glass dating-placeholder">
-                <div class="icon">💕</div>
-                <h2>Знакомства для встреч</h2>
-                <p>Анкеты, поиск по городу, чаты – всё анонимно и безопасно.</p>
-                <div style="margin-top:12px; color:rgba(255,255,255,0.2); font-size:12px;">Доступно только в PRO</div>
+            <div class="glass">
+                <div id="datingContent"></div>
             </div>
         </div>
     </div>
@@ -1027,7 +1046,6 @@
             else if (visibility === 1) displayName = '🎭 ' + (userMask || 'Маска');
             else displayName = firstName;
             preview.innerHTML = `Вы будете отображаться как: <strong>${displayName}</strong>`;
-            // Обновляем имя в шапке
             updateHeaderName(visibility);
         }
 
@@ -1082,6 +1100,12 @@
                 loadProfile();
                 loadAchievements();
                 loadReferralStats();
+            } else if (pageId === 'page-diary') {
+                renderDiary();
+            } else if (pageId === 'page-planner') {
+                renderPlanner();
+            } else if (pageId === 'page-dating') {
+                renderDating();
             } else if (pageId === 'page-moment') {
                 loadQuestion();
             }
@@ -1163,7 +1187,6 @@
                 userMask = mask;
                 updateVisibilityPreview(currentVisibility);
                 loadProfile();
-                // Если онбординг активен, завершаем его
                 if (document.getElementById('onboardingOverlay').classList.contains('active')) {
                     finishOnboarding();
                 }
@@ -1192,7 +1215,6 @@
                 document.getElementById('answerInput').value = '';
                 loadProfile();
                 loadGallery();
-                // Если онбординг активен, переходим к следующему шагу
                 if (document.getElementById('onboardingOverlay').classList.contains('active') && onboardingStep === 0) {
                     onboardingStep = 1;
                     showOnboardingStep();
@@ -1216,7 +1238,6 @@
                     const author = a.visibility === 0 ? 'Аноним' : a.visibility === 1 ? `🎭 ${a.mask||'Маска'}` : a.name;
                     const reactions = a.reactions || {};
                     const userReaction = a.user_reaction || null;
-                    // Собираем кнопки реакций
                     let reactionsHtml = '';
                     const reactionEmojis = ['👍','❤️','🔥','😍','🤯','😢','😱','😂','😈','👀'];
                     reactionEmojis.forEach(emoji => {
@@ -1254,7 +1275,6 @@
                             loadGallery();
                         }
                     });
-                    // Долгое нажатие для открытия палитры (на мобиле)
                     let pressTimer = null;
                     btn.addEventListener('touchstart', function(e) {
                         pressTimer = setTimeout(() => {
@@ -1269,7 +1289,6 @@
                     btn.addEventListener('touchmove', function() {
                         clearTimeout(pressTimer);
                     });
-                    // Для десктопа – правый клик
                     btn.addEventListener('contextmenu', function(e) {
                         e.preventDefault();
                         const answerId = this.dataset.answerId;
@@ -1289,7 +1308,6 @@
 
         // ===== ПАЛИТРА РЕАКЦИЙ =====
         function showReactionPicker(btn, answerId) {
-            // Удаляем старую палитру, если есть
             const oldPicker = document.querySelector('.reaction-picker');
             if (oldPicker) oldPicker.remove();
 
@@ -1309,7 +1327,6 @@
                 });
                 picker.appendChild(b);
             });
-            // Закрытие по клику вне
             const closePicker = function(e) {
                 if (!picker.contains(e.target)) {
                     picker.remove();
@@ -1318,7 +1335,6 @@
             };
             document.addEventListener('click', closePicker);
 
-            // Вставляем после кнопки
             btn.parentNode.insertBefore(picker, btn.nextSibling);
         }
 
@@ -1485,7 +1501,6 @@
                 }
                 let html = '';
                 data.answers.forEach((a) => {
-                    // Всегда анонимно
                     const author = 'Аноним';
                     const reactions = a.reactions || {};
                     const userReaction = a.user_reaction || null;
@@ -1512,7 +1527,6 @@
                 });
                 container.innerHTML = html;
 
-                // Обработчики реакций (аналогично галерее)
                 container.querySelectorAll('.reaction-btn').forEach(btn => {
                     btn.addEventListener('click', async function(e) {
                         e.stopPropagation();
@@ -1797,7 +1811,7 @@
             showPage('page-moment');
         });
 
-        // Клики по карточкам PRO
+        // Клики по карточкам PRO (для PRO-пользователей)
         document.getElementById('proDiary').addEventListener('click', function() {
             if (!isPremium) {
                 tg.showAlert('Доступно только в PRO. Купите подписку.');
@@ -1819,6 +1833,96 @@
             }
             showPage('page-dating');
         });
+
+        // Демо-карточки для не-PRO
+        document.getElementById('demoDiary').addEventListener('click', function() {
+            showPage('page-diary');
+        });
+        document.getElementById('demoPlanner').addEventListener('click', function() {
+            showPage('page-planner');
+        });
+        document.getElementById('demoDating').addEventListener('click', function() {
+            showPage('page-dating');
+        });
+
+        // ===== ОТОБРАЖЕНИЕ СТРАНИЦ PRO-ФУНКЦИЙ (ДЕМО/ПРО) =====
+        function renderDiary() {
+            const container = document.getElementById('diaryContent');
+            if (isPremium) {
+                container.innerHTML = `
+                    <div class="pro-demo-placeholder">
+                        <button class="btn-back" onclick="showPage('page-premium')">← Назад</button>
+                        <div class="icon">📝</div>
+                        <h2>Ваш личный дневник</h2>
+                        <p>Записывайте мысли, добавляйте фото, ведите теги.<br>Полноценная версия в разработке.</p>
+                        <p style="color:rgba(255,255,255,0.2); font-size:12px;">Скоро здесь появится функционал</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="pro-demo-placeholder">
+                        <button class="btn-back" onclick="showPage('page-premium')">← Назад</button>
+                        <div class="icon">📝</div>
+                        <h2>Дневник (демо-версия)</h2>
+                        <p>Записывайте мысли, добавляйте фото, ведите теги.</p>
+                        <p style="color:rgba(255,255,255,0.3);">Полный функционал доступен в PRO</p>
+                        <button class="btn-buy" onclick="showPage('page-premium')">Купить PRO</button>
+                    </div>
+                `;
+            }
+        }
+
+        function renderPlanner() {
+            const container = document.getElementById('plannerContent');
+            if (isPremium) {
+                container.innerHTML = `
+                    <div class="pro-demo-placeholder">
+                        <button class="btn-back" onclick="showPage('page-premium')">← Назад</button>
+                        <div class="icon">📋</div>
+                        <h2>Планер</h2>
+                        <p>Задачи, бюджет, календарь – всё в одном месте.</p>
+                        <p style="color:rgba(255,255,255,0.2); font-size:12px;">Полноценная версия в разработке</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="pro-demo-placeholder">
+                        <button class="btn-back" onclick="showPage('page-premium')">← Назад</button>
+                        <div class="icon">📋</div>
+                        <h2>Планер (демо-версия)</h2>
+                        <p>Управляйте задачами, бюджетом и календарём.</p>
+                        <p style="color:rgba(255,255,255,0.3);">Полный функционал доступен в PRO</p>
+                        <button class="btn-buy" onclick="showPage('page-premium')">Купить PRO</button>
+                    </div>
+                `;
+            }
+        }
+
+        function renderDating() {
+            const container = document.getElementById('datingContent');
+            if (isPremium) {
+                container.innerHTML = `
+                    <div class="pro-demo-placeholder">
+                        <button class="btn-back" onclick="showPage('page-premium')">← Назад</button>
+                        <div class="icon">💕</div>
+                        <h2>Знакомства</h2>
+                        <p>Анкеты, поиск по городу, чаты – всё анонимно и безопасно.</p>
+                        <p style="color:rgba(255,255,255,0.2); font-size:12px;">Полноценная версия в разработке</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="pro-demo-placeholder">
+                        <button class="btn-back" onclick="showPage('page-premium')">← Назад</button>
+                        <div class="icon">💕</div>
+                        <h2>Знакомства (демо-версия)</h2>
+                        <p>Находите людей для встреч, общайтесь в чатах.</p>
+                        <p style="color:rgba(255,255,255,0.3);">Полный функционал доступен в PRO</p>
+                        <button class="btn-buy" onclick="showPage('page-premium')">Купить PRO</button>
+                    </div>
+                `;
+            }
+        }
 
         // ===== ДОСТИЖЕНИЯ =====
         async function loadAchievements() {
@@ -1965,7 +2069,6 @@
             } else {
                 onboardingStep++;
                 showOnboardingStep();
-                // Подсвечиваем соответствующий элемент
                 if (onboardingStep === 1) {
                     document.getElementById('visibilityButtons').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 } else if (onboardingStep === 2) {
@@ -1978,7 +2081,6 @@
             document.getElementById('onboardingOverlay').classList.remove('active');
             await callApi('set_onboarding_completed');
             tg.showAlert('🎉 Онбординг пройден! Вы получили +5 бонусных очков.');
-            // Добавляем очки (бэкенд добавит при завершении)
             loadProfile();
         }
 
@@ -1998,7 +2100,6 @@
             await loadP2P();
             checkIskry();
             await loadIskryGallery();
-            // Обновляем каждую минуту
             setInterval(() => {
                 loadQuestion();
                 if (document.getElementById('page-otrazhenie').classList.contains('active')) loadGallery();
