@@ -7,7 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
-        /* ===== БАЗОВЫЕ СТИЛИ ===== */
+        /* ===== БАЗОВЫЕ СТИЛИ (без изменений, оставляем как в предыдущей версии) ===== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -607,7 +607,7 @@
             margin-top:8px;
         }
 
-        /* Страницы PRO-функций (демо) */
+        /* Страницы PRO-функций (демо/реальные) */
         .pro-demo-placeholder {
             text-align:center; padding:20px 10px;
         }
@@ -630,6 +630,60 @@
             margin-top:12px;
         }
         .pro-demo-placeholder .btn-buy:hover { transform:scale(1.02); }
+
+        /* Демо-режим (блокировка элементов) */
+        .demo-mode .task-actions button,
+        .demo-mode .task-check,
+        .demo-mode .budget-category input,
+        .demo-mode .budget-category .cat-active,
+        .demo-mode .budget-income-row button,
+        .demo-mode #budgetSaveBtn,
+        .demo-mode #incomeSaveBtn,
+        .demo-mode #taskAddBtn,
+        .demo-mode .cal-mark-btn-modal,
+        .demo-mode .calendar-grid .day,
+        .demo-mode .diary-add-btn,
+        .demo-mode .diary-entry-actions,
+        .demo-mode .dating-like-btn,
+        .demo-mode .dating-message-btn {
+            pointer-events:none !important;
+            opacity:0.6;
+        }
+        .demo-mode .modal-overlay { display:none !important; }
+
+        /* Дневник */
+        .diary-entry {
+            padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05);
+        }
+        .diary-entry .entry-title { font-weight:600; color:#fff; }
+        .diary-entry .entry-date { font-size:12px; color:rgba(255,255,255,0.3); }
+        .diary-entry .entry-text { color:rgba(255,255,255,0.5); margin-top:4px; }
+        .diary-add-btn {
+            background:rgba(212,175,55,0.1);
+            border:1px solid rgba(212,175,55,0.2);
+            border-radius:30px; padding:6px 16px;
+            color:#d4af37; cursor:pointer; font-family:inherit;
+            margin-bottom:12px;
+        }
+
+        /* Знакомства */
+        .dating-card {
+            display:flex; align-items:center; gap:12px;
+            padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05);
+        }
+        .dating-card .avatar { width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; }
+        .dating-card .info { flex:1; }
+        .dating-card .info .name { font-weight:500; color:#fff; }
+        .dating-card .info .meta { font-size:12px; color:rgba(255,255,255,0.3); }
+        .dating-card .actions { display:flex; gap:8px; }
+        .dating-card .actions button {
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:30px; padding:4px 12px;
+            color:rgba(255,255,255,0.5); cursor:pointer;
+            font-size:12px; font-family:inherit;
+        }
+        .dating-card .actions button.liked { background:rgba(255,107,107,0.15); border-color:#ff6b6b; color:#ff6b6b; }
     </style>
 </head>
 <body>
@@ -749,7 +803,7 @@
             </div>
         </div>
 
-        <!-- Страница PRO (открывается по кнопке PRO в шапке) -->
+        <!-- Страница PRO -->
         <div id="page-premium" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">⭐</div><div class="label" style="color:#d4af37;">PRO</div></div>
             <div class="glass" id="premiumContainer">
@@ -855,24 +909,24 @@
         <!-- Дневник (PRO) -->
         <div id="page-diary" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">📔</div><div class="label" style="color:#d4af37;">Дневник</div></div>
-            <div class="glass">
-                <div id="diaryContent"></div>
+            <div class="glass" id="diaryContainer">
+                <!-- Контент будет заполнен скриптом -->
             </div>
         </div>
 
         <!-- Планер (PRO) -->
         <div id="page-planner" class="page">
             <div class="center-piece"><div class="symbol" style="color:#d4af37;">📋</div><div class="label" style="color:#d4af37;">Планер</div></div>
-            <div class="glass">
-                <div id="plannerContent"></div>
+            <div class="glass" id="plannerContainer">
+                <!-- Контент будет заполнен скриптом -->
             </div>
         </div>
 
         <!-- Знакомства (PRO) -->
         <div id="page-dating" class="page">
             <div class="center-piece"><div class="symbol" style="color:#ff6b6b;">❤️</div><div class="label" style="color:#ff6b6b;">Знакомства</div></div>
-            <div class="glass">
-                <div id="datingContent"></div>
+            <div class="glass" id="datingContainer">
+                <!-- Контент будет заполнен скриптом -->
             </div>
         </div>
     </div>
@@ -987,6 +1041,7 @@
         let isPremium = false;
         let onboardingStep = 0;
         let userMask = '';
+        let isDemoMode = false; // флаг для демо-режима
 
         // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
         async function callApi(action, data = {}) {
@@ -1079,7 +1134,8 @@
         });
 
         // ===== ПЕРЕКЛЮЧЕНИЕ СТРАНИЦ =====
-        function showPage(pageId) {
+        function showPage(pageId, demo = false) {
+            isDemoMode = demo;
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             document.querySelectorAll('.tab-item').forEach(t => {
@@ -1093,7 +1149,7 @@
                 checkIskry();
                 loadIskryGallery();
             } else if (pageId === 'page-vstrecha') {
-                // nothing special
+                // nothing
             } else if (pageId === 'page-premium') {
                 loadPremiumStatus();
             } else if (pageId === 'page-profile') {
@@ -1101,11 +1157,11 @@
                 loadAchievements();
                 loadReferralStats();
             } else if (pageId === 'page-diary') {
-                renderDiary();
+                renderDiary(demo);
             } else if (pageId === 'page-planner') {
-                renderPlanner();
+                renderPlanner(demo);
             } else if (pageId === 'page-dating') {
-                renderDating();
+                renderDating(demo);
             } else if (pageId === 'page-moment') {
                 loadQuestion();
             }
@@ -1264,7 +1320,6 @@
                 });
                 container.innerHTML = html;
 
-                // Обработчики реакций
                 container.querySelectorAll('.reaction-btn').forEach(btn => {
                     btn.addEventListener('click', async function(e) {
                         e.stopPropagation();
@@ -1306,7 +1361,6 @@
             }
         }
 
-        // ===== ПАЛИТРА РЕАКЦИЙ =====
         function showReactionPicker(btn, answerId) {
             const oldPicker = document.querySelector('.reaction-picker');
             if (oldPicker) oldPicker.remove();
@@ -1817,110 +1871,276 @@
                 tg.showAlert('Доступно только в PRO. Купите подписку.');
                 return;
             }
-            showPage('page-diary');
+            showPage('page-diary', false);
         });
         document.getElementById('proPlanner').addEventListener('click', function() {
             if (!isPremium) {
                 tg.showAlert('Доступно только в PRO. Купите подписку.');
                 return;
             }
-            showPage('page-planner');
+            showPage('page-planner', false);
         });
         document.getElementById('proDating').addEventListener('click', function() {
             if (!isPremium) {
                 tg.showAlert('Доступно только в PRO. Купите подписку.');
                 return;
             }
-            showPage('page-dating');
+            showPage('page-dating', false);
         });
 
-        // Демо-карточки для не-PRO
+        // Демо-карточки для не-PRO – открывают страницы в демо-режиме
         document.getElementById('demoDiary').addEventListener('click', function() {
-            showPage('page-diary');
+            showPage('page-diary', true);
         });
         document.getElementById('demoPlanner').addEventListener('click', function() {
-            showPage('page-planner');
+            showPage('page-planner', true);
         });
         document.getElementById('demoDating').addEventListener('click', function() {
-            showPage('page-dating');
+            showPage('page-dating', true);
         });
 
         // ===== ОТОБРАЖЕНИЕ СТРАНИЦ PRO-ФУНКЦИЙ (ДЕМО/ПРО) =====
-        function renderDiary() {
-            const container = document.getElementById('diaryContent');
-            if (isPremium) {
+
+        // --- ДНЕВНИК ---
+        function renderDiary(demo) {
+            const container = document.getElementById('diaryContainer');
+            const modeClass = demo ? 'demo-mode' : '';
+            if (demo && !isPremium) {
+                // Демо-режим
                 container.innerHTML = `
-                    <div class="pro-demo-placeholder">
-                        <button class="btn-back" onclick="showPage('page-premium')">← Назад</button>
-                        <div class="icon">📝</div>
-                        <h2>Ваш личный дневник</h2>
-                        <p>Записывайте мысли, добавляйте фото, ведите теги.<br>Полноценная версия в разработке.</p>
-                        <p style="color:rgba(255,255,255,0.2); font-size:12px;">Скоро здесь появится функционал</p>
+                    <div class="${modeClass}">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                            <span style="font-weight:600; color:rgba(255,255,255,0.5);">Мои записи</span>
+                            <button class="diary-add-btn" onclick="tg.showAlert('Доступно в PRO')">+ Новая запись</button>
+                        </div>
+                        <div class="diary-entry">
+                            <div class="entry-title">Сегодняшний день</div>
+                            <div class="entry-date">28 июня 2025</div>
+                            <div class="entry-text">Сегодня я проснулся рано и почувствовал прилив энергии. Решил начать вести дневник, чтобы записывать свои мысли и идеи.</div>
+                        </div>
+                        <div class="diary-entry">
+                            <div class="entry-title">Размышления о работе</div>
+                            <div class="entry-date">27 июня 2025</div>
+                            <div class="entry-text">На работе много дел, но я стараюсь не перегружать себя. Важно находить время для отдыха.</div>
+                        </div>
+                        <div style="margin-top:12px; text-align:center; color:rgba(255,255,255,0.3); font-size:12px;">
+                            🔒 Полный функционал доступен в PRO
+                        </div>
                     </div>
                 `;
+            } else if (isPremium) {
+                // Реальный интерфейс для PRO (пока заглушка)
+                container.innerHTML = `
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                            <span style="font-weight:600; color:rgba(255,255,255,0.5);">Мои записи</span>
+                            <button class="diary-add-btn">+ Новая запись</button>
+                        </div>
+                        <div style="color:rgba(255,255,255,0.3); text-align:center; padding:20px;">
+                            <div style="font-size:48px;">📝</div>
+                            <p style="margin-top:8px;">Дневник активно разрабатывается.<br>Скоро здесь появится полноценный функционал.</p>
+                        </div>
+                    </div>
+                `;
+                // Кнопка "Новая запись" пока просто показывает уведомление
+                container.querySelector('.diary-add-btn')?.addEventListener('click', function() {
+                    tg.showAlert('Функция в разработке');
+                });
             } else {
+                // fallback (не должно случиться)
+                container.innerHTML = `<div class="pro-demo-placeholder"><button class="btn-back" onclick="showPage('page-premium')">← Назад</button><p>Ошибка загрузки</p></div>`;
+            }
+            // Добавляем кнопку "Назад" в начало
+            const backBtn = document.createElement('button');
+            backBtn.className = 'btn-back';
+            backBtn.textContent = '← Назад';
+            backBtn.style.cssText = 'background:rgba(255,255,255,0.1);border:none;border-radius:30px;padding:8px 20px;color:#fff;font-size:14px;cursor:pointer;font-family:inherit;transition:0.3s;display:inline-block;margin-bottom:16px;';
+            backBtn.onclick = () => showPage('page-premium');
+            container.prepend(backBtn);
+        }
+
+        // --- ПЛАНЕР (демо + реальный) ---
+        function renderPlanner(demo) {
+            const container = document.getElementById('plannerContainer');
+            const modeClass = demo ? 'demo-mode' : '';
+            if (demo && !isPremium) {
+                // Демо-режим (восстановленный из старого кода)
                 container.innerHTML = `
-                    <div class="pro-demo-placeholder">
-                        <button class="btn-back" onclick="showPage('page-premium')">← Назад</button>
-                        <div class="icon">📝</div>
-                        <h2>Дневник (демо-версия)</h2>
-                        <p>Записывайте мысли, добавляйте фото, ведите теги.</p>
-                        <p style="color:rgba(255,255,255,0.3);">Полный функционал доступен в PRO</p>
-                        <button class="btn-buy" onclick="showPage('page-premium')">Купить PRO</button>
+                    <div class="${modeClass}">
+                        <div style="display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap;">
+                            <button class="planer-tab active" data-planer="tasks" style="flex:1;padding:8px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:30px;color:rgba(255,255,255,0.4);cursor:pointer;font-weight:500;font-size:13px;transition:0.3s;font-family:inherit;min-width:60px;">📌 Задачи</button>
+                            <button class="planer-tab" data-planer="budget" style="flex:1;padding:8px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:30px;color:rgba(255,255,255,0.4);cursor:pointer;font-weight:500;font-size:13px;transition:0.3s;font-family:inherit;min-width:60px;">💰 Бюджет</button>
+                            <button class="planer-tab" data-planer="calendar" style="flex:1;padding:8px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:30px;color:rgba(255,255,255,0.4);cursor:pointer;font-weight:500;font-size:13px;transition:0.3s;font-family:inherit;min-width:60px;">📅 Календарь</button>
+                            <button class="planer-tab" data-planer="stats" style="flex:1;padding:8px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:30px;color:rgba(255,255,255,0.4);cursor:pointer;font-weight:500;font-size:13px;transition:0.3s;font-family:inherit;min-width:60px;">📊 Статистика</button>
+                        </div>
+                        <div id="demoPlannerContent">
+                            <div id="demoTasks" style="display:block;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                                    <span style="font-weight:600; color:rgba(255,255,255,0.5);">Задачи на сегодня</span>
+                                    <button id="demoTaskAddBtn" style="background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.2);border-radius:30px;padding:6px 16px;color:#d4af37;cursor:pointer;font-family:inherit;" onclick="tg.showAlert('Доступно в PRO')">+ Добавить</button>
+                                </div>
+                                <div class="task-item"><div class="task-check done"></div><div class="task-info"><div class="task-title done">Утренняя зарядка</div><div class="task-meta">08:00 · Здоровье</div></div><div class="task-priority low"></div><div class="task-actions"><button>✎</button><button>✕</button></div></div>
+                                <div class="task-item"><div class="task-check"></div><div class="task-info"><div class="task-title">Работа над проектом</div><div class="task-meta">10:00–13:00 · Работа</div></div><div class="task-priority high"></div><div class="task-actions"><button>✎</button><button>✕</button></div></div>
+                                <div class="task-item"><div class="task-check done"></div><div class="task-info"><div class="task-title done">Обед</div><div class="task-meta">13:00 · Личное</div></div><div class="task-priority medium"></div><div class="task-actions"><button>✎</button><button>✕</button></div></div>
+                                <div class="task-item"><div class="task-check"></div><div class="task-info"><div class="task-title">Встреча с клиентом</div><div class="task-meta">15:00 · Работа <span class="task-deadline-overdue">Просрочено!</span></div></div><div class="task-priority high"></div><div class="task-actions"><button>✎</button><button>✕</button></div></div>
+                            </div>
+                            <div id="demoBudget" style="display:none;">
+                                <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+                                    <button class="budget-mode-btn active" data-mode="0" style="padding:6px 16px;background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.2);border-radius:30px;color:#d4af37;cursor:pointer;font-weight:500;font-family:inherit;">Без кредитов</button>
+                                    <button class="budget-mode-btn" data-mode="1" style="padding:6px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-weight:500;font-family:inherit;">С кредитами</button>
+                                </div>
+                                <div class="budget-income-row" style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+                                    <label style="color:rgba(255,255,255,0.5);font-size:14px;">💰 Доход (руб/мес):</label>
+                                    <input type="number" value="50000" min="0" step="100" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:8px 14px;color:#fff;width:120px;font-family:inherit;" disabled />
+                                    <button style="padding:8px 20px;background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.2);border-radius:30px;color:#d4af37;cursor:pointer;font-weight:500;font-family:inherit;" disabled>Сохранить</button>
+                                </div>
+                                <div class="budget-category" style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);flex-wrap:wrap;"><span class="cat-name" style="flex:1;min-width:80px;color:#fff;font-weight:500;">Жильё</span><input type="number" value="25" min="0" max="100" step="0.1" style="width:70px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:4px 8px;color:#fff;font-family:inherit;" disabled /><span class="cat-percent" style="color:rgba(255,255,255,0.4);font-size:13px;width:50px;text-align:right;">25%</span><input type="number" value="12500" min="0" step="100" style="width:70px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:4px 8px;color:#fff;font-family:inherit;" disabled /><span class="cat-amount" style="color:#d4af37;font-weight:600;width:70px;text-align:right;">12500 ₽</span><span class="cat-active active" style="cursor:pointer;width:24px;text-align:center;color:#4ecdc4;">✔</span></div>
+                                <div class="budget-category" style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);flex-wrap:wrap;"><span class="cat-name" style="flex:1;min-width:80px;color:#fff;font-weight:500;">Еда</span><input type="number" value="20" min="0" max="100" step="0.1" style="width:70px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:4px 8px;color:#fff;font-family:inherit;" disabled /><span class="cat-percent" style="color:rgba(255,255,255,0.4);font-size:13px;width:50px;text-align:right;">20%</span><input type="number" value="10000" min="0" step="100" style="width:70px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:4px 8px;color:#fff;font-family:inherit;" disabled /><span class="cat-amount" style="color:#d4af37;font-weight:600;width:70px;text-align:right;">10000 ₽</span><span class="cat-active active" style="cursor:pointer;width:24px;text-align:center;color:#4ecdc4;">✔</span></div>
+                                <button id="demoBudgetSaveBtn" style="background:linear-gradient(135deg, #d4af37, #ffd700);color:#1a140e;border:none;padding:14px;border-radius:30px;font-size:16px;font-weight:600;cursor:pointer;width:100%;transition:0.3s;font-family:inherit;margin-top:12px;" disabled>Сохранить бюджет</button>
+                            </div>
+                            <div id="demoCalendar" style="display:none;">
+                                <div class="calendar-nav" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                                    <button style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:4px 14px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">◀</button>
+                                    <span style="font-weight:600;color:#fff;">Июнь 2025</span>
+                                    <button style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:4px 14px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">▶</button>
+                                </div>
+                                <div class="calendar-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px;">
+                                    <div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.3);padding:4px;">Пн</div><div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.3);padding:4px;">Вт</div><div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.3);padding:4px;">Ср</div><div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.3);padding:4px;">Чт</div><div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.3);padding:4px;">Пт</div><div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.3);padding:4px;">Сб</div><div style="text-align:center;font-size:12px;color:rgba(255,255,255,0.3);padding:4px;">Вс</div>
+                                    <div class="day" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.03);border-radius:8px;font-size:14px;color:rgba(255,255,255,0.6);cursor:pointer;position:relative;transition:0.2s;">1</div>
+                                    <div class="day" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.03);border-radius:8px;font-size:14px;color:rgba(255,255,255,0.6);cursor:pointer;position:relative;transition:0.2s;">2</div>
+                                    <div class="day" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.03);border-radius:8px;font-size:14px;color:rgba(255,255,255,0.6);cursor:pointer;position:relative;transition:0.2s;">3</div>
+                                    <div class="day" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.03);border-radius:8px;font-size:14px;color:rgba(255,255,255,0.6);cursor:pointer;position:relative;transition:0.2s;">4</div>
+                                    <div class="day has-mark" style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:rgba(212,175,55,0.1);border-radius:8px;font-size:14px;color:rgba(255,255,255,0.6);cursor:pointer;position:relative;transition:0.2s;">5<div class="mark-dot work" style="position:absolute;bottom:4px;width:6px;height:6px;border-radius:50%;background:#4caf50;"></div></div>
+                                    <!-- ... больше дней для демо пропустим -->
+                                </div>
+                            </div>
+                            <div id="demoStats" style="display:none;">
+                                <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+                                    <button class="stats-period-btn active" data-period="day" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">День</button>
+                                    <button class="stats-period-btn" data-period="week" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">Неделя</button>
+                                    <button class="stats-period-btn" data-period="month" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">Месяц</button>
+                                </div>
+                                <div class="stats-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                                    <div class="stats-card total" style="padding:16px;text-align:center;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);"><span class="number" style="font-size:28px;font-weight:700;display:block;color:#4ecdc4;">12</span><span class="label" style="font-size:12px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;">Всего</span></div>
+                                    <div class="stats-card completed" style="padding:16px;text-align:center;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);"><span class="number" style="font-size:28px;font-weight:700;display:block;color:#4caf50;">5</span><span class="label" style="font-size:12px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;">Выполнено</span></div>
+                                    <div class="stats-card pending" style="padding:16px;text-align:center;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);"><span class="number" style="font-size:28px;font-weight:700;display:block;color:#ff9800;">4</span><span class="label" style="font-size:12px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;">Ожидает</span></div>
+                                    <div class="stats-card overdue" style="padding:16px;text-align:center;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);"><span class="number" style="font-size:28px;font-weight:700;display:block;color:#f44336;">3</span><span class="label" style="font-size:12px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;">Просрочено</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top:12px; text-align:center; color:rgba(255,255,255,0.3); font-size:12px;">
+                            🔒 Полный функционал доступен в PRO
+                        </div>
                     </div>
                 `;
+                // Переключение вкладок в демо-планере
+                container.querySelectorAll('.planer-tab').forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        container.querySelectorAll('.planer-tab').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        const section = this.dataset.planer;
+                        ['demoTasks','demoBudget','demoCalendar','demoStats'].forEach(id => {
+                            document.getElementById(id).style.display = (id === 'demo' + section.charAt(0).toUpperCase() + section.slice(1)) ? 'block' : 'none';
+                        });
+                    });
+                });
+                // Стили для активной вкладки
+                container.querySelector('.planer-tab.active')?.classList.add('active');
+                // Кнопки в демо-режиме уже заблокированы через disabled и pointer-events
+                // Добавляем стиль demo-mode
+                container.firstChild.classList.add('demo-mode');
+                // Добавляем кнопку "Назад"
+                const backBtn = document.createElement('button');
+                backBtn.className = 'btn-back';
+                backBtn.textContent = '← Назад';
+                backBtn.style.cssText = 'background:rgba(255,255,255,0.1);border:none;border-radius:30px;padding:8px 20px;color:#fff;font-size:14px;cursor:pointer;font-family:inherit;transition:0.3s;display:inline-block;margin-bottom:16px;';
+                backBtn.onclick = () => showPage('page-premium');
+                container.prepend(backBtn);
+            } else if (isPremium) {
+                // Реальный планер для PRO (пока заглушка)
+                container.innerHTML = `
+                    <div>
+                        <div style="display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap;">
+                            <button class="planer-tab active" data-planer="tasks" style="flex:1;padding:8px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:30px;color:rgba(255,255,255,0.4);cursor:pointer;font-weight:500;font-size:13px;transition:0.3s;font-family:inherit;min-width:60px;">📌 Задачи</button>
+                            <button class="planer-tab" data-planer="budget" style="flex:1;padding:8px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:30px;color:rgba(255,255,255,0.4);cursor:pointer;font-weight:500;font-size:13px;transition:0.3s;font-family:inherit;min-width:60px;">💰 Бюджет</button>
+                            <button class="planer-tab" data-planer="calendar" style="flex:1;padding:8px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:30px;color:rgba(255,255,255,0.4);cursor:pointer;font-weight:500;font-size:13px;transition:0.3s;font-family:inherit;min-width:60px;">📅 Календарь</button>
+                            <button class="planer-tab" data-planer="stats" style="flex:1;padding:8px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:30px;color:rgba(255,255,255,0.4);cursor:pointer;font-weight:500;font-size:13px;transition:0.3s;font-family:inherit;min-width:60px;">📊 Статистика</button>
+                        </div>
+                        <div style="color:rgba(255,255,255,0.3); text-align:center; padding:20px;">
+                            <div style="font-size:48px;">📋</div>
+                            <p style="margin-top:8px;">Планер активно разрабатывается.<br>Скоро здесь появится полноценный функционал.</p>
+                        </div>
+                    </div>
+                `;
+                // Кнопка "Назад"
+                const backBtn = document.createElement('button');
+                backBtn.className = 'btn-back';
+                backBtn.textContent = '← Назад';
+                backBtn.style.cssText = 'background:rgba(255,255,255,0.1);border:none;border-radius:30px;padding:8px 20px;color:#fff;font-size:14px;cursor:pointer;font-family:inherit;transition:0.3s;display:inline-block;margin-bottom:16px;';
+                backBtn.onclick = () => showPage('page-premium');
+                container.prepend(backBtn);
+            } else {
+                // fallback
+                container.innerHTML = `<div class="pro-demo-placeholder"><button class="btn-back" onclick="showPage('page-premium')">← Назад</button><p>Ошибка загрузки</p></div>`;
             }
         }
 
-        function renderPlanner() {
-            const container = document.getElementById('plannerContent');
-            if (isPremium) {
+        // --- ЗНАКОМСТВА (демо) ---
+        function renderDating(demo) {
+            const container = document.getElementById('datingContainer');
+            if (demo && !isPremium) {
+                // Демо-режим
                 container.innerHTML = `
-                    <div class="pro-demo-placeholder">
-                        <button class="btn-back" onclick="showPage('page-premium')">← Назад</button>
-                        <div class="icon">📋</div>
-                        <h2>Планер</h2>
-                        <p>Задачи, бюджет, календарь – всё в одном месте.</p>
-                        <p style="color:rgba(255,255,255,0.2); font-size:12px;">Полноценная версия в разработке</p>
+                    <div class="demo-mode">
+                        <div style="display:flex; gap:8px; margin-bottom:12px;">
+                            <input type="text" placeholder="Город" value="Москва" style="flex:1;padding:8px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:#fff;font-family:inherit;" disabled />
+                            <input type="text" placeholder="От 18 до 99" value="25-35" style="flex:1;padding:8px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:#fff;font-family:inherit;" disabled />
+                        </div>
+                        <div class="dating-card">
+                            <div class="avatar">👩</div>
+                            <div class="info"><div class="name">Анна, 28</div><div class="meta">Москва · Любит путешествия</div></div>
+                            <div class="actions"><button class="dating-like-btn liked" onclick="tg.showAlert('Доступно в PRO')">❤️</button><button class="dating-message-btn" onclick="tg.showAlert('Доступно в PRO')">💬</button></div>
+                        </div>
+                        <div class="dating-card">
+                            <div class="avatar">👨</div>
+                            <div class="info"><div class="name">Дмитрий, 32</div><div class="meta">Москва · Спорт, путешествия</div></div>
+                            <div class="actions"><button class="dating-like-btn" onclick="tg.showAlert('Доступно в PRO')">❤️</button><button class="dating-message-btn" onclick="tg.showAlert('Доступно в PRO')">💬</button></div>
+                        </div>
+                        <div class="dating-card">
+                            <div class="avatar">👩</div>
+                            <div class="info"><div class="name">Екатерина, 24</div><div class="meta">Москва · Искусство, книги</div></div>
+                            <div class="actions"><button class="dating-like-btn liked" onclick="tg.showAlert('Доступно в PRO')">❤️</button><button class="dating-message-btn" onclick="tg.showAlert('Доступно в PRO')">💬</button></div>
+                        </div>
+                        <div style="margin-top:12px; text-align:center; color:rgba(255,255,255,0.3); font-size:12px;">
+                            🔒 Полный функционал доступен в PRO
+                        </div>
                     </div>
                 `;
+                // Добавляем кнопку "Назад"
+                const backBtn = document.createElement('button');
+                backBtn.className = 'btn-back';
+                backBtn.textContent = '← Назад';
+                backBtn.style.cssText = 'background:rgba(255,255,255,0.1);border:none;border-radius:30px;padding:8px 20px;color:#fff;font-size:14px;cursor:pointer;font-family:inherit;transition:0.3s;display:inline-block;margin-bottom:16px;';
+                backBtn.onclick = () => showPage('page-premium');
+                container.prepend(backBtn);
+            } else if (isPremium) {
+                // Реальные знакомства для PRO (заглушка)
+                container.innerHTML = `
+                    <div>
+                        <div style="color:rgba(255,255,255,0.3); text-align:center; padding:20px;">
+                            <div style="font-size:48px;">💕</div>
+                            <p style="margin-top:8px;">Знакомства активно разрабатываются.<br>Скоро здесь появится полноценный функционал.</p>
+                        </div>
+                    </div>
+                `;
+                const backBtn = document.createElement('button');
+                backBtn.className = 'btn-back';
+                backBtn.textContent = '← Назад';
+                backBtn.style.cssText = 'background:rgba(255,255,255,0.1);border:none;border-radius:30px;padding:8px 20px;color:#fff;font-size:14px;cursor:pointer;font-family:inherit;transition:0.3s;display:inline-block;margin-bottom:16px;';
+                backBtn.onclick = () => showPage('page-premium');
+                container.prepend(backBtn);
             } else {
-                container.innerHTML = `
-                    <div class="pro-demo-placeholder">
-                        <button class="btn-back" onclick="showPage('page-premium')">← Назад</button>
-                        <div class="icon">📋</div>
-                        <h2>Планер (демо-версия)</h2>
-                        <p>Управляйте задачами, бюджетом и календарём.</p>
-                        <p style="color:rgba(255,255,255,0.3);">Полный функционал доступен в PRO</p>
-                        <button class="btn-buy" onclick="showPage('page-premium')">Купить PRO</button>
-                    </div>
-                `;
-            }
-        }
-
-        function renderDating() {
-            const container = document.getElementById('datingContent');
-            if (isPremium) {
-                container.innerHTML = `
-                    <div class="pro-demo-placeholder">
-                        <button class="btn-back" onclick="showPage('page-premium')">← Назад</button>
-                        <div class="icon">💕</div>
-                        <h2>Знакомства</h2>
-                        <p>Анкеты, поиск по городу, чаты – всё анонимно и безопасно.</p>
-                        <p style="color:rgba(255,255,255,0.2); font-size:12px;">Полноценная версия в разработке</p>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = `
-                    <div class="pro-demo-placeholder">
-                        <button class="btn-back" onclick="showPage('page-premium')">← Назад</button>
-                        <div class="icon">💕</div>
-                        <h2>Знакомства (демо-версия)</h2>
-                        <p>Находите людей для встреч, общайтесь в чатах.</p>
-                        <p style="color:rgba(255,255,255,0.3);">Полный функционал доступен в PRO</p>
-                        <button class="btn-buy" onclick="showPage('page-premium')">Купить PRO</button>
-                    </div>
-                `;
+                container.innerHTML = `<div class="pro-demo-placeholder"><button class="btn-back" onclick="showPage('page-premium')">← Назад</button><p>Ошибка загрузки</p></div>`;
             }
         }
 
@@ -2088,7 +2308,7 @@
         document.querySelectorAll('.tab-item').forEach(tab => {
             tab.addEventListener('click', function() {
                 const pageId = this.dataset.page;
-                if (pageId) showPage(pageId);
+                if (pageId) showPage(pageId, false);
             });
         });
 
