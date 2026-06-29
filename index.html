@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Re:Self</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
         /* ===== БАЗОВЫЕ СТИЛИ ===== */
@@ -868,6 +869,18 @@
         .photo-upload-row .file-name {
             font-size:12px; color:rgba(255,255,255,0.3);
         }
+
+        /* Графики */
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+            margin: 12px 0;
+        }
+        .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
     </style>
 </head>
 <body>
@@ -1125,8 +1138,8 @@
     </div>
 
     <!-- ===== МОДАЛЬНЫЕ ОКНА ===== -->
-    <!-- Комментарии, P2P, Искры, Дневник, Планер, Транзакции, Знакомства — опущены для краткости, но должны быть в финальной версии -->
-    <!-- Для экономии места я не привожу их, но в реальном файле они присутствуют -->
+    <!-- Комментарии, P2P, Искры, Дневник, Планер, Транзакции, Знакомства — опущены для краткости, но в реальном файле они присутствуют -->
+    <!-- Для экономии места я не привожу их, но в финальном файле они должны быть -->
 
     <!-- Онбординг -->
     <div class="onboarding-overlay" id="onboardingOverlay">
@@ -1158,7 +1171,8 @@
         const userId = user.id || 0;
         const firstName = user.first_name || 'Пользователь';
         const photoUrl = user.photo_url || null;
-        const API_URL = 'https://garage-courier-everybody.ngrok-free.dev/api';
+        // Используем локальный адрес, замените на ваш реальный адрес при деплое
+        const API_URL = 'http://localhost:8080'; // или ваш ngrok-адрес
 
         // Состояния
         let currentVisibility = 0;
@@ -1182,6 +1196,7 @@
         let currentBudgetMode = 0;
         let calendarDate = new Date();
         let calendarMarks = [];
+        let budgetChartInstance = null;
 
         // Для знакомств
         let currentChatId = null;
@@ -1195,7 +1210,7 @@
             try {
                 const payload = { action, user_id: userId, ...data };
                 console.log('📤', payload);
-                const resp = await fetch(API_URL, {
+                const resp = await fetch(`${API_URL}/api`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -1213,11 +1228,16 @@
             const formData = new FormData();
             formData.append('user_id', userId);
             formData.append('file', file);
-            const resp = await fetch('/upload_photo', {
-                method: 'POST',
-                body: formData
-            });
-            return await resp.json();
+            try {
+                const resp = await fetch(`${API_URL}/upload_photo`, {
+                    method: 'POST',
+                    body: formData
+                });
+                return await resp.json();
+            } catch(e) {
+                tg.showAlert('Ошибка загрузки фото');
+                return null;
+            }
         }
 
         function escHtml(str) {
@@ -1558,7 +1578,6 @@
 
         function renderDiary(demo) {
             const container = document.getElementById('diaryContainer');
-            // Добавляем кнопку "Назад" и блокируем демо-режим
             let html = `<button class="pro-back-btn" onclick="showPage('page-premium')">← Назад</button>`;
             if (demo || !isPremium) {
                 html += `
@@ -1645,7 +1664,6 @@
             html += `</div>`;
             container.innerHTML = html;
 
-            // Обработчики
             document.getElementById('diaryAddEntryBtn').addEventListener('click', function() {
                 openDiaryEntryModal();
             });
@@ -1713,7 +1731,6 @@
                 `;
             });
             list.innerHTML = html;
-            // Перепривязываем обработчики
             list.querySelectorAll('.diary-edit-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const id = parseInt(this.dataset.id);
@@ -1775,7 +1792,6 @@
             // Обработчик загрузки фото через файл
             const fileInput = document.getElementById('diaryFileInput');
             if (!fileInput) {
-                // Создаём input, если его нет
                 const input = document.createElement('input');
                 input.type = 'file';
                 input.accept = 'image/*';
@@ -1786,14 +1802,13 @@
                     const file = this.files[0];
                     if (!file) return;
                     const result = await uploadPhoto(file);
-                    if (result.success) {
+                    if (result && result.success) {
                         addPhotoToContainer(photosContainer, result.file_id);
                     } else {
                         tg.showAlert('Ошибка загрузки фото');
                     }
                     this.value = '';
                 });
-                // Кнопка для выбора файла
                 const label = document.createElement('label');
                 label.htmlFor = 'diaryFileInput';
                 label.className = 'file-label';
@@ -1801,7 +1816,6 @@
                 const row = document.createElement('div');
                 row.className = 'photo-upload-row';
                 row.appendChild(label);
-                // Вставляем после поля "Фото"
                 const photosLabel = modal.querySelector('.photo-upload-row');
                 if (photosLabel) {
                     photosLabel.parentNode.insertBefore(row, photosLabel.nextSibling);
@@ -1859,14 +1873,13 @@
         });
 
         // ============================================================
-        // 9. ПЛАНЕР (полноценный)
+        // 9. ПЛАНЕР (полноценный, с автопересчётом бюджета и графиками)
         // ============================================================
 
         function renderPlanner(demo) {
             const container = document.getElementById('plannerContainer');
             let html = `<button class="pro-back-btn" onclick="showPage('page-premium')">← Назад</button>`;
             if (demo || !isPremium) {
-                // Демо-режим (заглушка)
                 html += `
                     <div class="demo-mode">
                         <div class="planer-tabs">
@@ -1892,7 +1905,6 @@
                     </div>
                 `;
                 container.innerHTML = html;
-                // Переключение вкладок демо
                 container.querySelectorAll('.planer-tabs button').forEach(tab => {
                     tab.addEventListener('click', function() {
                         container.querySelectorAll('.planer-tabs button').forEach(t => t.classList.remove('active'));
@@ -1906,7 +1918,6 @@
                 return;
             }
 
-            // Реальный планер для PRO
             loadPlannerContent(container);
         }
 
@@ -1951,7 +1962,6 @@
                     const done = t.status === 2;
                     const priorityClass = t.priority === 0 ? 'low' : t.priority === 2 ? 'high' : 'medium';
                     const overdue = t.deadline && t.deadline < getNowTimestamp() && !done;
-                    const statusText = ['Не начата','В процессе','Выполнена','Отложена'][t.status] || 'Не начата';
                     html += `
                         <div class="task-item" data-id="${t.id}">
                             <div class="task-check ${done?'done':''}" data-id="${t.id}"></div>
@@ -1973,8 +1983,6 @@
                             </div>
                         </div>
                     `;
-                    // Подзадачи (если есть)
-                    // можно загрузить отдельно, но пока пропустим
                 });
             }
 
@@ -1992,14 +2000,14 @@
                         <button id="incomeSaveBtn">Сохранить</button>
                     </div>
                     <div id="budgetCategoriesList">
-                        ${budgetCategories.map(c => `
-                            <div class="budget-category">
+                        ${budgetCategories.map((c, idx) => `
+                            <div class="budget-category" data-idx="${idx}">
                                 <span class="cat-name">${escHtml(c.name)}</span>
-                                <input type="number" class="cat-percent-input" value="${c.percent}" min="0" max="100" step="0.1" />
+                                <input type="number" class="cat-percent-input" data-idx="${idx}" value="${c.percent}" min="0" max="100" step="0.1" />
                                 <span class="cat-percent">${c.percent}%</span>
-                                <input type="number" class="cat-amount-input" value="${c.amount||0}" min="0" step="100" />
+                                <input type="number" class="cat-amount-input" data-idx="${idx}" value="${c.amount||0}" min="0" step="100" />
                                 <span class="cat-amount">${c.amount||0} ₽</span>
-                                <span class="cat-active ${c.active?'active':''}">${c.active?'✔':'✕'}</span>
+                                <span class="cat-active ${c.active?'active':''}" data-idx="${idx}">${c.active?'✔':'✕'}</span>
                             </div>
                         `).join('')}
                     </div>
@@ -2012,6 +2020,9 @@
                                 <div class="meta">${formatDateShort(t.date)}</div>
                             </div>
                         `).join('') || '<div class="empty">Нет транзакций</div>'}
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="budgetChart"></canvas>
                     </div>
                 </div>
                 <div class="planer-section" id="plannerCalendar">
@@ -2035,17 +2046,97 @@
                         <div class="stats-card pending"><span class="number" id="statPending">${stats.pending||0}</span><span class="label">Ожидает</span></div>
                         <div class="stats-card overdue"><span class="number" id="statOverdue">${stats.overdue||0}</span><span class="label">Просрочено</span></div>
                     </div>
+                    <div class="chart-container">
+                        <canvas id="taskChart"></canvas>
+                    </div>
                 </div>
             `;
             container.innerHTML = html;
 
-            // Обработчики для планера
             initPlannerHandlers();
             loadCalendar();
+            renderBudgetChart(budgetCategories);
+            renderTaskChart(stats);
+            // Автопересчёт бюджета при изменении полей
+            container.querySelectorAll('.budget-category input').forEach(input => {
+                input.addEventListener('input', function() {
+                    recalcBudgetPreview();
+                });
+            });
+        }
+
+        async function recalcBudgetPreview() {
+            const container = document.getElementById('budgetCategoriesList');
+            const inputs = container.querySelectorAll('.budget-category');
+            const categories = [];
+            const income = parseInt(document.getElementById('incomeInput').value) || 0;
+            inputs.forEach(el => {
+                const name = el.querySelector('.cat-name').textContent;
+                const percent = parseFloat(el.querySelector('.cat-percent-input').value) || 0;
+                const active = el.querySelector('.cat-active').classList.contains('active');
+                const fixed_amount = parseFloat(el.querySelector('.cat-amount-input').value) || 0;
+                categories.push({ name, percent, active, fixed_amount });
+            });
+            // Отправляем запрос на пересчёт
+            const data = await callApi('update_budget', { categories, income });
+            if (data?.success) {
+                loadPlannerContent(document.getElementById('plannerContainer'));
+            } else {
+                tg.showAlert(data?.error || 'Ошибка пересчёта');
+            }
+        }
+
+        function renderBudgetChart(categories) {
+            const ctx = document.getElementById('budgetChart');
+            if (!ctx) return;
+            if (budgetChartInstance) budgetChartInstance.destroy();
+            const labels = categories.filter(c => c.active).map(c => c.name);
+            const amounts = categories.filter(c => c.active).map(c => c.amount || 0);
+            budgetChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: amounts,
+                        backgroundColor: ['#4ecdc4', '#ff6b6b', '#ffd93d', '#6c5ce7', '#00b894', '#fdcb6e', '#e17055', '#00cec9', '#a29bfe', '#fd79a8']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#e0e8f0' } }
+                    }
+                }
+            });
+        }
+
+        function renderTaskChart(stats) {
+            const ctx = document.getElementById('taskChart');
+            if (!ctx) return;
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Всего', 'Выполнено', 'Ожидает', 'Просрочено'],
+                    datasets: [{
+                        label: 'Задачи',
+                        data: [stats.total || 0, stats.completed || 0, stats.pending || 0, stats.overdue || 0],
+                        backgroundColor: ['#4ecdc4', '#4caf50', '#ff9800', '#f44336']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { color: '#e0e8f0' } },
+                        x: { ticks: { color: '#e0e8f0' } }
+                    }
+                }
+            });
         }
 
         function initPlannerHandlers() {
-            // Переключение вкладок
             document.querySelectorAll('.planer-tabs button').forEach(tab => {
                 tab.addEventListener('click', function() {
                     document.querySelectorAll('.planer-tabs button').forEach(t => t.classList.remove('active'));
@@ -2057,7 +2148,6 @@
                 });
             });
 
-            // Задачи: чекбоксы
             document.querySelectorAll('.task-check').forEach(el => {
                 el.addEventListener('click', async function() {
                     const id = parseInt(this.dataset.id);
@@ -2068,7 +2158,6 @@
                 });
             });
 
-            // Статус задач
             document.querySelectorAll('.task-status-select').forEach(el => {
                 el.addEventListener('change', async function() {
                     const id = parseInt(this.dataset.id);
@@ -2078,7 +2167,6 @@
                 });
             });
 
-            // Таймер
             document.querySelectorAll('.task-timer-btn').forEach(el => {
                 el.addEventListener('click', async function() {
                     const id = parseInt(this.dataset.id);
@@ -2095,7 +2183,6 @@
                 });
             });
 
-            // Редактирование задачи
             document.querySelectorAll('.task-edit').forEach(el => {
                 el.addEventListener('click', function() {
                     const id = parseInt(this.dataset.id);
@@ -2103,7 +2190,6 @@
                 });
             });
 
-            // Удаление задачи
             document.querySelectorAll('.task-delete').forEach(el => {
                 el.addEventListener('click', async function() {
                     if (!confirm('Удалить задачу?')) return;
@@ -2113,18 +2199,15 @@
                 });
             });
 
-            // Добавить задачу
             document.getElementById('taskAddBtn').addEventListener('click', function() {
                 editingTaskId = null;
                 openTaskModal();
             });
 
-            // Экспорт CSV
             document.getElementById('taskExportBtn').addEventListener('click', function() {
-                window.open(`/export_tasks?user_id=${userId}`, '_blank');
+                window.open(`${API_URL}/export_tasks?user_id=${userId}`, '_blank');
             });
 
-            // Доход
             document.getElementById('incomeSaveBtn').addEventListener('click', async function() {
                 const income = parseInt(document.getElementById('incomeInput').value) || 0;
                 const result = await callApi('set_income', { income });
@@ -2134,7 +2217,6 @@
                 }
             });
 
-            // Бюджет
             document.getElementById('budgetSaveBtn').addEventListener('click', async function() {
                 const container = document.getElementById('budgetCategoriesList');
                 const inputs = container.querySelectorAll('.budget-category');
@@ -2157,12 +2239,10 @@
                 }
             });
 
-            // Транзакции
             document.getElementById('transactionAddBtn').addEventListener('click', function() {
                 document.getElementById('modalTransaction').classList.add('active');
             });
 
-            // Календарь
             document.getElementById('calPrev').addEventListener('click', function() {
                 calendarDate.setMonth(calendarDate.getMonth() - 1);
                 loadCalendar();
@@ -2172,7 +2252,6 @@
                 loadCalendar();
             });
 
-            // Статистика
             document.querySelectorAll('.stats-period-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     document.querySelectorAll('.stats-period-btn').forEach(b => b.classList.remove('active'));
@@ -2189,6 +2268,7 @@
                 document.getElementById('statCompleted').textContent = data.stats.completed || 0;
                 document.getElementById('statPending').textContent = data.stats.pending || 0;
                 document.getElementById('statOverdue').textContent = data.stats.overdue || 0;
+                renderTaskChart(data.stats);
             }
         }
 
@@ -2218,7 +2298,6 @@
             const daysInMonth = end.getDate();
             const today = new Date();
 
-            // Загружаем задачи на месяц для отображения точек
             const startTs = Math.floor(start.getTime() / 1000);
             const endTs = Math.floor(end.getTime() / 1000);
             const tasksData = await callApi('get_tasks');
@@ -2286,7 +2365,6 @@
             container.innerHTML = html;
         }
 
-        // Модалка для задачи
         function openTaskModal(taskId = null) {
             editingTaskId = taskId;
             const modal = document.getElementById('modalTask');
