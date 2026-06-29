@@ -8,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
-        /* ===== БАЗОВЫЕ СТИЛИ ===== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -1127,8 +1126,7 @@
                 <!-- будет заполнено скриптом -->
             </div>
         </div>
-
-        <!-- Знакомства -->
+                <!-- Знакомства -->
         <div id="page-dating" class="page">
             <div class="center-piece"><div class="symbol" style="color:#ff6b6b;">❤️</div><div class="label" style="color:#ff6b6b;">Знакомства</div></div>
             <div class="glass" id="datingContainer">
@@ -1138,8 +1136,184 @@
     </div>
 
     <!-- ===== МОДАЛЬНЫЕ ОКНА ===== -->
-    <!-- Комментарии, P2P, Искры, Дневник, Планер, Транзакции, Знакомства — опущены для краткости, но в реальном файле они присутствуют -->
-    <!-- Для экономии места я не привожу их, но в финальном файле они должны быть -->
+    <div class="modal-overlay" id="modalComments">
+        <div class="modal-card">
+            <div class="modal-title" id="modalCommentsTitle">💬 Комментарии</div>
+            <div id="modalCommentsList" style="max-height:300px; overflow-y:auto; margin-bottom:12px;">
+                <div style="color:rgba(255,255,255,0.3); text-align:center;">Нет комментариев</div>
+            </div>
+            <div style="margin-bottom:10px;">
+                <textarea id="modalCommentsInput" placeholder="Напишите комментарий..." rows="2" style="width:100%; padding:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:16px; color:#fff; font-size:15px; resize:vertical; font-family:inherit;"></textarea>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-submit" id="modalCommentsSubmit">Отправить</button>
+                <button class="modal-cancel" id="modalCommentsCancel">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalP2P">
+        <div class="modal-card">
+            <div class="modal-title">💬 Ответить на вопрос</div>
+            <div class="modal-question" id="modalP2PQuestion">Загрузка...</div>
+            <textarea id="modalP2PInput" placeholder="Напишите ответ..." rows="3"></textarea>
+            <div class="modal-buttons">
+                <button class="modal-submit" id="modalP2PSubmit">Отправить</button>
+                <button class="modal-cancel" id="modalP2PCancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalIskry">
+        <div class="modal-card">
+            <div class="modal-title">🔥 Ответить на вопрос 18+</div>
+            <div class="modal-question" id="modalIskryQuestion">Загрузка...</div>
+            <textarea id="modalIskryInput" placeholder="Напишите ответ..." rows="3"></textarea>
+            <div class="modal-buttons">
+                <button class="modal-submit" id="modalIskrySubmit">Отправить</button>
+                <button class="modal-cancel" id="modalIskryCancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалки для Дневника -->
+    <div class="modal-overlay" id="modalDiaryEntry">
+        <div class="modal-card">
+            <div class="modal-title" id="modalDiaryEntryTitle">📝 Новая запись</div>
+            <input type="text" id="diaryEntryTitle" placeholder="Название (необязательно)" />
+            <textarea id="diaryEntryText" placeholder="Текст записи..." rows="4"></textarea>
+            <select id="diaryEntryCategory"></select>
+            <input type="datetime-local" id="diaryEntryDate" />
+            <div style="margin:10px 0;">
+                <div style="color:rgba(255,255,255,0.4); font-size:13px;">Фото (до 5 шт.)</div>
+                <div id="diaryEntryPhotos" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"></div>
+                <div class="photo-upload-row">
+                    <input type="file" id="diaryFileInput" accept="image/*" style="display:none;" />
+                    <label for="diaryFileInput" class="file-label">📷 Выбрать фото</label>
+                    <span class="file-name" id="diaryFileName"></span>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-submit" id="modalDiaryEntrySubmit">Сохранить</button>
+                <button class="modal-cancel" id="modalDiaryEntryCancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalDiaryCategory">
+        <div class="modal-card">
+            <div class="modal-title">➕ Новая категория</div>
+            <input type="text" id="diaryCategoryName" placeholder="Название категории" />
+            <div class="modal-buttons">
+                <button class="modal-submit" id="modalDiaryCategorySubmit">Создать</button>
+                <button class="modal-cancel" id="modalDiaryCategoryCancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка для транзакций -->
+    <div class="modal-overlay" id="modalTransaction">
+        <div class="modal-card">
+            <div class="modal-title">💰 Новая транзакция</div>
+            <input type="text" id="transCategory" placeholder="Категория (например, Еда)" />
+            <input type="number" id="transAmount" placeholder="Сумма" />
+            <select id="transType">
+                <option value="expense">Расход</option>
+                <option value="income">Доход</option>
+            </select>
+            <input type="text" id="transDescription" placeholder="Описание (необязательно)" />
+            <input type="datetime-local" id="transDate" />
+            <div class="modal-buttons">
+                <button class="modal-submit" id="modalTransactionSubmit">Добавить</button>
+                <button class="modal-cancel" id="modalTransactionCancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка для задачи -->
+    <div class="modal-overlay" id="modalTask">
+        <div class="modal-card">
+            <div class="modal-title" id="modalTaskTitle">➕ Новая задача</div>
+            <input type="text" id="taskTitle" placeholder="Название задачи" />
+            <input type="text" id="taskDescription" placeholder="Описание (необязательно)" />
+            <input type="datetime-local" id="taskScheduled" />
+            <input type="number" id="taskDuration" placeholder="Длительность (мин)" value="60" />
+            <input type="text" id="taskCategory" placeholder="Категория (например, Работа)" />
+            <select id="taskPriority">
+                <option value="0">Низкий</option>
+                <option value="1" selected>Средний</option>
+                <option value="2">Высокий</option>
+            </select>
+            <input type="datetime-local" id="taskDeadline" placeholder="Дедлайн (необязательно)" />
+            <select id="taskRepeat">
+                <option value="none">Нет</option>
+                <option value="daily">Ежедневно</option>
+                <option value="weekly">Еженедельно</option>
+                <option value="monthly">Ежемесячно</option>
+            </select>
+            <input type="datetime-local" id="taskRepeatEnd" placeholder="Дата окончания повторений" />
+            <input type="text" id="taskParent" placeholder="ID родительской задачи (необязательно)" />
+            <input type="datetime-local" id="taskRemindAt" placeholder="Напоминание" />
+            <div class="modal-buttons">
+                <button class="modal-submit" id="modalTaskSubmit">Сохранить</button>
+                <button class="modal-cancel" id="modalTaskCancel">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка для чата знакомств -->
+    <div class="modal-overlay" id="modalDatingChat">
+        <div class="modal-card">
+            <div class="modal-title" id="modalDatingChatTitle">💬 Чат</div>
+            <div id="modalDatingMessages" style="max-height:300px; overflow-y:auto; margin-bottom:12px;">
+                <div style="color:rgba(255,255,255,0.3); text-align:center;">Нет сообщений</div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="modalDatingChatInput" placeholder="Сообщение..." style="flex:1; padding:10px 16px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; color:#fff; font-family:inherit;" />
+                <button id="modalDatingChatSendBtn" style="padding:10px 20px; background:linear-gradient(135deg, #7c4dff, #b388ff); border:none; border-radius:30px; color:#fff; font-weight:600; cursor:pointer;">➤</button>
+            </div>
+            <div class="modal-buttons" style="margin-top:10px;">
+                <button class="modal-cancel" id="modalDatingChatClose">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка для анкеты знакомств -->
+    <div class="modal-overlay" id="modalDatingProfile">
+        <div class="modal-card">
+            <div class="modal-title">👤 Редактировать анкету</div>
+            <div style="margin-bottom:10px;">
+                <div style="color:rgba(255,255,255,0.4); font-size:13px;">Фото (до 3 шт.)</div>
+                <div id="datingPhotosContainer" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"></div>
+                <div class="photo-upload-row">
+                    <input type="file" id="datingFileInput" accept="image/*" style="display:none;" />
+                    <label for="datingFileInput" class="file-label">📷 Выбрать фото</label>
+                    <span class="file-name" id="datingFileName"></span>
+                </div>
+            </div>
+            <input type="text" id="datingCity" placeholder="Город" />
+            <input type="number" id="datingAge" placeholder="Возраст" />
+            <select id="datingGender">
+                <option value="Мужской">Мужской</option>
+                <option value="Женский">Женский</option>
+                <option value="Другой">Другой</option>
+            </select>
+            <select id="datingPurpose">
+                <option value="Встреча">Встреча</option>
+                <option value="Интрига">Интрига</option>
+                <option value="Без обязательств">Без обязательств</option>
+                <option value="Дружба">Дружба</option>
+                <option value="Отношения">Отношения</option>
+                <option value="Общение">Общение</option>
+            </select>
+            <textarea id="datingDescription" placeholder="Описание (необязательно)" rows="3"></textarea>
+            <input type="text" id="datingInterests" placeholder="Интересы (через запятую)" />
+            <div class="modal-buttons">
+                <button class="modal-submit" id="modalDatingProfileSubmit">Сохранить</button>
+                <button class="modal-cancel" id="modalDatingProfileCancel">Отмена</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Онбординг -->
     <div class="onboarding-overlay" id="onboardingOverlay">
@@ -1159,8 +1333,7 @@
         <button class="tab-item" data-page="page-iskry"><span class="tab-icon">🔥</span>Искры</button>
         <button class="tab-item" data-page="page-vstrecha"><span class="tab-icon">🔮</span>Встреча</button>
     </div>
-
-    <script>
+        <script>
         // ============================================================
         // 1. ИНИЦИАЛИЗАЦИЯ
         // ============================================================
@@ -1171,8 +1344,7 @@
         const userId = user.id || 0;
         const firstName = user.first_name || 'Пользователь';
         const photoUrl = user.photo_url || null;
-        // Используем локальный адрес, замените на ваш реальный адрес при деплое
-        const API_URL = 'http://localhost:8080'; // или ваш ngrok-адрес
+        const API_URL = 'http://localhost:8080'; // замените на ваш адрес
 
         // Состояния
         let currentVisibility = 0;
@@ -1196,7 +1368,6 @@
         let currentBudgetMode = 0;
         let calendarDate = new Date();
         let calendarMarks = [];
-        let budgetChartInstance = null;
 
         // Для знакомств
         let currentChatId = null;
@@ -1219,7 +1390,7 @@
                 return await resp.json();
             } catch(e) {
                 console.error(e);
-                tg.showAlert('Ошибка связи с сервером.');
+                if (!isDemoMode) tg.showAlert('Ошибка связи с сервером.');
                 return null;
             }
         }
@@ -1408,7 +1579,6 @@
                 if (data.onboarding_completed !== undefined && !data.onboarding_completed) {
                     startOnboarding();
                 }
-                // Обновляем аватарку в шапке
                 if (photoUrl) {
                     const avatarBtn = document.querySelector('.avatar-btn');
                     const img = document.createElement('img');
@@ -1420,7 +1590,6 @@
                     if (placeholder) {
                         placeholder.parentElement.replaceChild(img, placeholder);
                     }
-                    // Также обновляем в профиле
                     const profileAvatar = document.getElementById('profileAvatar');
                     if (profileAvatar) {
                         const img2 = document.createElement('img');
@@ -1484,13 +1653,456 @@
         });
 
         // ============================================================
-        // 6. ГАЛЕРЕЯ, P2P, ИСКРЫ (без изменений)
+        // 6. ГАЛЕРЕЯ, P2P, ИСКРЫ
         // ============================================================
 
-        // Эти функции остаются как в предыдущей версии – их код слишком длинный, но в финальном файле они есть.
+        async function loadGallery() {
+            const data = await callApi('get_gallery');
+            if (data?.answers) {
+                const container = document.getElementById('galleryList');
+                if (data.answers.length === 0) {
+                    container.innerHTML = '<div class="empty">Пока никто не ответил</div>';
+                    return;
+                }
+                let html = '';
+                data.answers.forEach((a) => {
+                    const author = a.visibility === 0 ? 'Аноним' : a.visibility === 1 ? `🎭 ${a.mask||'Маска'}` : a.name;
+                    const reactions = a.reactions || {};
+                    const userReaction = a.user_reaction || null;
+                    let reactionsHtml = '';
+                    const reactionEmojis = ['👍','❤️','🔥','😍','🤯','😢','😱','😂','😈','👀'];
+                    reactionEmojis.forEach(emoji => {
+                        const count = reactions[emoji] || 0;
+                        const active = userReaction === emoji ? 'active' : '';
+                        reactionsHtml += `<button class="reaction-btn ${active}" data-answer-id="${a.id}" data-reaction="${emoji}">${emoji} <span class="count">${count}</span></button>`;
+                    });
+                    html += `
+                        <div class="history-item" data-id="${a.id}">
+                            <div style="color:rgba(255,255,255,0.4); font-size:13px;">${author}</div>
+                            <div class="answer">${escHtml(a.answer)}</div>
+                            <div class="meta">❤️ ${Object.values(reactions).reduce((sum, c) => sum + c, 0)} реакций</div>
+                            <div class="reaction-bar" data-answer-id="${a.id}">
+                                ${reactionsHtml}
+                            </div>
+                            <div class="actions">
+                                <button class="gallery-comments-btn" data-type="daily_answer" data-id="${a.id}">💬 Комментарии <span class="badge">${a.comments_count||0}</span></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+                container.querySelectorAll('.reaction-btn').forEach(btn => {
+                    btn.addEventListener('click', async function(e) {
+                        e.stopPropagation();
+                        const answerId = this.dataset.answerId;
+                        const reaction = this.dataset.reaction;
+                        const result = await callApi('toggle_answer_reaction', { answer_id: answerId, reaction_type: reaction });
+                        if (result) loadGallery();
+                    });
+                    let pressTimer = null;
+                    btn.addEventListener('touchstart', function(e) {
+                        pressTimer = setTimeout(() => {
+                            e.preventDefault();
+                            const answerId = this.dataset.answerId;
+                            showReactionPicker(this, answerId);
+                        }, 500);
+                    });
+                    btn.addEventListener('touchend', function() { clearTimeout(pressTimer); });
+                    btn.addEventListener('touchmove', function() { clearTimeout(pressTimer); });
+                    btn.addEventListener('contextmenu', function(e) {
+                        e.preventDefault();
+                        const answerId = this.dataset.answerId;
+                        showReactionPicker(this, answerId);
+                    });
+                });
+                container.querySelectorAll('.gallery-comments-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const targetType = this.dataset.type;
+                        const targetId = this.dataset.id;
+                        openCommentsModal(targetType, targetId);
+                    });
+                });
+            }
+        }
+
+        function showReactionPicker(btn, answerId) {
+            const oldPicker = document.querySelector('.reaction-picker');
+            if (oldPicker) oldPicker.remove();
+            const picker = document.createElement('div');
+            picker.className = 'reaction-picker';
+            const emojis = ['👍','❤️','🔥','😍','🤯','😢','😱','😂','😈','👀'];
+            emojis.forEach(emoji => {
+                const b = document.createElement('button');
+                b.textContent = emoji;
+                b.addEventListener('click', async function(e) {
+                    e.stopPropagation();
+                    const result = await callApi('toggle_answer_reaction', { answer_id: answerId, reaction_type: emoji });
+                    if (result) loadGallery();
+                    picker.remove();
+                });
+                picker.appendChild(b);
+            });
+            const closePicker = function(e) {
+                if (!picker.contains(e.target)) {
+                    picker.remove();
+                    document.removeEventListener('click', closePicker);
+                }
+            };
+            document.addEventListener('click', closePicker);
+            btn.parentNode.insertBefore(picker, btn.nextSibling);
+        }
+
+        async function loadP2P() {
+            const data = await callApi('get_p2p');
+            if (data?.questions) {
+                const container = document.getElementById('p2pList');
+                if (data.questions.length === 0) {
+                    container.innerHTML = '<div class="empty">Нет активных вопросов</div>';
+                    return;
+                }
+                let html = '';
+                data.questions.forEach(q => {
+                    html += `
+                        <div class="p2p-item" data-id="${q.id}">
+                            <div class="question-text">${escHtml(q.text)}</div>
+                            <div class="type">Тип: ${q.type} · Ответов: ${q.answers_count||0}</div>
+                            <div class="actions">
+                                <button class="p2p-answer-btn" data-id="${q.id}">💬 Ответить</button>
+                                <button class="p2p-comments-btn" data-type="p2p_question" data-id="${q.id}">💬 Комментарии <span class="badge">${q.comments_count||0}</span></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+                container.querySelectorAll('.p2p-answer-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const qid = this.dataset.id;
+                        openModalP2P(qid);
+                    });
+                });
+                container.querySelectorAll('.p2p-comments-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const targetType = this.dataset.type;
+                        const targetId = this.dataset.id;
+                        openCommentsModal(targetType, targetId);
+                    });
+                });
+            }
+        }
+
+        function openModalP2P(questionId) {
+            const item = document.querySelector(`.p2p-item[data-id="${questionId}"]`);
+            if (!item) return;
+            const questionText = item.querySelector('.question-text').textContent;
+            document.getElementById('modalP2PQuestion').textContent = questionText;
+            document.getElementById('modalP2PInput').value = '';
+            document.getElementById('modalP2P').classList.add('active');
+        }
+
+        document.getElementById('modalP2PCancel').addEventListener('click', function() {
+            document.getElementById('modalP2P').classList.remove('active');
+        });
+        document.getElementById('modalP2PSubmit').addEventListener('click', async function() {
+            const answer = document.getElementById('modalP2PInput').value.trim();
+            if (!answer) { tg.showAlert('Напишите ответ!'); return; }
+            const qid = parseInt(document.querySelector('.p2p-item .p2p-answer-btn')?.dataset.id);
+            if (!qid) { tg.showAlert('Ошибка'); return; }
+            this.disabled = true; this.textContent = 'Отправка...';
+            const result = await callApi('add_p2p_answer', {
+                question_id: qid,
+                text: answer,
+                visibility: currentVisibility
+            });
+            this.disabled = false; this.textContent = 'Отправить';
+            if (result?.success) {
+                tg.showAlert('✅ Ответ опубликован!');
+                document.getElementById('modalP2P').classList.remove('active');
+                loadP2P();
+            } else {
+                tg.showAlert(result?.error || 'Ошибка публикации.');
+            }
+        });
+
+        document.getElementById('p2pAskBtn').addEventListener('click', async function() {
+            if (!profileCompleted) {
+                tg.showAlert('❌ Сначала заполните профиль');
+                return;
+            }
+            const text = document.getElementById('p2pQuestionInput').value.trim();
+            if (!text) { tg.showAlert('Напишите вопрос.'); return; }
+            if (text.length > 500) { tg.showAlert('Максимум 500 символов.'); return; }
+            this.disabled = true; this.textContent = 'Публикация...';
+            const result = await callApi('ask_p2p', { text });
+            this.disabled = false; this.textContent = 'Опубликовать (стоит 5 очков)';
+            if (result?.success) {
+                tg.showAlert('✅ Вопрос опубликован!');
+                document.getElementById('p2pQuestionInput').value = '';
+                loadP2P();
+            } else {
+                tg.showAlert(result?.error || 'Ошибка публикации.');
+            }
+        });
+
+        function checkIskry() {
+            const now = new Date();
+            const hours = now.getHours();
+            const container = document.getElementById('iskryContainer');
+            const isEvening = (hours >= 20 || hours < 8);
+            if (isEvening) {
+                container.innerHTML = `
+                    <div style="padding:12px 0; color:#ff0033; font-weight:600;">🔥 Вечерние вопросы открыты</div>
+                    <div style="color:rgba(255,255,255,0.3); font-size:14px; margin-bottom:12px;">Здесь можно анонимно ответить на откровенные вопросы</div>
+                    <button class="btn-primary" id="iskryQuestionBtn" style="background:linear-gradient(135deg, #cc0033, #ff0033);">Получить вопрос</button>
+                    <div id="iskryQuestionDisplay" style="margin-top:12px; font-size:16px; color:#fff;"></div>
+                `;
+                document.getElementById('iskryQuestionBtn').addEventListener('click', async function() {
+                    const data = await callApi('get_iskry_question');
+                    if (data?.question) {
+                        const questionText = data.question;
+                        document.getElementById('iskryQuestionDisplay').textContent = questionText;
+                        openModalIskry(questionText);
+                    }
+                });
+                document.getElementById('iskryGallery').style.display = 'block';
+            } else {
+                container.innerHTML = `
+                    <div class="icon">🌙</div>
+                    <h2 style="color:#ff0033;">Вечерний режим</h2>
+                    <p>Вопросы доступны с 20:00 до 08:00</p>
+                `;
+                document.getElementById('iskryGallery').style.display = 'none';
+            }
+        }
+
+        function openModalIskry(questionText) {
+            document.getElementById('modalIskryQuestion').textContent = questionText;
+            document.getElementById('modalIskryInput').value = '';
+            document.getElementById('modalIskry').classList.add('active');
+        }
+
+        document.getElementById('modalIskryCancel').addEventListener('click', function() {
+            document.getElementById('modalIskry').classList.remove('active');
+        });
+        document.getElementById('modalIskrySubmit').addEventListener('click', async function() {
+            const answer = document.getElementById('modalIskryInput').value.trim();
+            if (!answer) { tg.showAlert('Напишите ответ!'); return; }
+            const question = document.getElementById('modalIskryQuestion').textContent;
+            this.disabled = true; this.textContent = 'Отправка...';
+            const result = await callApi('submit_iskry_answer', {
+                question: question,
+                answer: answer,
+                visibility: 0
+            });
+            this.disabled = false; this.textContent = 'Отправить';
+            if (result?.success) {
+                tg.showAlert('✅ Ответ опубликован!');
+                document.getElementById('modalIskry').classList.remove('active');
+                loadIskryGallery();
+            } else {
+                tg.showAlert('Ошибка публикации.');
+            }
+        });
+
+        async function loadIskryGallery() {
+            const data = await callApi('get_iskry_gallery');
+            if (data?.answers) {
+                const container = document.getElementById('iskryGallery');
+                if (data.answers.length === 0) {
+                    container.innerHTML = '<div class="empty">Пока никто не ответил</div>';
+                    return;
+                }
+                let html = '';
+                data.answers.forEach((a) => {
+                    const author = 'Аноним';
+                    const reactions = a.reactions || {};
+                    const userReaction = a.user_reaction || null;
+                    let reactionsHtml = '';
+                    const reactionEmojis = ['👍','❤️','🔥','😍','🤯','😢','😱','😂','😈','👀'];
+                    reactionEmojis.forEach(emoji => {
+                        const count = reactions[emoji] || 0;
+                        const active = userReaction === emoji ? 'active' : '';
+                        reactionsHtml += `<button class="reaction-btn ${active}" data-answer-id="${a.id}" data-reaction="${emoji}">${emoji} <span class="count">${count}</span></button>`;
+                    });
+                    html += `
+                        <div class="iskry-gallery-item" data-id="${a.id}">
+                            <div class="question">${escHtml(a.question)}</div>
+                            <div class="answer">${escHtml(a.answer)}</div>
+                            <div class="meta">от ${author} · ❤️ ${Object.values(reactions).reduce((sum, c) => sum + c, 0)} реакций</div>
+                            <div class="reaction-bar" data-answer-id="${a.id}">
+                                ${reactionsHtml}
+                            </div>
+                            <div class="actions">
+                                <button class="iskry-comments-btn" data-type="iskry_answer" data-id="${a.id}">💬 Комментарии <span class="badge">${a.comments_count||0}</span></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+                container.querySelectorAll('.reaction-btn').forEach(btn => {
+                    btn.addEventListener('click', async function(e) {
+                        e.stopPropagation();
+                        const answerId = this.dataset.answerId;
+                        const reaction = this.dataset.reaction;
+                        const result = await callApi('toggle_answer_reaction', { answer_id: answerId, reaction_type: reaction });
+                        if (result) loadIskryGallery();
+                    });
+                    let pressTimer = null;
+                    btn.addEventListener('touchstart', function(e) {
+                        pressTimer = setTimeout(() => {
+                            e.preventDefault();
+                            const answerId = this.dataset.answerId;
+                            showReactionPickerIskry(this, answerId);
+                        }, 500);
+                    });
+                    btn.addEventListener('touchend', function() { clearTimeout(pressTimer); });
+                    btn.addEventListener('touchmove', function() { clearTimeout(pressTimer); });
+                    btn.addEventListener('contextmenu', function(e) {
+                        e.preventDefault();
+                        const answerId = this.dataset.answerId;
+                        showReactionPickerIskry(this, answerId);
+                    });
+                });
+                container.querySelectorAll('.iskry-comments-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const targetType = this.dataset.type;
+                        const targetId = this.dataset.id;
+                        openCommentsModal(targetType, targetId);
+                    });
+                });
+            }
+        }
+
+        function showReactionPickerIskry(btn, answerId) {
+            const oldPicker = document.querySelector('.reaction-picker');
+            if (oldPicker) oldPicker.remove();
+            const picker = document.createElement('div');
+            picker.className = 'reaction-picker';
+            const emojis = ['👍','❤️','🔥','😍','🤯','😢','😱','😂','😈','👀'];
+            emojis.forEach(emoji => {
+                const b = document.createElement('button');
+                b.textContent = emoji;
+                b.addEventListener('click', async function(e) {
+                    e.stopPropagation();
+                    const result = await callApi('toggle_answer_reaction', { answer_id: answerId, reaction_type: emoji });
+                    if (result) loadIskryGallery();
+                    picker.remove();
+                });
+                picker.appendChild(b);
+            });
+            const closePicker = function(e) {
+                if (!picker.contains(e.target)) {
+                    picker.remove();
+                    document.removeEventListener('click', closePicker);
+                }
+            };
+            document.addEventListener('click', closePicker);
+            btn.parentNode.insertBefore(picker, btn.nextSibling);
+        }
 
         // ============================================================
-        // 7. PRO
+        // 7. КОММЕНТАРИИ
+        // ============================================================
+
+        async function openCommentsModal(targetType, targetId) {
+            currentCommentsTarget = { type: targetType, id: targetId };
+            const container = document.getElementById('modalCommentsList');
+            container.innerHTML = '<div class="loading">Загрузка...</div>';
+            document.getElementById('modalComments').classList.add('active');
+
+            const data = await callApi('get_comments', { target_type: targetType, target_id: targetId });
+            if (data?.comments) {
+                if (data.comments.length === 0) {
+                    container.innerHTML = '<div style="color:rgba(255,255,255,0.3); text-align:center;">Нет комментариев</div>';
+                } else {
+                    let html = '';
+                    const rootComments = data.comments.filter(c => !c.parent_id);
+                    const commentMap = {};
+                    data.comments.forEach(c => commentMap[c.id] = c);
+                    rootComments.forEach(c => {
+                        html += renderCommentTree(c, commentMap, 0);
+                    });
+                    container.innerHTML = html;
+                    container.querySelectorAll('.comment-reaction-btn').forEach(btn => {
+                        btn.addEventListener('click', async function() {
+                            const commentId = this.dataset.commentId;
+                            const type = this.dataset.type;
+                            const result = await callApi('toggle_reaction', { comment_id: commentId, type: type });
+                            if (result) openCommentsModal(targetType, targetId);
+                        });
+                    });
+                    container.querySelectorAll('.comment-reply-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const parentId = this.dataset.commentId;
+                            const input = document.getElementById('modalCommentsInput');
+                            input.placeholder = `Ответить на комментарий #${parentId}`;
+                            input.dataset.parentId = parentId;
+                            input.focus();
+                        });
+                    });
+                }
+            } else {
+                container.innerHTML = '<div style="color:rgba(255,255,255,0.3); text-align:center;">Ошибка загрузки</div>';
+            }
+        }
+
+        function renderCommentTree(comment, map, depth) {
+            const reactions = comment.reactions || {};
+            const userReactions = comment.user_reactions || [];
+            const indent = depth * 20;
+            let html = `
+                <div style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); margin-left:${indent}px;">
+                    <div style="font-weight:600; font-size:13px; color:#f5deb3;">${escHtml(comment.user_name)}</div>
+                    <div style="color:rgba(255,255,255,0.7); font-size:14px;">${escHtml(comment.text)}</div>
+                    <div style="display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; align-items:center;">
+                        ${['like','heart','fire','laugh'].map(type => {
+                            const count = reactions[type] || 0;
+                            const active = userReactions.includes(type) ? 'active' : '';
+                            const emoji = {like:'👍', heart:'❤️', fire:'🔥', laugh:'😂'}[type];
+                            return `<button class="comment-reaction-btn" data-comment-id="${comment.id}" data-type="${type}" style="background:${active ? 'rgba(78,205,196,0.15)' : 'transparent'}; border:1px solid ${active ? '#4ecdc4' : 'rgba(255,255,255,0.1)'}; border-radius:30px; padding:2px 8px; font-size:12px; color:#fff; cursor:pointer;">${emoji} ${count}</button>`;
+                        }).join('')}
+                        <button class="comment-reply-btn" data-comment-id="${comment.id}" style="background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:30px; padding:2px 8px; font-size:12px; color:rgba(255,255,255,0.5); cursor:pointer;">Ответить</button>
+                    </div>
+                </div>
+            `;
+            const children = Object.values(map).filter(c => c.parent_id === comment.id);
+            children.forEach(child => {
+                html += renderCommentTree(child, map, depth + 1);
+            });
+            return html;
+        }
+
+        document.getElementById('modalCommentsCancel').addEventListener('click', function() {
+            document.getElementById('modalComments').classList.remove('active');
+            currentCommentsTarget = null;
+        });
+
+        document.getElementById('modalCommentsSubmit').addEventListener('click', async function() {
+            const input = document.getElementById('modalCommentsInput');
+            const text = input.value.trim();
+            if (!text) { tg.showAlert('Напишите комментарий!'); return; }
+            if (!currentCommentsTarget) { tg.showAlert('Ошибка'); return; }
+            const parentId = input.dataset.parentId ? parseInt(input.dataset.parentId) : null;
+            this.disabled = true; this.textContent = 'Отправка...';
+            const result = await callApi('add_comment', {
+                target_type: currentCommentsTarget.type,
+                target_id: currentCommentsTarget.id,
+                text: text,
+                parent_id: parentId
+            });
+            this.disabled = false; this.textContent = 'Отправить';
+            if (result?.success) {
+                tg.showAlert('✅ Комментарий добавлен!');
+                input.value = '';
+                input.placeholder = 'Напишите комментарий...';
+                delete input.dataset.parentId;
+                openCommentsModal(currentCommentsTarget.type, currentCommentsTarget.id);
+            } else {
+                tg.showAlert('Ошибка');
+            }
+        });
+
+        // ============================================================
+        // 8. PRO
         // ============================================================
 
         async function loadPremiumStatus() {
@@ -1536,7 +2148,6 @@
             showPage('page-moment');
         });
 
-        // Карточки PRO
         document.getElementById('proDiary').addEventListener('click', function() {
             if (!isPremium) { tg.showAlert('Доступно только в PRO'); return; }
             showPage('page-diary', false);
@@ -1561,7 +2172,7 @@
         });
 
         // ============================================================
-        // 8. ДНЕВНИК (с загрузкой фото)
+        // 9. ДНЕВНИК
         // ============================================================
 
         async function loadAutoSaveDiary() {
@@ -1613,15 +2224,12 @@
                 container.innerHTML = html;
                 return;
             }
-
-            // Реальный дневник для PRO
             loadDiaryContent(container);
         }
 
         async function loadDiaryContent(container) {
             const catsData = await callApi('get_diary_categories');
             diaryCategories = catsData?.categories || [];
-
             const entriesData = await callApi('get_diary_entries', { limit: 50 });
             const entries = entriesData?.entries || [];
 
@@ -1640,7 +2248,6 @@
                 </div>
                 <div id="diaryEntriesList">
             `;
-
             if (entries.length === 0) {
                 html += `<div class="empty">Пока нет записей. Создайте первую!</div>`;
             } else {
@@ -1660,7 +2267,6 @@
                     `;
                 });
             }
-
             html += `</div>`;
             container.innerHTML = html;
 
@@ -1687,7 +2293,6 @@
                     }
                 });
             });
-
             document.getElementById('diaryFilterCategory').addEventListener('change', () => applyDiaryFilters(container));
             document.getElementById('diarySearch').addEventListener('input', () => applyDiaryFilters(container));
             document.getElementById('diaryDateFrom').addEventListener('change', () => applyDiaryFilters(container));
@@ -1750,7 +2355,6 @@
             });
         }
 
-        // Модалка для записи
         async function openDiaryEntryModal(entryId = null) {
             editingDiaryEntryId = entryId;
             const modal = document.getElementById('modalDiaryEntry');
@@ -1791,36 +2395,18 @@
 
             // Обработчик загрузки фото через файл
             const fileInput = document.getElementById('diaryFileInput');
-            if (!fileInput) {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.id = 'diaryFileInput';
-                input.style.display = 'none';
-                modal.querySelector('.modal-card').appendChild(input);
-                input.addEventListener('change', async function(e) {
-                    const file = this.files[0];
-                    if (!file) return;
-                    const result = await uploadPhoto(file);
-                    if (result && result.success) {
-                        addPhotoToContainer(photosContainer, result.file_id);
-                    } else {
-                        tg.showAlert('Ошибка загрузки фото');
-                    }
-                    this.value = '';
-                });
-                const label = document.createElement('label');
-                label.htmlFor = 'diaryFileInput';
-                label.className = 'file-label';
-                label.textContent = '📷 Выбрать фото';
-                const row = document.createElement('div');
-                row.className = 'photo-upload-row';
-                row.appendChild(label);
-                const photosLabel = modal.querySelector('.photo-upload-row');
-                if (photosLabel) {
-                    photosLabel.parentNode.insertBefore(row, photosLabel.nextSibling);
+            fileInput.addEventListener('change', async function(e) {
+                const file = this.files[0];
+                if (!file) return;
+                const result = await uploadPhoto(file);
+                if (result && result.success) {
+                    addPhotoToContainer(photosContainer, result.file_id);
+                    document.getElementById('diaryFileName').textContent = file.name;
+                } else {
+                    tg.showAlert('Ошибка загрузки фото');
                 }
-            }
+                this.value = '';
+            });
 
             modal.classList.add('active');
         }
@@ -1872,8 +2458,25 @@
             }
         });
 
+        document.getElementById('modalDiaryCategoryCancel').addEventListener('click', function() {
+            document.getElementById('modalDiaryCategory').classList.remove('active');
+        });
+        document.getElementById('modalDiaryCategorySubmit').addEventListener('click', async function() {
+            const name = document.getElementById('diaryCategoryName').value.trim();
+            if (!name) { tg.showAlert('Введите название'); return; }
+            const result = await callApi('create_diary_category', { name });
+            if (result?.success) {
+                tg.showAlert('✅ Категория создана');
+                document.getElementById('modalDiaryCategory').classList.remove('active');
+                document.getElementById('diaryCategoryName').value = '';
+                renderDiary(false);
+            } else {
+                tg.showAlert(result?.error || 'Ошибка');
+            }
+        });
+
         // ============================================================
-        // 9. ПЛАНЕР (полноценный, с автопересчётом бюджета и графиками)
+        // 10. ПЛАНЕР
         // ============================================================
 
         function renderPlanner(demo) {
@@ -1895,10 +2498,36 @@
                             </div>
                             <div class="task-item"><div class="task-check done"></div><div class="task-info"><div class="task-title done">Утренняя зарядка</div><div class="task-meta">08:00 · Здоровье</div></div><div class="task-priority low"></div><div class="task-actions"><button>✎</button><button>✕</button></div></div>
                             <div class="task-item"><div class="task-check"></div><div class="task-info"><div class="task-title">Работа над проектом</div><div class="task-meta">10:00–13:00 · Работа</div></div><div class="task-priority high"></div><div class="task-actions"><button>✎</button><button>✕</button></div></div>
+                            <div class="task-item"><div class="task-check done"></div><div class="task-info"><div class="task-title done">Обед</div><div class="task-meta">13:00 · Личное</div></div><div class="task-priority medium"></div><div class="task-actions"><button>✎</button><button>✕</button></div></div>
                         </div>
-                        <div class="planer-section" id="demoPlannerBudget" style="display:none;">...</div>
-                        <div class="planer-section" id="demoPlannerCalendar" style="display:none;">...</div>
-                        <div class="planer-section" id="demoPlannerStats" style="display:none;">...</div>
+                        <div class="planer-section" id="demoPlannerBudget" style="display:none;">
+                            <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+                                <button class="budget-mode-btn active" data-mode="0" style="padding:6px 16px;background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.2);border-radius:30px;color:#d4af37;cursor:pointer;font-weight:500;font-family:inherit;">Без кредитов</button>
+                                <button class="budget-mode-btn" data-mode="1" style="padding:6px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-weight:500;font-family:inherit;">С кредитами</button>
+                            </div>
+                            <div class="budget-income-row">
+                                <label style="color:rgba(255,255,255,0.5);font-size:14px;">💰 Доход (руб/мес):</label>
+                                <input type="number" value="50000" disabled />
+                                <button disabled>Сохранить</button>
+                            </div>
+                            <div class="budget-category"><span class="cat-name">Жильё</span><input type="number" value="25" disabled /><span class="cat-percent">25%</span><input type="number" value="12500" disabled /><span class="cat-amount">12500 ₽</span><span class="cat-active active">✔</span></div>
+                            <div class="budget-category"><span class="cat-name">Еда</span><input type="number" value="20" disabled /><span class="cat-percent">20%</span><input type="number" value="10000" disabled /><span class="cat-amount">10000 ₽</span><span class="cat-active active">✔</span></div>
+                            <div class="budget-category"><span class="cat-name">Транспорт</span><input type="number" value="10" disabled /><span class="cat-percent">10%</span><input type="number" value="5000" disabled /><span class="cat-amount">5000 ₽</span><span class="cat-active active">✔</span></div>
+                            <div class="budget-category"><span class="cat-name">Накопления</span><input type="number" value="15" disabled /><span class="cat-percent">15%</span><input type="number" value="7500" disabled /><span class="cat-amount">7500 ₽</span><span class="cat-active active">✔</span></div>
+                            <button id="demoBudgetSaveBtn" style="background:linear-gradient(135deg, #d4af37, #ffd700);color:#1a140e;border:none;padding:14px;border-radius:30px;font-size:16px;font-weight:600;cursor:pointer;width:100%;transition:0.3s;font-family:inherit;margin-top:12px;" disabled>Сохранить бюджет</button>
+                        </div>
+                        <div class="planer-section" id="demoPlannerCalendar" style="display:none;">
+                            <div class="calendar-nav"><button>◀</button><span>Июнь 2025</span><button>▶</button></div>
+                            <div class="calendar-grid">${Array.from({length:30}, (_,i) => `<div class="day ${i===5?'has-mark':''}">${i+1}</div>`).join('')}</div>
+                        </div>
+                        <div class="planer-section" id="demoPlannerStats" style="display:none;">
+                            <div class="stats-cards">
+                                <div class="stats-card total"><span class="number">12</span><span class="label">Всего</span></div>
+                                <div class="stats-card completed"><span class="number">5</span><span class="label">Выполнено</span></div>
+                                <div class="stats-card pending"><span class="number">4</span><span class="label">Ожидает</span></div>
+                                <div class="stats-card overdue"><span class="number">3</span><span class="label">Просрочено</span></div>
+                            </div>
+                        </div>
                         <div style="margin-top:12px; text-align:center; color:rgba(255,255,255,0.3); font-size:12px;">
                             🔒 Полный функционал доступен в PRO
                         </div>
@@ -1954,7 +2583,6 @@
                     </div>
                     <div id="tasksList">
             `;
-
             if (tasks.length === 0) {
                 html += `<div class="empty">Нет задач на сегодня</div>`;
             } else {
@@ -1985,7 +2613,6 @@
                     `;
                 });
             }
-
             html += `
                     </div>
                 </div>
@@ -2021,9 +2648,7 @@
                             </div>
                         `).join('') || '<div class="empty">Нет транзакций</div>'}
                     </div>
-                    <div class="chart-container">
-                        <canvas id="budgetChart"></canvas>
-                    </div>
+                    <div class="chart-container"><canvas id="budgetChart"></canvas></div>
                 </div>
                 <div class="planer-section" id="plannerCalendar">
                     <div class="calendar-nav">
@@ -2046,9 +2671,7 @@
                         <div class="stats-card pending"><span class="number" id="statPending">${stats.pending||0}</span><span class="label">Ожидает</span></div>
                         <div class="stats-card overdue"><span class="number" id="statOverdue">${stats.overdue||0}</span><span class="label">Просрочено</span></div>
                     </div>
-                    <div class="chart-container">
-                        <canvas id="taskChart"></canvas>
-                    </div>
+                    <div class="chart-container"><canvas id="taskChart"></canvas></div>
                 </div>
             `;
             container.innerHTML = html;
@@ -2057,56 +2680,21 @@
             loadCalendar();
             renderBudgetChart(budgetCategories);
             renderTaskChart(stats);
-            // Автопересчёт бюджета при изменении полей
-            container.querySelectorAll('.budget-category input').forEach(input => {
-                input.addEventListener('input', function() {
-                    recalcBudgetPreview();
-                });
-            });
-        }
-
-        async function recalcBudgetPreview() {
-            const container = document.getElementById('budgetCategoriesList');
-            const inputs = container.querySelectorAll('.budget-category');
-            const categories = [];
-            const income = parseInt(document.getElementById('incomeInput').value) || 0;
-            inputs.forEach(el => {
-                const name = el.querySelector('.cat-name').textContent;
-                const percent = parseFloat(el.querySelector('.cat-percent-input').value) || 0;
-                const active = el.querySelector('.cat-active').classList.contains('active');
-                const fixed_amount = parseFloat(el.querySelector('.cat-amount-input').value) || 0;
-                categories.push({ name, percent, active, fixed_amount });
-            });
-            // Отправляем запрос на пересчёт
-            const data = await callApi('update_budget', { categories, income });
-            if (data?.success) {
-                loadPlannerContent(document.getElementById('plannerContainer'));
-            } else {
-                tg.showAlert(data?.error || 'Ошибка пересчёта');
-            }
         }
 
         function renderBudgetChart(categories) {
             const ctx = document.getElementById('budgetChart');
             if (!ctx) return;
-            if (budgetChartInstance) budgetChartInstance.destroy();
-            const labels = categories.filter(c => c.active).map(c => c.name);
-            const amounts = categories.filter(c => c.active).map(c => c.amount || 0);
-            budgetChartInstance = new Chart(ctx, {
+            new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: labels,
+                    labels: categories.filter(c => c.active).map(c => c.name),
                     datasets: [{
-                        data: amounts,
+                        data: categories.filter(c => c.active).map(c => c.amount || 0),
                         backgroundColor: ['#4ecdc4', '#ff6b6b', '#ffd93d', '#6c5ce7', '#00b894', '#fdcb6e', '#e17055', '#00cec9', '#a29bfe', '#fd79a8']
                     }]
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { color: '#e0e8f0' } }
-                    }
-                }
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#e0e8f0' } } } }
             });
         }
 
@@ -2123,16 +2711,7 @@
                         backgroundColor: ['#4ecdc4', '#4caf50', '#ff9800', '#f44336']
                     }]
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: { beginAtZero: true, ticks: { color: '#e0e8f0' } },
-                        x: { ticks: { color: '#e0e8f0' } }
-                    }
-                }
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#e0e8f0' } }, x: { ticks: { color: '#e0e8f0' } } } }
             });
         }
 
@@ -2334,7 +2913,13 @@
                 }
 
                 div.addEventListener('click', function() {
-                    showTasksForDate(dateObj);
+                    const selectedDate = dateObj;
+                    // Открываем модалку создания задачи с предзаполненной датой
+                    document.getElementById('taskScheduled').value = selectedDate.toISOString().slice(0,16);
+                    document.getElementById('taskDate').value = Math.floor(selectedDate.getTime() / 1000);
+                    editingTaskId = null;
+                    document.getElementById('modalTaskTitle').textContent = '➕ Новая задача на ' + selectedDate.toLocaleDateString('ru-RU');
+                    document.getElementById('modalTask').classList.add('active');
                 });
 
                 grid.appendChild(div);
@@ -2457,14 +3042,585 @@
         });
 
         // ============================================================
-        // 10. ЗНАКОМСТВА (аналогично дневнику с загрузкой фото)
+        // 11. ЗНАКОМСТВА
         // ============================================================
 
-        // Оставляем как в предыдущей версии, но заменяем ввод file_id на загрузку файла.
-        // Здесь я не привожу полный код, чтобы не перегружать, но в финальном файле он есть.
+        function renderDating(demo) {
+            const container = document.getElementById('datingContainer');
+            let html = `<button class="pro-back-btn" onclick="showPage('page-premium')">← Назад</button>`;
+            if (demo || !isPremium) {
+                html += `
+                    <div class="demo-mode">
+                        <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+                            <button class="dating-tab active" data-tab="profile" style="flex:1;padding:6px;background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.2);border-radius:30px;color:#d4af37;cursor:pointer;font-family:inherit;">👤 Моя анкета</button>
+                            <button class="dating-tab" data-tab="swipe" style="flex:1;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">❤️ Поиск</button>
+                            <button class="dating-tab" data-tab="chats" style="flex:1;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">💬 Чаты</button>
+                        </div>
+                        <div id="datingProfile" style="display:block;">
+                            <div style="color:rgba(255,255,255,0.3); text-align:center; padding:20px;">
+                                <div style="font-size:48px;">👤</div>
+                                <p style="margin-top:8px;">Заполните анкету, чтобы начать знакомиться</p>
+                                <button onclick="tg.showAlert('Доступно в PRO')" style="background:linear-gradient(135deg, #ff6b6b, #4ecdc4);border:none;border-radius:30px;padding:12px 30px;color:#fff;font-weight:600;cursor:pointer;font-family:inherit;margin-top:12px;">Создать анкету</button>
+                            </div>
+                        </div>
+                        <div id="datingSwipe" style="display:none;">
+                            <div class="dating-swipe-card">
+                                <div class="photos"><img src="https://via.placeholder.com/80" /></div>
+                                <div class="name">Анна, 28</div>
+                                <div class="meta">Москва · Ищет встречу</div>
+                                <div class="purpose">💕 Без обязательств</div>
+                                <div class="actions">
+                                    <button class="dislike" onclick="tg.showAlert('Доступно в PRO')">✕</button>
+                                    <button class="message" onclick="tg.showAlert('Доступно в PRO')">💬</button>
+                                    <button class="like" onclick="tg.showAlert('Доступно в PRO')">❤️</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="datingChats" style="display:none;">
+                            <div class="empty">Нет чатов</div>
+                        </div>
+                        <div style="margin-top:12px; text-align:center; color:rgba(255,255,255,0.3); font-size:12px;">
+                            🔒 Полный функционал доступен в PRO
+                        </div>
+                    </div>
+                `;
+                container.innerHTML = html;
+                container.querySelectorAll('.dating-tab').forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        container.querySelectorAll('.dating-tab').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        const section = this.dataset.tab;
+                        ['profile','swipe','chats'].forEach(id => {
+                            document.getElementById('dating' + id.charAt(0).toUpperCase() + id.slice(1)).style.display = id === section ? 'block' : 'none';
+                        });
+                    });
+                });
+                return;
+            }
+            loadDatingContent(container);
+        }
+
+        async function loadDatingContent(container) {
+            const profileData = await callApi('get_dating_profile');
+            const profile = profileData?.profile;
+
+            const candidatesData = await callApi('get_dating_candidates');
+            const candidates = candidatesData?.candidates || [];
+
+            const chatsData = await callApi('get_dating_chats');
+            const chats = chatsData?.chats || [];
+
+            let html = `<button class="pro-back-btn" onclick="showPage('page-premium')">← Назад</button>`;
+            html += `
+                <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+                    <button class="dating-tab active" data-tab="profile" style="flex:1;padding:6px;background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.2);border-radius:30px;color:#d4af37;cursor:pointer;font-family:inherit;">👤 Моя анкета</button>
+                    <button class="dating-tab" data-tab="swipe" style="flex:1;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">❤️ Поиск</button>
+                    <button class="dating-tab" data-tab="chats" style="flex:1;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">💬 Чаты</button>
+                </div>
+                <div id="datingProfile">
+            `;
+            if (profile) {
+                html += `
+                    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+                        ${profile.photos.map(p => `<img src="${p}" style="width:60px;height:60px;object-fit:cover;border-radius:12px;" />`).join('') || '<div style="color:rgba(255,255,255,0.2);">Нет фото</div>'}
+                    </div>
+                    <div><strong>Город:</strong> ${escHtml(profile.city)}</div>
+                    <div><strong>Возраст:</strong> ${profile.age}</div>
+                    <div><strong>Пол:</strong> ${profile.gender}</div>
+                    <div><strong>Цель:</strong> ${profile.purpose}</div>
+                    <div><strong>Описание:</strong> ${escHtml(profile.description || '—')}</div>
+                    <div><strong>Интересы:</strong> ${escHtml(profile.interests || '—')}</div>
+                    <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+                        <button id="editProfileBtn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:#fff;cursor:pointer;font-family:inherit;">✎ Редактировать</button>
+                        <button id="hideProfileBtn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:${profile.hidden ? '#4ecdc4' : '#ff6b6b'};cursor:pointer;font-family:inherit;">${profile.hidden ? 'Показать' : 'Скрыть'}</button>
+                        <button id="reportBtn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">⚠️ Пожаловаться</button>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div style="color:rgba(255,255,255,0.3); text-align:center; padding:20px;">
+                        <div style="font-size:48px;">👤</div>
+                        <p style="margin-top:8px;">Заполните анкету, чтобы начать знакомиться</p>
+                        <button id="createProfileBtn" style="background:linear-gradient(135deg, #ff6b6b, #4ecdc4);border:none;border-radius:30px;padding:12px 30px;color:#fff;font-weight:600;cursor:pointer;font-family:inherit;margin-top:12px;">Создать анкету</button>
+                    </div>
+                `;
+            }
+            html += `
+                </div>
+                <div id="datingSwipe" style="display:none;">
+                    ${candidates.length > 0 ? `
+                        <div class="dating-swipe-card" id="datingSwipeCard">
+                            <div class="photos">${candidates[0].photos.map(p => `<img src="${p}" />`).join('')}</div>
+                            <div class="name">${escHtml(candidates[0].first_name || 'Пользователь')}, ${candidates[0].age}</div>
+                            <div class="meta">${escHtml(candidates[0].city)} · ${candidates[0].gender}</div>
+                            <div class="purpose">${escHtml(candidates[0].purpose || '')}</div>
+                            <div style="color:rgba(255,255,255,0.3); font-size:13px; margin:4px 0;">${escHtml(candidates[0].description || '')}</div>
+                            <div class="actions">
+                                <button class="dislike" data-id="${candidates[0].user_id}">✕</button>
+                                <button class="message" data-id="${candidates[0].user_id}">💬</button>
+                                <button class="like" data-id="${candidates[0].user_id}">❤️</button>
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="dating-empty">
+                            <div style="font-size:48px;">😔</div>
+                            <p>Нет новых кандидатов. Попробуйте позже.</p>
+                        </div>
+                    `}
+                </div>
+                <div id="datingChats" style="display:none;">
+                    ${chats.length > 0 ? chats.map(c => `
+                        <div class="dating-card" data-chat-id="${c.id}">
+                            <div class="avatar">${c.partner_name.charAt(0)}</div>
+                            <div class="info">
+                                <div class="name">${escHtml(c.partner_name)}</div>
+                                <div class="meta">Последнее сообщение: ${formatDate(c.last_message_at)}</div>
+                            </div>
+                            <div class="actions">
+                                <button class="open-chat-btn" data-chat-id="${c.id}">💬 Открыть</button>
+                            </div>
+                        </div>
+                    `).join('') : '<div class="empty">Нет чатов</div>'}
+                </div>
+            `;
+            container.innerHTML = html;
+
+            container.querySelectorAll('.dating-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    container.querySelectorAll('.dating-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    const section = this.dataset.tab;
+                    ['profile','swipe','chats'].forEach(id => {
+                        document.getElementById('dating' + id.charAt(0).toUpperCase() + id.slice(1)).style.display = id === section ? 'block' : 'none';
+                    });
+                    if (section === 'swipe') loadDatingCandidates();
+                    if (section === 'chats') loadDatingChats();
+                });
+            });
+
+            document.getElementById('createProfileBtn')?.addEventListener('click', function() {
+                openDatingProfileModal();
+            });
+            document.getElementById('editProfileBtn')?.addEventListener('click', function() {
+                openDatingProfileModal(profile);
+            });
+            document.getElementById('hideProfileBtn')?.addEventListener('click', async function() {
+                const hidden = profile.hidden;
+                const result = await callApi('hide_dating_profile', { hidden: !hidden });
+                if (result?.success) {
+                    tg.showAlert(`Анкета ${hidden ? 'показана' : 'скрыта'}`);
+                    renderDating(false);
+                }
+            });
+            document.getElementById('reportBtn')?.addEventListener('click', function() {
+                const reportedId = prompt('Введите ID пользователя, на которого жалуетесь:');
+                if (reportedId) {
+                    const reason = prompt('Причина жалобы:');
+                    if (reason) {
+                        callApi('report_dating_user', { reported_id: parseInt(reportedId), reason });
+                        tg.showAlert('✅ Жалоба отправлена');
+                    }
+                }
+            });
+
+            container.querySelectorAll('.dating-swipe-card .like').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const targetId = parseInt(this.dataset.id);
+                    const result = await callApi('dating_like', { target_id: targetId });
+                    if (result?.mutual) tg.showAlert('💕 Взаимный лайк! Чат открыт.');
+                    else tg.showAlert('❤️ Лайк поставлен!');
+                    renderDating(false);
+                });
+            });
+            container.querySelectorAll('.dating-swipe-card .dislike').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const targetId = parseInt(this.dataset.id);
+                    await callApi('dating_dislike', { target_id: targetId });
+                    renderDating(false);
+                });
+            });
+            container.querySelectorAll('.dating-swipe-card .message').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetId = parseInt(this.dataset.id);
+                    openDatingChatWith(targetId);
+                });
+            });
+
+            container.querySelectorAll('.open-chat-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const chatId = parseInt(this.dataset.chatId);
+                    openDatingChat(chatId);
+                });
+            });
+        }
+
+        async function loadDatingCandidates() {
+            const data = await callApi('get_dating_candidates');
+            const candidates = data?.candidates || [];
+            const swipeContainer = document.getElementById('datingSwipe');
+            if (candidates.length === 0) {
+                swipeContainer.innerHTML = `
+                    <div class="dating-empty">
+                        <div style="font-size:48px;">😔</div>
+                        <p>Нет новых кандидатов. Попробуйте позже.</p>
+                    </div>
+                `;
+                return;
+            }
+            const c = candidates[0];
+            swipeContainer.innerHTML = `
+                <div class="dating-swipe-card" id="datingSwipeCard">
+                    <div class="photos">${c.photos.map(p => `<img src="${p}" />`).join('')}</div>
+                    <div class="name">${escHtml(c.first_name || 'Пользователь')}, ${c.age}</div>
+                    <div class="meta">${escHtml(c.city)} · ${c.gender}</div>
+                    <div class="purpose">${escHtml(c.purpose || '')}</div>
+                    <div style="color:rgba(255,255,255,0.3); font-size:13px; margin:4px 0;">${escHtml(c.description || '')}</div>
+                    <div class="actions">
+                        <button class="dislike" data-id="${c.user_id}">✕</button>
+                        <button class="message" data-id="${c.user_id}">💬</button>
+                        <button class="like" data-id="${c.user_id}">❤️</button>
+                    </div>
+                </div>
+            `;
+            document.querySelector('#datingSwipeCard .like').addEventListener('click', async function() {
+                const targetId = parseInt(this.dataset.id);
+                const result = await callApi('dating_like', { target_id: targetId });
+                if (result?.mutual) tg.showAlert('💕 Взаимный лайк! Чат открыт.');
+                else tg.showAlert('❤️ Лайк поставлен!');
+                renderDating(false);
+            });
+            document.querySelector('#datingSwipeCard .dislike').addEventListener('click', async function() {
+                const targetId = parseInt(this.dataset.id);
+                await callApi('dating_dislike', { target_id: targetId });
+                renderDating(false);
+            });
+            document.querySelector('#datingSwipeCard .message').addEventListener('click', function() {
+                const targetId = parseInt(this.dataset.id);
+                openDatingChatWith(targetId);
+            });
+        }
+
+        async function loadDatingChats() {
+            const data = await callApi('get_dating_chats');
+            const chats = data?.chats || [];
+            const container = document.getElementById('datingChats');
+            if (chats.length === 0) {
+                container.innerHTML = '<div class="empty">Нет чатов</div>';
+                return;
+            }
+            container.innerHTML = chats.map(c => `
+                <div class="dating-card" data-chat-id="${c.id}">
+                    <div class="avatar">${c.partner_name.charAt(0)}</div>
+                    <div class="info">
+                        <div class="name">${escHtml(c.partner_name)}</div>
+                        <div class="meta">Последнее сообщение: ${formatDate(c.last_message_at)}</div>
+                    </div>
+                    <div class="actions">
+                        <button class="open-chat-btn" data-chat-id="${c.id}">💬 Открыть</button>
+                    </div>
+                </div>
+            `).join('');
+            container.querySelectorAll('.open-chat-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const chatId = parseInt(this.dataset.chatId);
+                    openDatingChat(chatId);
+                });
+            });
+        }
+
+        function openDatingProfileModal(existingProfile = null) {
+            const modal = document.getElementById('modalDatingProfile');
+            if (existingProfile) {
+                document.getElementById('datingCity').value = existingProfile.city || '';
+                document.getElementById('datingAge').value = existingProfile.age || '';
+                document.getElementById('datingGender').value = existingProfile.gender || 'Мужской';
+                document.getElementById('datingPurpose').value = existingProfile.purpose || 'Встреча';
+                document.getElementById('datingDescription').value = existingProfile.description || '';
+                document.getElementById('datingInterests').value = existingProfile.interests || '';
+                const container = document.getElementById('datingPhotosContainer');
+                container.innerHTML = existingProfile.photos.map(p => `
+                    <div style="position:relative;display:inline-block;">
+                        <img src="${p}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" />
+                        <button class="dating-remove-photo" style="position:absolute;top:-4px;right:-4px;background:rgba(244,67,54,0.8);border:none;border-radius:50%;width:18px;height:18px;color:#fff;cursor:pointer;font-size:12px;">✕</button>
+                    </div>
+                `).join('');
+            } else {
+                document.getElementById('datingCity').value = '';
+                document.getElementById('datingAge').value = '';
+                document.getElementById('datingGender').value = 'Мужской';
+                document.getElementById('datingPurpose').value = 'Встреча';
+                document.getElementById('datingDescription').value = '';
+                document.getElementById('datingInterests').value = '';
+                document.getElementById('datingPhotosContainer').innerHTML = '';
+            }
+            // Обработчик загрузки фото для анкеты
+            const fileInput = document.getElementById('datingFileInput');
+            fileInput.addEventListener('change', async function(e) {
+                const file = this.files[0];
+                if (!file) return;
+                const result = await uploadPhoto(file);
+                if (result && result.success) {
+                    const container = document.getElementById('datingPhotosContainer');
+                    const div = document.createElement('div');
+                    div.style.position = 'relative';
+                    div.style.display = 'inline-block';
+                    div.innerHTML = `
+                        <img src="${result.file_id}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" />
+                        <button class="dating-remove-photo" style="position:absolute;top:-4px;right:-4px;background:rgba(244,67,54,0.8);border:none;border-radius:50%;width:18px;height:18px;color:#fff;cursor:pointer;font-size:12px;">✕</button>
+                    `;
+                    container.appendChild(div);
+                    div.querySelector('.dating-remove-photo').addEventListener('click', function() {
+                        div.remove();
+                    });
+                    document.getElementById('datingFileName').textContent = file.name;
+                } else {
+                    tg.showAlert('Ошибка загрузки фото');
+                }
+                this.value = '';
+            });
+
+            modal.classList.add('active');
+        }
+
+        document.getElementById('modalDatingProfileCancel').addEventListener('click', function() {
+            document.getElementById('modalDatingProfile').classList.remove('active');
+        });
+
+        document.getElementById('modalDatingProfileSubmit').addEventListener('click', async function() {
+            const city = document.getElementById('datingCity').value.trim();
+            const age = parseInt(document.getElementById('datingAge').value);
+            const gender = document.getElementById('datingGender').value;
+            const purpose = document.getElementById('datingPurpose').value;
+            const description = document.getElementById('datingDescription').value.trim();
+            const interests = document.getElementById('datingInterests').value.trim();
+            const photos = Array.from(document.querySelectorAll('#datingPhotosContainer img')).map(img => img.src);
+
+            if (!city || !age || !gender || !purpose) {
+                tg.showAlert('Заполните все обязательные поля');
+                return;
+            }
+            if (age < 18) {
+                tg.showAlert('Возраст должен быть не менее 18 лет');
+                return;
+            }
+
+            const result = await callApi('create_dating_profile', { photos, city, age, gender, purpose, description, interests });
+            if (result?.success) {
+                tg.showAlert('✅ Анкета сохранена');
+                document.getElementById('modalDatingProfile').classList.remove('active');
+                renderDating(false);
+            } else {
+                tg.showAlert('Ошибка сохранения');
+            }
+        });
+
+        async function openDatingChatWith(targetId) {
+            const result = await callApi('dating_like', { target_id: targetId });
+            if (result?.chat_id) {
+                openDatingChat(result.chat_id);
+            } else {
+                tg.showAlert('Не удалось открыть чат. Возможно, пользователь не ответил взаимностью.');
+            }
+        }
+
+        async function openDatingChat(chatId) {
+            currentChatId = chatId;
+            const modal = document.getElementById('modalDatingChat');
+            const messagesContainer = document.getElementById('modalDatingMessages');
+            const input = document.getElementById('modalDatingChatInput');
+
+            const data = await callApi('get_dating_messages', { chat_id: chatId });
+            const messages = data?.messages || [];
+
+            const chatsData = await callApi('get_dating_chats');
+            const chat = chatsData?.chats?.find(c => c.id === chatId);
+            document.getElementById('modalDatingChatTitle').textContent = `💬 Чат с ${chat?.partner_name || 'собеседником'}`;
+
+            if (messages.length === 0) {
+                messagesContainer.innerHTML = '<div style="color:rgba(255,255,255,0.3); text-align:center;">Нет сообщений</div>';
+            } else {
+                messagesContainer.innerHTML = messages.map(m => `
+                    <div style="padding:6px 10px; margin:4px 0; border-radius:12px; background:${m.sender_id === userId ? 'rgba(78,205,196,0.15)' : 'rgba(255,255,255,0.04)'}; max-width:80%; ${m.sender_id === userId ? 'margin-left:auto;' : ''}">
+                        <div style="font-size:12px; color:rgba(255,255,255,0.3);">${m.sender_id === userId ? 'Вы' : m.sender_name}</div>
+                        <div style="word-wrap:break-word;">${escHtml(m.message)}</div>
+                        <div style="font-size:10px; color:rgba(255,255,255,0.2); margin-top:2px;">${formatDate(m.timestamp)}</div>
+                    </div>
+                `).join('');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            modal.classList.add('active');
+
+            document.getElementById('modalDatingChatSendBtn').onclick = async function() {
+                const text = input.value.trim();
+                if (!text) return;
+                await callApi('send_dating_message', { chat_id: chatId, message: text });
+                input.value = '';
+                openDatingChat(chatId);
+            };
+            input.onkeydown = function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('modalDatingChatSendBtn').click();
+                }
+            };
+        }
+
+        document.getElementById('modalDatingChatClose').addEventListener('click', function() {
+            document.getElementById('modalDatingChat').classList.remove('active');
+            if (datingChatPollInterval) clearInterval(datingChatPollInterval);
+        });
 
         // ============================================================
-        // 11. ЗАПУСК
+        // 12. ДОСТИЖЕНИЯ, РЕФЕРАЛЫ, ОНБОРДИНГ
+        // ============================================================
+
+        async function loadAchievements() {
+            const container = document.getElementById('achievementsContainer');
+            container.innerHTML = '<div class="loading">Загрузка...</div>';
+            const data = await callApi('get_achievements');
+            if (data?.achievements) {
+                let html = '<div class="achievements-grid">';
+                data.achievements.forEach(ach => {
+                    const achieved = ach.achieved;
+                    const icon = ach.icon || '❓';
+                    const name = ach.name || '???';
+                    const desc = ach.description || '';
+                    let progressHtml = '';
+                    let maxProg = ach.max_progress;
+                    let prog = ach.progress;
+
+                    if (ach.category === 'reflection' || ach.category === 'discipline') {
+                        const pct = Math.min(100, (prog / maxProg) * 100);
+                        progressHtml = `<div class="progress-bar"><div class="fill" style="width:${pct}%;"></div></div>`;
+                    } else if (ach.category === 'social') {
+                        if (prog && typeof prog === 'object') {
+                            progressHtml = `<div class="ach-progress">💬 ${prog.comments} ❤️ ${prog.likes} 🌐 ${prog.p2p}</div>`;
+                        }
+                    } else if (ach.category === 'planner') {
+                        if (prog && typeof prog === 'object') {
+                            progressHtml = `<div class="ach-progress">📋 ${prog.tasks} 💰 ${prog.budget_saves}</div>`;
+                        }
+                    } else if (ach.category === 'unique') {
+                        if (achieved) {
+                            progressHtml = `<div class="ach-progress">✅ Получено</div>`;
+                        } else {
+                            progressHtml = `<div class="ach-progress">🔒 Скрыто</div>`;
+                        }
+                    }
+
+                    const cls = achieved ? 'achievement-item achieved' : 'achievement-item';
+                    html += `
+                        <div class="${cls}" title="${desc}">
+                            <div class="icon-circle">
+                                ${icon}
+                                ${!achieved ? '<span class="lock">🔒</span>' : ''}
+                            </div>
+                            <div class="ach-name">${name}</div>
+                            ${progressHtml}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '<div class="empty">Не удалось загрузить достижения</div>';
+            }
+        }
+
+        async function loadReferralStats() {
+            const container = document.getElementById('referralStats');
+            container.innerHTML = '<div class="loading" style="font-size:14px; color:rgba(255,255,255,0.3); padding:8px 0;">Загрузка...</div>';
+            const data = await callApi('get_referral_stats');
+            if (data?.stats) {
+                const stats = data.stats;
+                const link = data.link || '#';
+                const bonusEarned = stats.awarded * 10;
+                container.innerHTML = `
+                    <div class="ref-stats">
+                        <span>👥 Приглашено: <strong>${stats.total}</strong></span>
+                        <span>🎁 Бонусов: <strong>${bonusEarned}</strong> очков</span>
+                    </div>
+                    <div class="ref-link">
+                        <code>${escHtml(link)}</code>
+                        <button id="copyRefLinkBtn">📋 Копировать</button>
+                    </div>
+                    <div class="ref-hint">🔗 Отправьте эту ссылку друзьям. За каждого, кто ответит на первый вопрос, вы получите +10 очков.</div>
+                `;
+                document.getElementById('copyRefLinkBtn').addEventListener('click', function() {
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(link).then(() => {
+                            tg.showAlert('✅ Ссылка скопирована!');
+                        }).catch(() => {
+                            const textarea = document.createElement('textarea');
+                            textarea.value = link;
+                            document.body.appendChild(textarea);
+                            textarea.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(textarea);
+                            tg.showAlert('✅ Ссылка скопирована!');
+                        });
+                    } else {
+                        const textarea = document.createElement('textarea');
+                        textarea.value = link;
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                        tg.showAlert('✅ Ссылка скопирована!');
+                    }
+                });
+            } else {
+                container.innerHTML = '<div style="color:rgba(255,255,255,0.3); font-size:14px;">Не удалось загрузить данные</div>';
+            }
+        }
+
+        // ============================================================
+        // 13. ОНБОРДИНГ
+        // ============================================================
+
+        function startOnboarding() {
+            onboardingStep = 0;
+            document.getElementById('onboardingOverlay').classList.add('active');
+            showOnboardingStep();
+        }
+
+        function showOnboardingStep() {
+            const steps = [
+                { icon: '🌱', title: 'Ответьте на вопрос дня', desc: 'Напишите свой ответ в поле ввода и нажмите "Отправить ответ". Это поможет вам начать рефлексию.' },
+                { icon: '🎭', title: 'Выберите видимость', desc: 'Нажмите на одну из кнопок: Анонимно, Маска или Открыто. Это определит, как ваше имя будет отображаться для других.' },
+                { icon: '📝', title: 'Заполните профиль', desc: 'Перейдите в профиль (нажмите на аватарку) и придумайте себе псевдоним (маску). Это сделает ваше общение более персонализированным.' }
+            ];
+            const step = steps[onboardingStep];
+            document.getElementById('onboardingIcon').textContent = step.icon;
+            document.getElementById('onboardingTitle').textContent = step.title;
+            document.getElementById('onboardingDesc').textContent = step.desc;
+            const btn = document.getElementById('onboardingNextBtn');
+            btn.textContent = onboardingStep === steps.length - 1 ? 'Завершить' : 'Далее';
+        }
+
+        document.getElementById('onboardingNextBtn').addEventListener('click', function() {
+            if (onboardingStep === 2) {
+                finishOnboarding();
+            } else {
+                onboardingStep++;
+                showOnboardingStep();
+                if (onboardingStep === 1) {
+                    document.getElementById('visibilityButtons').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else if (onboardingStep === 2) {
+                    document.getElementById('profileBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+
+        async function finishOnboarding() {
+            document.getElementById('onboardingOverlay').classList.remove('active');
+            await callApi('set_onboarding_completed');
+            tg.showAlert('🎉 Онбординг пройден! Вы получили +5 бонусных очков.');
+            loadProfile();
+        }
+
+        // ============================================================
+        // 14. ЗАПУСК
         // ============================================================
 
         async function init() {
