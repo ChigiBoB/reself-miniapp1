@@ -543,10 +543,18 @@
 
 <script>  
 // ============================================================
-// 1. ДИНАМИЧЕСКИЙ API_URL (с приоритетом параметра)
+// 1. ДИНАМИЧЕСКИЙ API_URL
 // ============================================================
-const API_URL = 'https://garage-courier-everybody.ngrok-free.dev/api';
+const urlParams = new URLSearchParams(window.location.search);
+let apiBase = urlParams.get('api');
 
+if (!apiBase) {
+    // !!! ВСТАВЬТЕ ВАШ АКТУАЛЬНЫЙ АДРЕС ngrok (БЕЗ /api в конце)
+    apiBase = 'https://garage-courier-everybody.ngrok-free.dev';
+}
+
+const API_URL = apiBase + '/api';
+console.log('API_URL:', API_URL);
 // ============================================================  
 // 2. TELEGRAM WEB APP  
 // ============================================================  
