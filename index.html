@@ -543,24 +543,19 @@
 
 <script>  
 // ============================================================
-// 1. ДИНАМИЧЕСКИЙ API_URL
+// 1. ДИНАМИЧЕСКИЙ API_URL (с приоритетом параметра)
 // ============================================================
 const urlParams = new URLSearchParams(window.location.search);
 let apiBase = urlParams.get('api');
 
 if (!apiBase) {
-    const origin = window.location.origin;
-    // Если открыто в Telegram и параметр api не передан,
-    // используем заранее заданный ngrok-адрес
-    if (origin.includes('t.me') || origin.includes('telegram')) {
-        // !!! ВСТАВЬТЕ СЮДА ВАШ АКТУАЛЬНЫЙ АДРЕС ngrok (без https://)
-        apiBase = 'https://garage-courier-everybody.ngrok-free.dev';
-    } else {
-        apiBase = origin;
-    }
+    // Если параметр не передан — используем жёстко заданный адрес
+    // !!! ВСТАВЬТЕ СЮДА ВАШ АКТУАЛЬНЫЙ АДРЕС ngrok (с https://, без /api в конце)
+    apiBase = 'https://garage-courier-everybody.ngrok-free.dev';
 }
 
-const API_URL = apiBase;
+// Добавляем /api для всех запросов, если его нет
+const API_URL = apiBase.endsWith('/api') ? apiBase : apiBase + '/api';
 console.log('API_URL:', API_URL);
 
 // ============================================================  
