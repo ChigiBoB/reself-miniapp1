@@ -545,18 +545,7 @@
 // ============================================================
 // 1. ДИНАМИЧЕСКИЙ API_URL (с приоритетом параметра)
 // ============================================================
-const urlParams = new URLSearchParams(window.location.search);
-let apiBase = urlParams.get('api');
-
-if (!apiBase) {
-    // Если параметр не передан — используем жёстко заданный адрес
-    // !!! ВСТАВЬТЕ СЮДА ВАШ АКТУАЛЬНЫЙ АДРЕС ngrok (с https://, без /api в конце)
-    apiBase = 'https://garage-courier-everybody.ngrok-free.dev';
-}
-
-// Добавляем /api для всех запросов, если его нет
-const API_URL = apiBase.endsWith('/api') ? apiBase : apiBase + '/api';
-console.log('API_URL:', API_URL);
+const API_URL = 'https://garage-courier-everybody.ngrok-free.dev/api';
 
 // ============================================================  
 // 2. TELEGRAM WEB APP  
