@@ -542,21 +542,26 @@
 </div>  
 
 <script>  
-// ============================================================  
-// 1. ДИНАМИЧЕСКИЙ API_URL  
-// ============================================================  
-const urlParams = new URLSearchParams(window.location.search);  
-let apiBase = urlParams.get('api');  
-if (!apiBase) {  
-    const origin = window.location.origin;  
-    if (origin.includes('t.me') || origin.includes('telegram')) {  
-        apiBase = 'http://localhost:8080'; // замените на ваш ngrok адрес  
-    } else {  
-        apiBase = origin;  
-    }  
-}  
-const API_URL = apiBase;  
-console.log('API_URL:', API_URL);  
+// ============================================================
+// 1. ДИНАМИЧЕСКИЙ API_URL
+// ============================================================
+const urlParams = new URLSearchParams(window.location.search);
+let apiBase = urlParams.get('api');
+
+if (!apiBase) {
+    const origin = window.location.origin;
+    // Если открыто в Telegram и параметр api не передан,
+    // используем заранее заданный ngrok-адрес
+    if (origin.includes('t.me') || origin.includes('telegram')) {
+        // !!! ВСТАВЬТЕ СЮДА ВАШ АКТУАЛЬНЫЙ АДРЕС ngrok (без https://)
+        apiBase = 'https://garage-courier-everybody.ngrok-free.dev';
+    } else {
+        apiBase = origin;
+    }
+}
+
+const API_URL = apiBase;
+console.log('API_URL:', API_URL);
 
 // ============================================================  
 // 2. TELEGRAM WEB APP  
