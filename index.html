@@ -549,11 +549,15 @@ const urlParams = new URLSearchParams(window.location.search);
 let apiBase = urlParams.get('api');
 
 if (!apiBase) {
-    // !!! ВСТАВЬТЕ ВАШ АКТУАЛЬНЫЙ АДРЕС ngrok (БЕЗ /api в конце)
+    // !!! ВСТАВЬТЕ ВАШ АКТУАЛЬНЫЙ АДРЕС (БЕЗ /api в конце)
     apiBase = 'https://garage-courier-everybody.ngrok-free.dev';
+    // Для локального теста используйте:
+    // apiBase = 'http://localhost:8080';
 }
 
-const API_URL = apiBase + '/api';
+const API_BASE = apiBase;                 // для /upload_photo, /export_tasks
+const API_URL = apiBase + '/api';         // для основных запросов
+console.log('API_BASE:', API_BASE);
 console.log('API_URL:', API_URL);
 // ============================================================  
 // 2. TELEGRAM WEB APP  
@@ -597,7 +601,7 @@ async function callApi(action, data = {}) {
     try {  
         const payload = { action, user_id: userId, ...data };  
         console.log('📤', payload);  
-        const resp = await fetch(`${API_URL}/api`, {  
+        const resp = await fetch(API_URL, {   // <-- теперь без /api
             method: 'POST',  
             headers: { 'Content-Type': 'application/json' },  
             body: JSON.stringify(payload)  
@@ -619,7 +623,7 @@ async function uploadPhoto(file) {
     formData.append('user_id', userId);  
     formData.append('file', file);  
     try {  
-        const resp = await fetch(`${API_URL}/upload_photo`, {  
+        const resp = await fetch(`${API_BASE}/upload_photo`, {   // <-- используем API_BASE
             method: 'POST',  
             body: formData  
         });  
@@ -1495,7 +1499,7 @@ function initPlannerHandlers() {
         });  
     });  
     document.getElementById('taskAddBtn').addEventListener('click', function() { editingTaskId = null; selectedDateForTask = null; openTaskModal(); });  
-    document.getElementById('taskExportBtn').addEventListener('click', function() { window.open(`${API_URL}/export_tasks?user_id=${userId}`, '_blank'); });  
+    document.getElementById('taskExportBtn').addEventListener('click', function() { window.open(`${API_BASE}/export_tasks?user_id=${userId}`, '_blank'); });  
     document.getElementById('incomeSaveBtn').addEventListener('click', async function() {  
         const income = parseInt(document.getElementById('incomeInput').value) || 0;  
         const result = await callApi('set_income', { income });  
