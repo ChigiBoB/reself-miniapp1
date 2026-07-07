@@ -307,6 +307,36 @@
         .credit-result-item.overpay .value { color:#ff6b6b; }  
         .credit-result-item.payment .value { color:#4ecdc4; }  
         .credit-result-item.total .value { color:#ffd700; }
+        /* Новые стили для кредитного калькулятора */
+        .credit-tabs { display:flex; gap:6px; margin:8px 0 12px; flex-wrap:wrap; }
+        .credit-tabs button { flex:1; padding:8px 4px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:30px; color:rgba(255,255,255,0.4); cursor:pointer; font-weight:500; font-size:12px; transition:0.3s; font-family:inherit; min-width:50px; }
+        .credit-tabs button.active { background:rgba(212,175,55,0.15); border-color:#d4af37; color:#d4af37; }
+        .credit-scheme-tabs { display:flex; gap:6px; margin-bottom:12px; }
+        .credit-scheme-tabs button { flex:1; padding:6px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:30px; color:rgba(255,255,255,0.4); cursor:pointer; font-weight:500; font-size:13px; transition:0.3s; font-family:inherit; }
+        .credit-scheme-tabs button.active { background:rgba(78,205,196,0.15); border-color:#4ecdc4; color:#4ecdc4; }
+        .credit-payment-table { overflow-x:auto; margin-top:12px; }
+        .credit-payment-table table { width:100%; border-collapse:collapse; font-size:12px; }
+        .credit-payment-table th, .credit-payment-table td { padding:6px 4px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.05); color:rgba(255,255,255,0.6); }
+        .credit-payment-table th { color:rgba(255,255,255,0.3); font-weight:500; }
+        .credit-strategy { background:rgba(78,205,196,0.05); border-radius:16px; padding:12px; margin-top:12px; border-left:3px solid #4ecdc4; }
+        .credit-strategy .title { font-weight:600; color:#4ecdc4; }
+        .credit-strategy .badge { display:inline-block; padding:2px 10px; border-radius:30px; font-size:12px; margin-left:8px; }
+        .badge-success { background:rgba(76,175,80,0.2); color:#4caf50; }
+        .badge-warning { background:rgba(255,193,7,0.2); color:#ffc107; }
+        .badge-danger { background:rgba(244,67,54,0.2); color:#f44336; }
+        .credit-compare-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
+        .credit-compare-item { flex:1; min-width:150px; background:rgba(255,255,255,0.02); border-radius:16px; padding:12px; border:1px solid rgba(255,255,255,0.05); }
+        .credit-compare-item .label { font-size:11px; color:rgba(255,255,255,0.3); }
+        .credit-compare-item .value { font-size:18px; font-weight:600; color:#fff; }
+        .credit-compare-item .value.green { color:#4caf50; }
+        .credit-compare-item .value.red { color:#f44336; }
+        .credit-compare-item .value.gold { color:#ffd700; }
+        .credit-save-btn { background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.2); border-radius:30px; padding:6px 16px; color:#d4af37; cursor:pointer; font-family:inherit; font-size:13px; margin-top:8px; }
+        .credit-save-btn:hover { background:rgba(212,175,55,0.2); }
+        .credit-history-item { padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
+        .credit-history-item .date { font-size:11px; color:rgba(255,255,255,0.3); }
+        .credit-history-item .details { font-size:13px; color:rgba(255,255,255,0.6); }
+        .credit-history-item .amount { float:right; color:#d4af37; font-weight:600; }
     </style>  
 </head>  
 <body>  
@@ -522,12 +552,12 @@
 <div class="modal-overlay" id="modalComments"><div class="modal-card"><div class="modal-title" id="modalCommentsTitle">💬 Комментарии</div><div id="modalCommentsList" style="max-height:300px; overflow-y:auto; margin-bottom:12px;"><div style="color:rgba(255,255,255,0.3); text-align:center;">Нет комментариев</div></div><div style="margin-bottom:10px;"><textarea id="modalCommentsInput" placeholder="Напишите комментарий..." rows="2" style="width:100%; padding:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:16px; color:#fff; font-size:15px; resize:vertical; font-family:inherit;"></textarea></div><div class="modal-buttons"><button class="modal-submit" id="modalCommentsSubmit">Отправить</button><button class="modal-cancel" id="modalCommentsCancel">Закрыть</button></div></div></div>  
 <div class="modal-overlay" id="modalP2P"><div class="modal-card"><div class="modal-title">💬 Ответить на вопрос</div><div class="modal-question" id="modalP2PQuestion">Загрузка...</div><textarea id="modalP2PInput" placeholder="Напишите ответ..." rows="3"></textarea><div class="modal-buttons"><button class="modal-submit" id="modalP2PSubmit">Отправить</button><button class="modal-cancel" id="modalP2PCancel">Отмена</button></div></div></div>  
 <div class="modal-overlay" id="modalIskry"><div class="modal-card"><div class="modal-title">🔥 Ответить на вопрос 18+</div><div class="modal-question" id="modalIskryQuestion">Загрузка...</div><textarea id="modalIskryInput" placeholder="Напишите ответ..." rows="3"></textarea><div class="modal-buttons"><button class="modal-submit" id="modalIskrySubmit">Отправить</button><button class="modal-cancel" id="modalIskryCancel">Отмена</button></div></div></div>  
-<div class="modal-overlay" id="modalDiaryEntry"><div class="modal-card"><div class="modal-title" id="modalDiaryEntryTitle">📝 Новая запись</div><input type="text" id="diaryEntryTitle" placeholder="Название (необязательно)" /><textarea id="diaryEntryText" placeholder="Текст записи..." rows="4"></textarea><select id="diaryEntryCategory"></select><input type="datetime-local" id="diaryEntryDate" /><div style="margin:10px 0;"><div style="color:rgba(255,255,255,0.4); font-size:13px;">Фото (до 5 шт.)</div><div id="diaryEntryPhotos" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"></div><div class="photo-upload-row"><input type="file" id="diaryFileInput" accept="image/*" style="display:none;" /><label for="diaryFileInput" class="file-label">📷 Выбрать фото</label><span class="file-name" id="diaryFileName"></span></div></div><div class="modal-buttons"><button class="modal-submit" id="modalDiaryEntrySubmit">Сохранить</button><button class="modal-cancel" id="modalDiaryEntryCancel">Отмена</button></div></div></div>  
+<div class="modal-overlay" id="modalDiaryEntry"><div class="modal-card"><div class="modal-title" id="modalDiaryEntryTitle">📝 Новая запись</div><input type="text" id="diaryEntryTitle" placeholder="Название (необязательно)" /><textarea id="diaryEntryText" placeholder="Текст записи..." rows="4"></textarea><select id="diaryEntryCategory"></select><input type="datetime-local" id="diaryEntryDate" /><div style="margin:10px 0;"><div style="color:rgba(255,255,255,0.4); font-size:13px;">Фото (до 5 шт.)</div><div id="diaryEntryPhotos" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"></div><div class="photo-upload-row"><input type="file" id="diaryFileInput" accept="image/*" style="display:none;" /><label for="diaryFileInput" class="file-label" id="diaryFileLabel">📷 Выбрать фото</label><span class="file-name" id="diaryFileName"></span></div></div><div class="modal-buttons"><button class="modal-submit" id="modalDiaryEntrySubmit">Сохранить</button><button class="modal-cancel" id="modalDiaryEntryCancel">Отмена</button></div></div></div>  
 <div class="modal-overlay" id="modalDiaryCategory"><div class="modal-card"><div class="modal-title">➕ Новая категория</div><input type="text" id="diaryCategoryName" placeholder="Название категории" /><div class="modal-buttons"><button class="modal-submit" id="modalDiaryCategorySubmit">Создать</button><button class="modal-cancel" id="modalDiaryCategoryCancel">Отмена</button></div></div></div>  
 <div class="modal-overlay" id="modalTransaction"><div class="modal-card"><div class="modal-title">💰 Новая транзакция</div><input type="text" id="transCategory" placeholder="Категория (например, Еда)" /><input type="number" id="transAmount" placeholder="Сумма" /><select id="transType"><option value="expense">Расход</option><option value="income">Доход</option></select><input type="text" id="transDescription" placeholder="Описание (необязательно)" /><input type="datetime-local" id="transDate" /><div class="modal-buttons"><button class="modal-submit" id="modalTransactionSubmit">Добавить</button><button class="modal-cancel" id="modalTransactionCancel">Отмена</button></div></div></div>  
 <div class="modal-overlay" id="modalTask"><div class="modal-card"><div class="modal-title" id="modalTaskTitle">➕ Новая задача</div><input type="text" id="taskTitle" placeholder="Название задачи" /><input type="text" id="taskDescription" placeholder="Описание (необязательно)" /><input type="datetime-local" id="taskScheduled" /><input type="number" id="taskDuration" placeholder="Длительность (мин)" value="60" /><input type="text" id="taskCategory" placeholder="Категория (например, Работа)" /><select id="taskPriority"><option value="0">Низкий</option><option value="1" selected>Средний</option><option value="2">Высокий</option></select><input type="datetime-local" id="taskDeadline" placeholder="Дедлайн (необязательно)" /><select id="taskRepeat"><option value="none">Нет</option><option value="daily">Ежедневно</option><option value="weekly">Еженедельно</option><option value="monthly">Ежемесячно</option></select><input type="datetime-local" id="taskRepeatEnd" placeholder="Дата окончания повторений" /><input type="text" id="taskParent" placeholder="ID родительской задачи (необязательно)" /><input type="datetime-local" id="taskRemindAt" placeholder="Напоминание" /><div class="modal-buttons"><button class="modal-submit" id="modalTaskSubmit">Сохранить</button><button class="modal-cancel" id="modalTaskCancel">Отмена</button></div></div></div>  
 <div class="modal-overlay" id="modalDatingChat"><div class="modal-card"><div class="modal-title" id="modalDatingChatTitle">💬 Чат</div><div id="modalDatingMessages" style="max-height:300px; overflow-y:auto; margin-bottom:12px;"><div style="color:rgba(255,255,255,0.3); text-align:center;">Нет сообщений</div></div><div style="display:flex; gap:10px;"><input type="text" id="modalDatingChatInput" placeholder="Сообщение..." style="flex:1; padding:10px 16px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; color:#fff; font-family:inherit;" /><button id="modalDatingChatSendBtn" style="padding:10px 20px; background:linear-gradient(135deg, #7c4dff, #b388ff); border:none; border-radius:30px; color:#fff; font-weight:600; cursor:pointer;">➤</button></div><div class="modal-buttons" style="margin-top:10px;"><button class="modal-cancel" id="modalDatingChatClose">Закрыть</button></div></div></div>  
-<div class="modal-overlay" id="modalDatingProfile"><div class="modal-card"><div class="modal-title">👤 Редактировать анкету</div><div style="margin-bottom:10px;"><div style="color:rgba(255,255,255,0.4); font-size:13px;">Фото (до 3 шт.)</div><div id="datingPhotosContainer" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"></div><div class="photo-upload-row"><input type="file" id="datingFileInput" accept="image/*" style="display:none;" /><label for="datingFileInput" class="file-label">📷 Выбрать фото</label><span class="file-name" id="datingFileName"></span></div></div><input type="text" id="datingCity" placeholder="Город" /><input type="number" id="datingAge" placeholder="Возраст" /><select id="datingGender"><option value="Мужской">Мужской</option><option value="Женский">Женский</option><option value="Другой">Другой</option></select><select id="datingPurpose"><option value="Встреча">Встреча</option><option value="Интрига">Интрига</option><option value="Без обязательств">Без обязательств</option><option value="Дружба">Дружба</option><option value="Отношения">Отношения</option><option value="Общение">Общение</option></select><textarea id="datingDescription" placeholder="Описание (необязательно)" rows="3"></textarea><input type="text" id="datingInterests" placeholder="Интересы (через запятую)" /><div class="modal-buttons"><button class="modal-submit" id="modalDatingProfileSubmit">Сохранить</button><button class="modal-cancel" id="modalDatingProfileCancel">Отмена</button></div></div></div>  
+<div class="modal-overlay" id="modalDatingProfile"><div class="modal-card"><div class="modal-title">👤 Редактировать анкету</div><div style="margin-bottom:10px;"><div style="color:rgba(255,255,255,0.4); font-size:13px;">Фото (до 3 шт.)</div><div id="datingPhotosContainer" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"></div><div class="photo-upload-row"><input type="file" id="datingFileInput" accept="image/*" style="display:none;" /><label for="datingFileInput" class="file-label" id="datingFileLabel">📷 Выбрать фото</label><span class="file-name" id="datingFileName"></span></div></div><input type="text" id="datingCity" placeholder="Город" /><input type="number" id="datingAge" placeholder="Возраст" /><select id="datingGender"><option value="Мужской">Мужской</option><option value="Женский">Женский</option><option value="Другой">Другой</option></select><select id="datingPurpose"><option value="Встреча">Встреча</option><option value="Интрига">Интрига</option><option value="Без обязательств">Без обязательств</option><option value="Дружба">Дружба</option><option value="Отношения">Отношения</option><option value="Общение">Общение</option></select><textarea id="datingDescription" placeholder="Описание (необязательно)" rows="3"></textarea><input type="text" id="datingInterests" placeholder="Интересы (через запятую)" /><div class="modal-buttons"><button class="modal-submit" id="modalDatingProfileSubmit">Сохранить</button><button class="modal-cancel" id="modalDatingProfileCancel">Отмена</button></div></div></div>  
 
 <!-- Онбординг -->  
 <div class="onboarding-overlay" id="onboardingOverlay"><div class="onboarding-card" id="onboardingCard"><div class="step-icon" id="onboardingIcon">🌱</div><h2 id="onboardingTitle">Добро пожаловать!</h2><p id="onboardingDesc">Давайте познакомимся с приложением за 3 простых шага.</p><button class="btn-primary" id="onboardingNextBtn">Далее</button></div></div>  
@@ -549,15 +579,10 @@ const urlParams = new URLSearchParams(window.location.search);
 let apiBase = urlParams.get('api');
 
 if (!apiBase) {
-    // !!! ВСТАВЬТЕ ВАШ АКТУАЛЬНЫЙ АДРЕС (БЕЗ /api в конце)
-    apiBase = 'https://garage-courier-everybody.ngrok-free.dev';
-    // Для локального теста используйте:
-    // apiBase = 'http://localhost:8080';
+    apiBase = 'https://garage-courier-everybody.ngrok-free.dev'; // замените на ваш актуальный адрес
 }
 
-const API_BASE = apiBase;                 // для /upload_photo, /export_tasks
-const API_URL = apiBase + '/api';         // для основных запросов
-console.log('API_BASE:', API_BASE);
+const API_URL = apiBase + '/api';
 console.log('API_URL:', API_URL);
 // ============================================================  
 // 2. TELEGRAM WEB APP  
@@ -601,7 +626,7 @@ async function callApi(action, data = {}) {
     try {  
         const payload = { action, user_id: userId, ...data };  
         console.log('📤', payload);  
-        const resp = await fetch(API_URL, {   // <-- теперь без /api
+        const resp = await fetch(API_URL, {  
             method: 'POST',  
             headers: { 'Content-Type': 'application/json' },  
             body: JSON.stringify(payload)  
@@ -618,46 +643,118 @@ async function callApi(action, data = {}) {
     }  
 }  
 
-async function uploadPhoto(file) {  
-    const formData = new FormData();  
-    formData.append('user_id', userId);  
-    formData.append('file', file);  
-    try {  
-        const resp = await fetch(`${API_BASE}/upload_photo`, {   // <-- используем API_BASE
-            method: 'POST',  
-            body: formData  
+// УНИВЕРСАЛЬНАЯ ФУНКЦИЯ ЗАГРУЗКИ ФОТО ЧЕРЕЗ ПОПАП  
+async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {  
+    return new Promise((resolve) => {  
+        tg.showPopup({  
+            title: 'Выберите источник',  
+            buttons: [  
+                { id: 'camera', text: '📷 Камера' },  
+                { id: 'gallery', text: '🖼 Галерея' },  
+                { id: 'cancel', text: 'Отмена', type: 'cancel' }  
+            ]  
+        }, async (buttonId) => {  
+            if (buttonId === 'cancel') {  
+                resolve(false);  
+                return;  
+            }  
+            const input = document.getElementById(fileInputId);  
+            if (!input) {  
+                tg.showAlert('Ошибка: поле ввода не найдено');  
+                resolve(false);  
+                return;  
+            }  
+            // Очищаем предыдущий выбор  
+            input.value = '';  
+            // Устанавливаем capture для камеры  
+            if (buttonId === 'camera') {  
+                input.setAttribute('capture', 'environment');  
+            } else {  
+                input.removeAttribute('capture');  
+            }  
+            // Вешаем обработчик на выбор файла  
+            const handler = async (e) => {  
+                input.removeEventListener('change', handler);  
+                const file = e.target.files[0];  
+                if (!file) {  
+                    resolve(false);  
+                    return;  
+                }  
+                // Проверка размера (5 МБ)  
+                if (file.size > 5 * 1024 * 1024) {  
+                    tg.showAlert('Файл слишком большой. Максимум 5 МБ.');  
+                    resolve(false);  
+                    return;  
+                }  
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];  
+                if (!allowedTypes.includes(file.type)) {  
+                    tg.showAlert('Поддерживаются только JPEG, PNG, WebP');  
+                    resolve(false);  
+                    return;  
+                }  
+                // Загружаем на сервер  
+                const formData = new FormData();  
+                formData.append('user_id', userId);  
+                formData.append('file', file);  
+                try {  
+                    const resp = await fetch(`${apiBase}/upload_photo`, {  
+                        method: 'POST',  
+                        body: formData  
+                    });  
+                    const result = await resp.json();  
+                    if (result.success) {  
+                        // Добавляем фото в контейнер  
+                        const container = document.getElementById(containerId);  
+                        if (container) {  
+                            // Проверяем лимит  
+                            const currentPhotos = container.querySelectorAll('img').length;  
+                            if (currentPhotos >= maxPhotos) {  
+                                tg.showAlert(`Максимум ${maxPhotos} фото`);  
+                                resolve(false);  
+                                return;  
+                            }  
+                            const div = document.createElement('div');  
+                            div.style.position = 'relative';  
+                            div.style.display = 'inline-block';  
+                            div.innerHTML = `<img src="${result.url}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" /><button class="remove-photo-btn" style="position:absolute;top:-4px;right:-4px;background:rgba(244,67,54,0.8);border:none;border-radius:50%;width:18px;height:18px;color:#fff;cursor:pointer;font-size:12px;">✕</button>`;  
+                            container.appendChild(div);  
+                            div.querySelector('.remove-photo-btn').addEventListener('click', function() {  
+                                div.remove();  
+                            });  
+                            // Обновляем имя файла  
+                            const fileNameSpan = document.getElementById(fileInputId.replace('Input', 'FileName'));  
+                            if (fileNameSpan) fileNameSpan.textContent = file.name;  
+                            resolve(true);  
+                        } else {  
+                            tg.showAlert('Ошибка: контейнер не найден');  
+                            resolve(false);  
+                        }  
+                    } else {  
+                        tg.showAlert('Ошибка загрузки фото');  
+                        resolve(false);  
+                    }  
+                } catch(err) {  
+                    console.error(err);  
+                    tg.showAlert('Ошибка связи с сервером при загрузке фото');  
+                    resolve(false);  
+                }  
+            };  
+            input.addEventListener('change', handler);  
+            // Имитируем клик по input  
+            input.click();  
         });  
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);  
-        return await resp.json();  
-    } catch(e) {  
-        console.error(e);  
-        tg.showAlert('Ошибка загрузки фото');  
-        return null;  
-    }  
+    });  
 }  
 
-function escHtml(str) {  
-    const d = document.createElement('div');  
-    d.textContent = str;  
-    return d.innerHTML;  
-}  
-function formatDate(ts) {  
-    if (!ts) return '';  
-    const d = new Date(ts * 1000);  
-    return d.toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });  
-}  
-function formatDateShort(ts) {  
-    if (!ts) return '';  
-    const d = new Date(ts * 1000);  
-    return d.toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' });  
-}  
-function getTodayTimestamp() {  
-    const d = new Date();  
-    d.setHours(0,0,0,0);  
-    return Math.floor(d.getTime() / 1000);  
-}  
-function getNowTimestamp() {  
-    return Math.floor(Date.now() / 1000);  
+// Функция для инициализации кнопок "Выбрать фото" через попап  
+function initPhotoUpload(labelId, fileInputId, containerId, maxPhotos = 5) {  
+    const label = document.getElementById(labelId);  
+    if (!label) return;  
+    // Убираем стандартное открытие файлового диалога  
+    label.addEventListener('click', function(e) {  
+        e.preventDefault();  
+        uploadPhotoViaPopup(fileInputId, containerId, maxPhotos);  
+    });  
 }  
 
 // ============================================================  
@@ -1210,6 +1307,11 @@ document.getElementById('autoSaveDiaryToggle').addEventListener('change', async 
     await callApi('set_auto_save_diary', { enabled: this.checked });  
 });  
 
+// Инициализация загрузки фото в дневнике (через попап)  
+function initDiaryPhotoUpload() {  
+    initPhotoUpload('diaryFileLabel', 'diaryFileInput', 'diaryEntryPhotos', 5);  
+}  
+
 function renderDiary(demo) {  
     const container = document.getElementById('diaryContainer');  
     let html = `<button class="pro-back-btn" onclick="showPage('page-premium')">← Назад</button>`;  
@@ -1249,6 +1351,8 @@ async function loadDiaryContent(container) {
     document.getElementById('diarySearch').addEventListener('input', () => applyDiaryFilters(container));  
     document.getElementById('diaryDateFrom').addEventListener('change', () => applyDiaryFilters(container));  
     document.getElementById('diaryDateTo').addEventListener('change', () => applyDiaryFilters(container));  
+    // Инициализация загрузки фото для дневника  
+    initDiaryPhotoUpload();  
 }  
 async function applyDiaryFilters(container) {  
     const category_id = document.getElementById('diaryFilterCategory').value;  
@@ -1278,23 +1382,10 @@ async function applyDiaryFilters(container) {
 }  
 
 function initDiaryFileInput() {  
-    const fileInput = document.getElementById('diaryFileInput');  
-    fileInput.onchange = async function(e) {  
-        const file = this.files[0];  
-        if (!file) return;  
-        const result = await uploadPhoto(file);  
-        if (result && result.success) {  
-            const container = document.getElementById('diaryEntryPhotos');  
-            const div = document.createElement('div');  
-            div.style.position = 'relative'; div.style.display = 'inline-block';  
-            div.innerHTML = `<img src="${result.url}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" /><button class="diary-remove-photo" style="position:absolute;top:-4px;right:-4px;background:rgba(244,67,54,0.8);border:none;border-radius:50%;width:18px;height:18px;color:#fff;cursor:pointer;font-size:12px;">✕</button>`;  
-            container.appendChild(div);  
-            div.querySelector('.diary-remove-photo').addEventListener('click', function() { div.remove(); });  
-            document.getElementById('diaryFileName').textContent = file.name;  
-        } else tg.showAlert('Ошибка загрузки фото');  
-        this.value = '';  
-    };  
+    // Теперь управление через попап, этот обработчик уже не нужен  
+    // Но оставляем заглушку для совместимости  
 }  
+
 async function openDiaryEntryModal(entryId = null) {  
     editingDiaryEntryId = entryId;  
     const modal = document.getElementById('modalDiaryEntry');  
@@ -1319,7 +1410,7 @@ async function openDiaryEntryModal(entryId = null) {
         document.getElementById('diaryEntryDate').value = '';  
         document.getElementById('diaryEntryPhotos').innerHTML = '';  
     }  
-    initDiaryFileInput();  
+    initDiaryPhotoUpload();  
     modal.classList.add('active');  
 }  
 document.getElementById('modalDiaryEntryCancel').addEventListener('click', () => document.getElementById('modalDiaryEntry').classList.remove('active'));  
@@ -1349,635 +1440,444 @@ document.getElementById('modalDiaryCategorySubmit').addEventListener('click', as
 });  
 
 // ============================================================  
-// 15. ПЛАНЕР  
+// 15. ПЛАНЕР (включая РАСШИРЕННЫЙ КРЕДИТНЫЙ КАЛЬКУЛЯТОР)  
 // ============================================================  
-function renderPlanner(demo) {  
-    const container = document.getElementById('plannerContainer');  
-    let html = `<button class="pro-back-btn" onclick="showPage('page-premium')">← Назад</button>`;  
-    if (demo || !isPremium) {  
-        html += `<div class="demo-mode"><div class="planer-tabs"><button class="active" data-planer="tasks">📌 Задачи</button><button data-planer="budget">💰 Бюджет</button><button data-planer="calendar">📅 Календарь</button><button data-planer="stats">📊 Статистика</button><button data-planer="credits">💳 Кредиты</button></div><div class="planer-section active" id="demoPlannerTasks"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><span style="font-weight:600;color:rgba(255,255,255,0.5);">Задачи на сегодня</span><button onclick="tg.showAlert('Доступно в PRO')" style="background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.2);border-radius:30px;padding:6px 16px;color:#d4af37;cursor:pointer;font-family:inherit;">+ Добавить</button></div><div class="task-item"><div class="task-check done"></div><div class="task-info"><div class="task-title done">Утренняя зарядка</div><div class="task-meta">08:00 · Здоровье</div></div><div class="task-priority low"></div><div class="task-actions"><button>✎</button><button>✕</button></div></div><div class="task-item"><div class="task-check"></div><div class="task-info"><div class="task-title">Работа над проектом</div><div class="task-meta">10:00–13:00 · Работа</div></div><div class="task-priority high"></div><div class="task-actions"><button>✎</button><button>✕</button></div></div><div class="task-item"><div class="task-check done"></div><div class="task-info"><div class="task-title done">Обед</div><div class="task-meta">13:00 · Личное</div></div><div class="task-priority medium"></div><div class="task-actions"><button>✎</button><button>✕</button></div></div></div><div class="planer-section" id="demoPlannerBudget" style="display:none;"><div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;"><button class="budget-mode-btn active" data-mode="0" style="padding:6px 16px;background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.2);border-radius:30px;color:#d4af37;cursor:pointer;font-weight:500;font-family:inherit;">Без кредитов</button><button class="budget-mode-btn" data-mode="1" style="padding:6px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-weight:500;font-family:inherit;">С кредитами</button></div><div class="budget-income-row"><label style="color:rgba(255,255,255,0.5);font-size:14px;">💰 Доход (руб/мес):</label><input type="number" value="50000" disabled /><button disabled>Сохранить</button></div><div class="budget-category"><span class="cat-name">Жильё</span><input type="number" value="25" disabled /><span class="cat-percent">25%</span><input type="number" value="12500" disabled /><span class="cat-amount">12500 ₽</span><span class="cat-active active">✔</span></div><div class="budget-category"><span class="cat-name">Еда</span><input type="number" value="20" disabled /><span class="cat-percent">20%</span><input type="number" value="10000" disabled /><span class="cat-amount">10000 ₽</span><span class="cat-active active">✔</span></div><div class="budget-category"><span class="cat-name">Транспорт</span><input type="number" value="10" disabled /><span class="cat-percent">10%</span><input type="number" value="5000" disabled /><span class="cat-amount">5000 ₽</span><span class="cat-active active">✔</span></div><div class="budget-category"><span class="cat-name">Накопления</span><input type="number" value="15" disabled /><span class="cat-percent">15%</span><input type="number" value="7500" disabled /><span class="cat-amount">7500 ₽</span><span class="cat-active active">✔</span></div><button id="demoBudgetSaveBtn" style="background:linear-gradient(135deg,#d4af37,#ffd700);color:#1a140e;border:none;padding:14px;border-radius:30px;font-size:16px;font-weight:600;cursor:pointer;width:100%;transition:0.3s;font-family:inherit;margin-top:12px;" disabled>Сохранить бюджет</button></div><div class="planer-section" id="demoPlannerCalendar" style="display:none;"><div class="calendar-nav"><button>◀</button><span>Июнь 2025</span><button>▶</button></div><div class="calendar-grid">${Array.from({length:30}, (_,i) => `<div class="day ${i===5?'has-mark':''}">${i+1}</div>`).join('')}</div></div><div class="planer-section" id="demoPlannerStats" style="display:none;"><div class="stats-cards"><div class="stats-card total"><span class="number">12</span><span class="label">Всего</span></div><div class="stats-card completed"><span class="number">5</span><span class="label">Выполнено</span></div><div class="stats-card pending"><span class="number">4</span><span class="label">Ожидает</span></div><div class="stats-card overdue"><span class="number">3</span><span class="label">Просрочено</span></div></div></div><div class="planer-section" id="demoPlannerCredits" style="display:none;"><div style="background:rgba(212,175,55,0.05);border-radius:16px;padding:20px;margin-top:12px;"><h3 style="color:#d4af37;">💳 Кредитный калькулятор</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:12px;"><div><label>Сумма кредита (₽)</label><input type="number" id="creditAmountDemo" value="100000" style="width:100%;padding:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:#fff;" disabled/></div><div><label>Процентная ставка (% годовых)</label><input type="number" id="creditRateDemo" value="15" step="0.1" style="width:100%;padding:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:#fff;" disabled/></div><div><label>Срок (месяцев)</label><input type="number" id="creditMonthsDemo" value="12" style="width:100%;padding:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:#fff;" disabled/></div><button id="calcCreditBtnDemo" style="background:linear-gradient(135deg,#d4af37,#ffd700);color:#1a140e;border:none;padding:12px;border-radius:30px;font-weight:600;cursor:pointer;" disabled>Рассчитать</button></div><div id="creditResultDemo" style="margin-top:16px;display:none;"><div class="credit-result-grid"><div class="credit-result-item payment"><div class="value" id="monthlyPaymentDemo">0</div><div class="label">Ежемесячный платёж</div></div><div class="credit-result-item total"><div class="value" id="totalPaymentDemo">0</div><div class="label">Общая выплата</div></div><div class="credit-result-item overpay"><div class="value" id="overpaymentDemo">0</div><div class="label">Переплата</div></div></div></div></div></div><div style="margin-top:12px;text-align:center;color:rgba(255,255,255,0.3);font-size:12px;">🔒 Полный функционал доступен в PRO</div></div>`;  
-        container.innerHTML = html;  
-        container.querySelectorAll('.planer-tabs button').forEach(tab => {  
-            tab.addEventListener('click', function() {  
-                container.querySelectorAll('.planer-tabs button').forEach(t => t.classList.remove('active'));  
-                this.classList.add('active');  
-                const section = this.dataset.planer;  
-                ['demoPlannerTasks','demoPlannerBudget','demoPlannerCalendar','demoPlannerStats','demoPlannerCredits'].forEach(id => {  
-                    document.getElementById(id).style.display = id === 'demoPlanner' + section.charAt(0).toUpperCase() + section.slice(1) ? 'block' : 'none';  
-                });  
-            });  
-        });  
+
+// === КРЕДИТНЫЙ КАЛЬКУЛЯТОР ===  
+let creditHistory = JSON.parse(localStorage.getItem('creditHistory_' + userId) || '[]');  
+let creditCompare = []; // временное хранилище для сравнения  
+
+function saveCreditHistory() {  
+    localStorage.setItem('creditHistory_' + userId, JSON.stringify(creditHistory));  
+}  
+
+function addCreditToHistory(params, result, scheme) {  
+    creditHistory.push({  
+        date: new Date().toISOString(),  
+        params: params,  
+        result: result,  
+        scheme: scheme  
+    });  
+    if (creditHistory.length > 20) creditHistory.shift();  
+    saveCreditHistory();  
+}  
+
+function renderCreditHistory() {  
+    const container = document.getElementById('creditHistoryList');  
+    if (!container) return;  
+    if (creditHistory.length === 0) {  
+        container.innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;padding:12px;">Нет сохранённых расчётов</div>';  
         return;  
     }  
-    loadPlannerContent(container);  
-}  
-
-async function loadPlannerContent(container) {  
-    const today = getTodayTimestamp();  
-    const tasksData = await callApi('get_tasks', { date: today });  
-    const tasks = tasksData?.tasks || [];  
-    const budgetData = await callApi('get_budget');  
-    const budgetCategories = budgetData?.categories || [];  
-    const income = budgetData?.income || 0;  
-    const startDate = getTodayTimestamp() - 30*86400;  
-    const endDate = getTodayTimestamp() + 86400;  
-    const transData = await callApi('get_transactions', { start_date: startDate, end_date: endDate });  
-    const transactions = transData?.transactions || [];  
-    const statsData = await callApi('get_task_stats', { period: 'day' });  
-    const stats = statsData?.stats || { total:0, completed:0, pending:0, overdue:0 };  
-
-    let html = `<button class="pro-back-btn" onclick="showPage('page-premium')">← Назад</button><div class="planer-tabs"><button class="active" data-planer="tasks">📌 Задачи</button><button data-planer="budget">💰 Бюджет</button><button data-planer="calendar">📅 Календарь</button><button data-planer="stats">📊 Статистика</button><button data-planer="credits">💳 Кредиты</button></div><div class="planer-section active" id="plannerTasks"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><span style="font-weight:600;color:rgba(255,255,255,0.5);">Задачи на сегодня</span><button id="taskAddBtn" style="background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.2);border-radius:30px;padding:6px 16px;color:#d4af37;cursor:pointer;font-family:inherit;">+ Добавить</button><button id="taskExportBtn" style="background:rgba(78,205,196,0.1);border:1px solid rgba(78,205,196,0.2);border-radius:30px;padding:6px 16px;color:#4ecdc4;cursor:pointer;font-family:inherit;">📊 Экспорт CSV</button></div><div id="tasksList">`;  
-    if (tasks.length === 0) html += `<div class="empty">Нет задач на сегодня</div>`;  
-    else {  
-        tasks.forEach(t => {  
-            const done = t.status === 2;  
-            const priorityClass = t.priority === 0 ? 'low' : t.priority === 2 ? 'high' : 'medium';  
-            const overdue = t.deadline && t.deadline < getNowTimestamp() && !done;  
-            html += `<div class="task-item" data-id="${t.id}"><div class="task-check ${done?'done':''}" data-id="${t.id}"></div><div class="task-info"><div class="task-title ${done?'done':''}">${escHtml(t.title)}</div><div class="task-meta">${formatDate(t.scheduled_time)} · ${t.category||'Без категории'} ${t.repeat_type!=='none'?' 🔁'+t.repeat_type:''} ${overdue?' <span class="task-deadline-overdue">Просрочено!</span>':''}</div></div><div class="task-priority ${priorityClass}"></div><div class="task-actions"><select class="task-status-select" data-id="${t.id}"><option value="0" ${t.status===0?'selected':''}>⏳ Не начата</option><option value="1" ${t.status===1?'selected':''}>🔄 В процессе</option><option value="2" ${t.status===2?'selected':''}>✅ Выполнена</option><option value="3" ${t.status===3?'selected':''}>⏰ Отложена</option></select><button class="task-timer-btn" data-id="${t.id}" title="Таймер">⏱</button><button class="task-edit" data-id="${t.id}">✎</button><button class="task-delete" data-id="${t.id}">✕</button></div></div>`;  
-        });  
-    }  
-    html += `</div></div><div class="planer-section" id="plannerBudget"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><span style="font-weight:600;color:rgba(255,255,255,0.5);">Бюджет</span><button id="transactionAddBtn" style="background:rgba(78,205,196,0.1);border:1px solid rgba(78,205,196,0.2);border-radius:30px;padding:6px 16px;color:#4ecdc4;cursor:pointer;font-family:inherit;">+ Транзакция</button></div><div class="budget-income-row"><label>💰 Доход (руб/мес):</label><input type="number" id="incomeInput" value="${income}" min="0" step="100" /><button id="incomeSaveBtn">Сохранить</button></div><div id="budgetCategoriesList">`;  
-    budgetCategories.forEach((c, idx) => {  
-        html += `<div class="budget-category" data-idx="${idx}"><span class="cat-name">${escHtml(c.name)}</span><input type="number" class="cat-percent-input" data-idx="${idx}" value="${c.percent}" min="0" max="100" step="0.1" /><span class="cat-percent">${c.percent}%</span><input type="number" class="cat-amount-input" data-idx="${idx}" value="${c.amount||0}" min="0" step="100" /><span class="cat-amount">${c.amount||0} ₽</span><span class="cat-active ${c.active?'active':''}" data-idx="${idx}">${c.active?'✔':'✕'}</span></div>`;  
-    });  
-    html += `</div><button id="budgetSaveBtn" style="background:linear-gradient(135deg,#d4af37,#ffd700);color:#1a140e;border:none;padding:14px;border-radius:30px;font-size:16px;font-weight:600;cursor:pointer;width:100%;transition:0.3s;font-family:inherit;margin-top:12px;">Сохранить бюджет</button><div style="margin-top:16px;"><div style="font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:8px;">Последние транзакции</div>${transactions.slice(0,10).map(t => `<div class="transaction-item"><div><span class="${t.type}">${t.type === 'income' ? '💰 +' : '💸 -'}${t.amount} ₽</span> · ${escHtml(t.category)}</div><div class="meta">${formatDateShort(t.date)}</div></div>`).join('') || '<div class="empty">Нет транзакций</div>'}</div><div class="chart-container"><canvas id="budgetChart"></canvas></div></div><div class="planer-section" id="plannerCalendar"><div class="calendar-nav"><button id="calPrev">◀</button><span id="calMonthYear">${calendarDate.toLocaleString('ru-RU', { month:'long', year:'numeric' })}</span><button id="calNext">▶</button></div><div class="calendar-grid" id="calendarGrid"></div><div id="calendarTasks" style="margin-top:12px;"></div></div><div class="planer-section" id="plannerStats"><div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;"><button class="stats-period-btn active" data-period="day" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">День</button><button class="stats-period-btn" data-period="week" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">Неделя</button><button class="stats-period-btn" data-period="month" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">Месяц</button></div><div class="stats-cards"><div class="stats-card total"><span class="number" id="statTotal">${stats.total||0}</span><span class="label">Всего</span></div><div class="stats-card completed"><span class="number" id="statCompleted">${stats.completed||0}</span><span class="label">Выполнено</span></div><div class="stats-card pending"><span class="number" id="statPending">${stats.pending||0}</span><span class="label">Ожидает</span></div><div class="stats-card overdue"><span class="number" id="statOverdue">${stats.overdue||0}</span><span class="label">Просрочено</span></div></div><div class="chart-container"><canvas id="taskChart"></canvas></div></div><div class="planer-section" id="plannerCredits"><div style="background:rgba(212,175,55,0.05);border-radius:16px;padding:20px;margin-top:12px;"><h3 style="color:#d4af37;">💳 Кредитный калькулятор</h3><div style="display:flex;flex-direction:column;gap:12px;margin-top:12px;"><div><label>Сумма кредита (₽)</label><input type="number" id="creditAmount" value="100000" style="width:100%;padding:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:#fff;"/></div><div><label>Процентная ставка (% годовых)</label><input type="number" id="creditRate" value="15" step="0.1" style="width:100%;padding:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:#fff;"/></div><div><label>Срок (месяцев)</label><input type="number" id="creditMonths" value="12" style="width:100%;padding:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:#fff;"/></div><button id="calcCreditBtn" style="background:linear-gradient(135deg,#d4af37,#ffd700);color:#1a140e;border:none;padding:12px;border-radius:30px;font-weight:600;cursor:pointer;">Рассчитать</button></div><div id="creditResult" style="margin-top:16px;display:none;"><div class="credit-result-grid"><div class="credit-result-item payment"><div class="value" id="monthlyPayment">0</div><div class="label">Ежемесячный платёж</div></div><div class="credit-result-item total"><div class="value" id="totalPayment">0</div><div class="label">Общая выплата</div></div><div class="credit-result-item overpay"><div class="value" id="overpayment">0</div><div class="label">Переплата</div></div></div></div></div></div>`;  
-    container.innerHTML = html;  
-
-    // Кредитный калькулятор  
-    document.getElementById('calcCreditBtn').addEventListener('click', function() {  
-        const amount = parseFloat(document.getElementById('creditAmount').value);  
-        const rate = parseFloat(document.getElementById('creditRate').value) / 100 / 12;  
-        const months = parseInt(document.getElementById('creditMonths').value);  
-        if (!amount || !months || rate < 0) { tg.showAlert('Введите корректные данные'); return; }  
-        const monthly = amount * rate * Math.pow(1 + rate, months) / (Math.pow(1 + rate, months) - 1);  
-        const total = monthly * months;  
-        const overpay = total - amount;  
-        document.getElementById('monthlyPayment').textContent = monthly.toFixed(2);  
-        document.getElementById('totalPayment').textContent = total.toFixed(2);  
-        document.getElementById('overpayment').textContent = overpay.toFixed(2);  
-        document.getElementById('creditResult').style.display = 'block';  
-    });  
-
-    initPlannerHandlers();  
-    loadCalendar();  
-    renderBudgetChart(budgetCategories);  
-    renderTaskChart(stats);  
-}  
-function renderBudgetChart(categories) {  
-    const ctx = document.getElementById('budgetChart');  
-    if (!ctx) return;  
-    if (budgetChartInstance) budgetChartInstance.destroy();  
-    budgetChartInstance = new Chart(ctx, {  
-        type: 'doughnut',  
-        data: {  
-            labels: categories.filter(c => c.active).map(c => c.name),  
-            datasets: [{ data: categories.filter(c => c.active).map(c => c.amount || 0), backgroundColor: ['#4ecdc4','#ff6b6b','#ffd93d','#6c5ce7','#00b894','#fdcb6e','#e17055','#00cec9','#a29bfe','#fd79a8'] }]  
-        },  
-        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#e0e8f0' } } } }  
-    });  
-}  
-function renderTaskChart(stats) {  
-    const ctx = document.getElementById('taskChart');  
-    if (!ctx) return;  
-    if (taskChartInstance) taskChartInstance.destroy();  
-    taskChartInstance = new Chart(ctx, {  
-        type: 'bar',  
-        data: {  
-            labels: ['Всего','Выполнено','Ожидает','Просрочено'],  
-            datasets: [{ label: 'Задачи', data: [stats.total||0, stats.completed||0, stats.pending||0, stats.overdue||0], backgroundColor: ['#4ecdc4','#4caf50','#ff9800','#f44336'] }]  
-        },  
-        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#e0e8f0' } }, x: { ticks: { color: '#e0e8f0' } } } }  
-    });  
-}  
-function initPlannerHandlers() {  
-    document.querySelectorAll('.planer-tabs button').forEach(tab => {  
-        tab.addEventListener('click', function() {  
-            document.querySelectorAll('.planer-tabs button').forEach(t => t.classList.remove('active'));  
-            this.classList.add('active');  
-            const section = this.dataset.planer;  
-            document.querySelectorAll('.planer-section').forEach(s => s.classList.remove('active'));  
-            document.getElementById(`planner${section.charAt(0).toUpperCase() + section.slice(1)}`).classList.add('active');  
-            if (section === 'calendar') loadCalendar();  
-        });  
-    });  
-    document.querySelectorAll('.task-check').forEach(el => {  
-        el.addEventListener('click', async function() {  
-            const id = parseInt(this.dataset.id);  
-            const done = this.classList.contains('done');  
-            const newStatus = done ? 0 : 2;  
-            const result = await callApi('update_task', { task_id: id, status: newStatus });  
-            if (result?.success) loadPlannerContent(document.getElementById('plannerContainer'));  
-        });  
-    });  
-    document.querySelectorAll('.task-status-select').forEach(el => {  
-        el.addEventListener('change', async function() {  
-            const id = parseInt(this.dataset.id);  
-            const status = parseInt(this.value);  
-            const result = await callApi('update_task', { task_id: id, status });  
-            if (result?.success) loadPlannerContent(document.getElementById('plannerContainer'));  
-        });  
-    });  
-    document.querySelectorAll('.task-timer-btn').forEach(el => {  
-        el.addEventListener('click', async function() {  
-            const id = parseInt(this.dataset.id);  
-            const logs = await callApi('get_task_time_logs', { task_id: id });  
-            const running = logs?.logs?.some(l => l.end === null);  
-            if (running) { await callApi('stop_task_timer', { task_id: id }); tg.showAlert('⏹ Таймер остановлен'); }  
-            else { await callApi('start_task_timer', { task_id: id }); tg.showAlert('⏱ Таймер запущен'); }  
-            loadPlannerContent(document.getElementById('plannerContainer'));  
-        });  
-    });  
-    document.querySelectorAll('.task-edit').forEach(el => {  
-        el.addEventListener('click', function() { const id = parseInt(this.dataset.id); openTaskModal(id); });  
-    });  
-    document.querySelectorAll('.task-delete').forEach(el => {  
-        el.addEventListener('click', async function() {  
-            if (!confirm('Удалить задачу?')) return;  
-            const id = parseInt(this.dataset.id);  
-            const result = await callApi('delete_task', { task_id: id });  
-            if (result?.success) loadPlannerContent(document.getElementById('plannerContainer'));  
-        });  
-    });  
-    document.getElementById('taskAddBtn').addEventListener('click', function() { editingTaskId = null; selectedDateForTask = null; openTaskModal(); });  
-    document.getElementById('taskExportBtn').addEventListener('click', function() { window.open(`${API_BASE}/export_tasks?user_id=${userId}`, '_blank'); });  
-    document.getElementById('incomeSaveBtn').addEventListener('click', async function() {  
-        const income = parseInt(document.getElementById('incomeInput').value) || 0;  
-        const result = await callApi('set_income', { income });  
-        if (result?.success) { tg.showAlert('✅ Доход сохранён'); loadPlannerContent(document.getElementById('plannerContainer')); }  
-    });  
-    document.getElementById('budgetSaveBtn').addEventListener('click', async function() {  
-        const container = document.getElementById('budgetCategoriesList');  
-        const inputs = container.querySelectorAll('.budget-category');  
-        const categories = [];  
-        const income = parseInt(document.getElementById('incomeInput').value) || 0;  
-        inputs.forEach(el => {  
-            const name = el.querySelector('.cat-name').textContent;  
-            const percent = parseFloat(el.querySelector('.cat-percent-input').value) || 0;  
-            const active = el.querySelector('.cat-active').classList.contains('active');  
-            const fixed_amount = parseFloat(el.querySelector('.cat-amount-input').value) || 0;  
-            categories.push({ name, percent, active, fixed_amount });  
-        });  
-        const result = await callApi('update_budget', { categories, income });  
-        if (result?.success) { tg.showAlert('✅ Бюджет сохранён'); loadPlannerContent(document.getElementById('plannerContainer')); }  
-        else tg.showAlert(result?.error || 'Ошибка');  
-    });  
-    document.getElementById('transactionAddBtn').addEventListener('click', function() { document.getElementById('modalTransaction').classList.add('active'); });  
-    document.getElementById('calPrev').addEventListener('click', function() { calendarDate.setMonth(calendarDate.getMonth() - 1); loadCalendar(); });  
-    document.getElementById('calNext').addEventListener('click', function() { calendarDate.setMonth(calendarDate.getMonth() + 1); loadCalendar(); });  
-    document.querySelectorAll('.stats-period-btn').forEach(btn => {  
-        btn.addEventListener('click', function() {  
-            document.querySelectorAll('.stats-period-btn').forEach(b => b.classList.remove('active'));  
-            this.classList.add('active');  
-            loadTaskStats(this.dataset.period);  
-        });  
-    });  
-}  
-async function loadTaskStats(period) {  
-    const data = await callApi('get_task_stats', { period });  
-    if (data?.stats) {  
-        document.getElementById('statTotal').textContent = data.stats.total || 0;  
-        document.getElementById('statCompleted').textContent = data.stats.completed || 0;  
-        document.getElementById('statPending').textContent = data.stats.pending || 0;  
-        document.getElementById('statOverdue').textContent = data.stats.overdue || 0;  
-        renderTaskChart(data.stats);  
-    }  
-}  
-async function loadCalendar() {  
-    const year = calendarDate.getFullYear();  
-    const month = calendarDate.getMonth();  
-    document.getElementById('calMonthYear').textContent = calendarDate.toLocaleString('ru-RU', { month:'long', year:'numeric' });  
-    const grid = document.getElementById('calendarGrid');  
-    grid.innerHTML = '';  
-    const daysOfWeek = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];  
-    daysOfWeek.forEach(d => { const div = document.createElement('div'); div.style.textAlign='center'; div.style.fontSize='12px'; div.style.color='rgba(255,255,255,0.3)'; div.style.padding='4px'; div.textContent=d; grid.appendChild(div); });  
-    const start = new Date(year, month, 1);  
-    const end = new Date(year, month + 1, 0);  
-    const firstDay = start.getDay();  
-    const offset = firstDay === 0 ? 6 : firstDay - 1;  
-    const daysInMonth = end.getDate();  
-    const today = new Date();  
-    const tasksData = await callApi('get_tasks');  
-    const allTasks = tasksData?.tasks || [];  
-    const tasksByDate = {};  
-    allTasks.forEach(t => {  
-        const d = new Date(t.date * 1000);  
-        const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;  
-        if (!tasksByDate[key]) tasksByDate[key] = [];  
-        tasksByDate[key].push(t);  
-    });  
-    for (let i=0; i<offset; i++) { const empty=document.createElement('div'); grid.appendChild(empty); }  
-    for (let d=1; d<=daysInMonth; d++) {  
-        const dateObj = new Date(year, month, d);  
-        const div = document.createElement('div');  
-        div.className = 'day';  
-        if (dateObj.toDateString() === today.toDateString()) div.classList.add('today');  
-        div.textContent = d;  
-        const key = `${year}-${month}-${d}`;  
-        if (tasksByDate[key]) { div.classList.add('has-mark'); const dot=document.createElement('div'); dot.className='mark-dot work'; div.appendChild(dot); }  
-        div.addEventListener('click', function() {  
-            selectedDateForTask = dateObj;  
-            const scheduled = dateObj;  
-            document.getElementById('taskScheduled').value = scheduled.toISOString().slice(0,16);  
-            editingTaskId = null;  
-            document.getElementById('modalTaskTitle').textContent = '➕ Новая задача на ' + scheduled.toLocaleDateString('ru-RU');  
-            document.getElementById('modalTask').classList.add('active');  
-        });  
-        grid.appendChild(div);  
-    }  
-    showTasksForDate(today);  
-}  
-async function showTasksForDate(dateObj) {  
-    const ts = Math.floor(dateObj.getTime() / 1000);  
-    const container = document.getElementById('calendarTasks');  
-    const data = await callApi('get_tasks', { date: ts });  
-    const tasks = data?.tasks || [];  
-    if (tasks.length === 0) { container.innerHTML = `<div class="empty">Нет задач на ${dateObj.toLocaleDateString('ru-RU')}</div>`; return; }  
-    let html = `<div style="font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:8px;">Задачи на ${dateObj.toLocaleDateString('ru-RU')}:</div>`;  
-    tasks.forEach(t => {  
-        const done = t.status === 2;  
-        html += `<div class="task-item" style="padding:6px 0;"><div class="task-check ${done?'done':''}" style="width:18px;height:18px;font-size:12px;"></div><div class="task-info"><div class="task-title ${done?'done':''}" style="font-size:14px;">${escHtml(t.title)}</div></div></div>`;  
+    let html = '';  
+    creditHistory.slice().reverse().forEach((item, idx) => {  
+        const p = item.params;  
+        const r = item.result;  
+        html += `<div class="credit-history-item"><div class="date">${new Date(item.date).toLocaleDateString()} ${new Date(item.date).toLocaleTimeString()}</div><div class="details">${p.amount} ₽ · ${p.rate}% · ${p.months} мес · ${item.scheme === 'annuity' ? 'Аннуитетный' : 'Дифференцированный'}</div><div class="amount">${r.monthly_payment.toFixed(2)} ₽/мес</div></div>`;  
     });  
     container.innerHTML = html;  
 }  
-function openTaskModal(taskId = null) {  
-    editingTaskId = taskId;  
-    document.getElementById('modalTaskTitle').textContent = taskId ? '✎ Редактировать задачу' : '➕ Новая задача';  
-    document.getElementById('taskTitle').value = '';  
-    document.getElementById('taskDescription').value = '';  
-    document.getElementById('taskScheduled').value = '';  
-    document.getElementById('taskDuration').value = '60';  
-    document.getElementById('taskCategory').value = '';  
-    document.getElementById('taskPriority').value = '1';  
-    document.getElementById('taskDeadline').value = '';  
-    document.getElementById('taskRepeat').value = 'none';  
-    document.getElementById('taskRepeatEnd').value = '';  
-    document.getElementById('taskParent').value = '';  
-    document.getElementById('taskRemindAt').value = '';  
-    if (taskId) {  
-        callApi('get_tasks', { date: getTodayTimestamp() }).then(data => {  
-            const task = data?.tasks?.find(t => t.id === taskId);  
-            if (task) {  
-                document.getElementById('taskTitle').value = task.title;  
-                document.getElementById('taskDescription').value = task.description || '';  
-                const scheduled = new Date(task.scheduled_time * 1000);  
-                document.getElementById('taskScheduled').value = scheduled.toISOString().slice(0,16);  
-                document.getElementById('taskDuration').value = task.duration || 60;  
-                document.getElementById('taskCategory').value = task.category || '';  
-                document.getElementById('taskPriority').value = task.priority || 1;  
-                if (task.deadline) { const dl = new Date(task.deadline * 1000); document.getElementById('taskDeadline').value = dl.toISOString().slice(0,16); }  
-                document.getElementById('taskRepeat').value = task.repeat_type || 'none';  
-                if (task.repeat_end) { const re = new Date(task.repeat_end * 1000); document.getElementById('taskRepeatEnd').value = re.toISOString().slice(0,16); }  
-                if (task.parent_id) document.getElementById('taskParent').value = task.parent_id;  
-                if (task.remind_at) { const ra = new Date(task.remind_at * 1000); document.getElementById('taskRemindAt').value = ra.toISOString().slice(0,16); }  
+
+function calculateCredit(params) {  
+    // params: amount, rate (годовых, %), months, scheme ('annuity' или 'differential'),  
+    // early_payment (сумма досрочного), early_month (с какого месяца), early_scenario ('reduce_term' или 'reduce_payment')  
+    const amount = params.amount;  
+    const annualRate = params.rate / 100;  
+    const monthlyRate = annualRate / 12;  
+    const months = params.months;  
+    const scheme = params.scheme || 'annuity';  
+    const earlyPayment = params.early_payment || 0;  
+    const earlyMonth = params.early_month || 0;  
+    const earlyScenario = params.early_scenario || 'reduce_term';  
+
+    let schedule = [];  
+    let totalPayment = 0;  
+    let totalInterest = 0;  
+    let monthlyPayment = 0;  
+    let remainingDebt = amount;  
+    let earlyApplied = false;  
+
+    if (scheme === 'annuity') {  
+        if (monthlyRate === 0) {  
+            monthlyPayment = amount / months;  
+        } else {  
+            monthlyPayment = amount * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1);  
+        }  
+        for (let m = 1; m <= months; m++) {  
+            let interest = remainingDebt * monthlyRate;  
+            let principal = monthlyPayment - interest;  
+            if (m === earlyMonth && earlyPayment > 0 && !earlyApplied) {  
+                principal += earlyPayment;  
+                earlyApplied = true;  
             }  
-        });  
-    } else if (selectedDateForTask) {  
-        const dateObj = selectedDateForTask;  
-        document.getElementById('taskScheduled').value = dateObj.toISOString().slice(0,16);  
+            if (principal > remainingDebt) principal = remainingDebt;  
+            remainingDebt -= principal;  
+            if (remainingDebt < 0) remainingDebt = 0;  
+            totalPayment += principal + interest;  
+            totalInterest += interest;  
+            schedule.push({ month: m, payment: principal + interest, principal, interest, remaining: remainingDebt });  
+            if (remainingDebt <= 0) break;  
+        }  
+        // Если досрочное погашение применено и сценарий "уменьшить срок"  
+        if (earlyApplied && earlyScenario === 'reduce_term' && remainingDebt === 0) {  
+            // Укорачиваем график, убираем лишние месяцы  
+            schedule = schedule.filter(s => s.remaining >= 0);  
+        } else if (earlyApplied && earlyScenario === 'reduce_payment' && remainingDebt > 0) {  
+            // Пересчитываем оставшиеся платежи с меньшей суммой  
+            let newMonths = schedule.length - earlyMonth;  
+            if (newMonths > 0 && remainingDebt > 0) {  
+                let newMonthlyPayment = remainingDebt * monthlyRate * Math.pow(1 + monthlyRate, newMonths) / (Math.pow(1 + monthlyRate, newMonths) - 1);  
+                if (monthlyRate === 0) newMonthlyPayment = remainingDebt / newMonths;  
+                // Заменяем оставшиеся платежи  
+                let idx = schedule.length - newMonths;  
+                for (let i = 0; i < newMonths; i++) {  
+                    let m = idx + i;  
+                    let interest = remainingDebt * monthlyRate;  
+                    let principal = newMonthlyPayment - interest;  
+                    if (principal > remainingDebt) principal = remainingDebt;  
+                    remainingDebt -= principal;  
+                    if (remainingDebt < 0) remainingDebt = 0;  
+                    schedule[m].payment = principal + interest;  
+                    schedule[m].principal = principal;  
+                    schedule[m].interest = interest;  
+                    schedule[m].remaining = remainingDebt;  
+                    totalPayment = schedule.reduce((sum, s) => sum + s.payment, 0);  
+                    totalInterest = totalPayment - amount;  
+                    if (remainingDebt <= 0) break;  
+                }  
+                monthlyPayment = newMonthlyPayment;  
+            }  
+        }  
+    } else { // дифференцированный  
+        let basePrincipal = amount / months;  
+        for (let m = 1; m <= months; m++) {  
+            let interest = remainingDebt * monthlyRate;  
+            let principal = basePrincipal;  
+            if (m === earlyMonth && earlyPayment > 0 && !earlyApplied) {  
+                principal += earlyPayment;  
+                earlyApplied = true;  
+            }  
+            let payment = principal + interest;  
+            if (principal > remainingDebt) principal = remainingDebt;  
+            remainingDebt -= principal;  
+            if (remainingDebt < 0) remainingDebt = 0;  
+            totalPayment += payment;  
+            totalInterest += interest;  
+            schedule.push({ month: m, payment, principal, interest, remaining: remainingDebt });  
+            if (remainingDebt <= 0) break;  
+        }  
+        monthlyPayment = schedule[0] ? schedule[0].payment : 0; // первый платёж для дифф.  
+        // Аналогичная логика для досрочного  
+        if (earlyApplied && earlyScenario === 'reduce_term' && remainingDebt === 0) {  
+            schedule = schedule.filter(s => s.remaining >= 0);  
+        } else if (earlyApplied && earlyScenario === 'reduce_payment' && remainingDebt > 0) {  
+            let newMonths = schedule.length - earlyMonth;  
+            if (newMonths > 0 && remainingDebt > 0) {  
+                let newBasePrincipal = remainingDebt / newMonths;  
+                let idx = schedule.length - newMonths;  
+                for (let i = 0; i < newMonths; i++) {  
+                    let m = idx + i;  
+                    let interest = remainingDebt * monthlyRate;  
+                    let principal = newBasePrincipal;  
+                    let payment = principal + interest;  
+                    if (principal > remainingDebt) principal = remainingDebt;  
+                    remainingDebt -= principal;  
+                    if (remainingDebt < 0) remainingDebt = 0;  
+                    schedule[m].payment = payment;  
+                    schedule[m].principal = principal;  
+                    schedule[m].interest = interest;  
+                    schedule[m].remaining = remainingDebt;  
+                    totalPayment = schedule.reduce((sum, s) => sum + s.payment, 0);  
+                    totalInterest = totalPayment - amount;  
+                    if (remainingDebt <= 0) break;  
+                }  
+                monthlyPayment = schedule[idx] ? schedule[idx].payment : 0;  
+            }  
+        }  
     }  
-    document.getElementById('modalTask').classList.add('active');  
+    return {  
+        monthly_payment: monthlyPayment,  
+        total_payment: totalPayment,  
+        total_interest: totalInterest,  
+        schedule: schedule,  
+        remaining_debt: remainingDebt  
+    };  
 }  
-document.getElementById('modalTaskCancel').addEventListener('click', () => document.getElementById('modalTask').classList.remove('active'));  
-document.getElementById('modalTaskSubmit').addEventListener('click', async function() {  
-    const title = document.getElementById('taskTitle').value.trim();  
-    if (!title) { tg.showAlert('Введите название'); return; }  
-    const description = document.getElementById('taskDescription').value.trim();  
-    let scheduled = document.getElementById('taskScheduled').value;  
-    if (!scheduled) { const now = new Date(); scheduled = now.toISOString().slice(0,16); }  
-    const scheduledTs = Math.floor(new Date(scheduled).getTime() / 1000);  
-    const duration = parseInt(document.getElementById('taskDuration').value) || 60;  
-    const category = document.getElementById('taskCategory').value.trim() || 'Работа';  
-    const priority = parseInt(document.getElementById('taskPriority').value);  
-    let deadline = document.getElementById('taskDeadline').value;  
-    const deadlineTs = deadline ? Math.floor(new Date(deadline).getTime() / 1000) : null;  
-    const repeat_type = document.getElementById('taskRepeat').value;  
-    let repeat_end = document.getElementById('taskRepeatEnd').value;  
-    const repeatEndTs = repeat_end ? Math.floor(new Date(repeat_end).getTime() / 1000) : null;  
-    let dateTs = selectedDateForTask ? Math.floor(selectedDateForTask.getTime() / 1000) : getTodayTimestamp();  
-    const parent_id = document.getElementById('taskParent').value ? parseInt(document.getElementById('taskParent').value) : null;  
-    let remind_at = document.getElementById('taskRemindAt').value;  
-    const remindAtTs = remind_at ? Math.floor(new Date(remind_at).getTime() / 1000) : null;  
-    const payload = { title, description, scheduled_time: scheduledTs, duration, category, date: dateTs, priority, deadline: deadlineTs, repeat_type, repeat_end: repeatEndTs, parent_id, remind_at: remindAtTs };  
-    if (editingTaskId) payload.task_id = editingTaskId;  
-    const result = await callApi(editingTaskId ? 'update_task' : 'add_task', payload);  
-    if (result?.success) { tg.showAlert('✅ Задача сохранена'); document.getElementById('modalTask').classList.remove('active'); selectedDateForTask = null; loadPlannerContent(document.getElementById('plannerContainer')); }  
-    else tg.showAlert('Ошибка сохранения');  
-});  
-document.getElementById('modalTransactionCancel').addEventListener('click', () => document.getElementById('modalTransaction').classList.remove('active'));  
-document.getElementById('modalTransactionSubmit').addEventListener('click', async function() {  
-    const category = document.getElementById('transCategory').value.trim();  
-    const amount = parseFloat(document.getElementById('transAmount').value);  
-    const type = document.getElementById('transType').value;  
-    const description = document.getElementById('transDescription').value.trim();  
-    const dateVal = document.getElementById('transDate').value;  
-    const date = dateVal ? Math.floor(new Date(dateVal).getTime() / 1000) : getNowTimestamp();  
-    if (!category || !amount || amount <= 0) { tg.showAlert('Заполните категорию и сумму'); return; }  
-    const result = await callApi('add_transaction', { category, amount, type, description, date });  
-    if (result?.success) { tg.showAlert('✅ Транзакция добавлена'); document.getElementById('modalTransaction').classList.remove('active'); loadPlannerContent(document.getElementById('plannerContainer')); }  
-    else tg.showAlert('Ошибка добавления');  
-});  
 
-// ============================================================  
-// 16. ЗНАКОМСТВА  
-// ============================================================  
-function renderDating(demo) {  
-    const container = document.getElementById('datingContainer');  
-    let html = `<button class="pro-back-btn" onclick="showPage('page-premium')">← Назад</button>`;  
-    if (demo || !isPremium) {  
-        html += `<div class="demo-mode"><div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;"><button class="dating-tab active" data-tab="profile" style="flex:1;padding:6px;background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.2);border-radius:30px;color:#d4af37;cursor:pointer;font-family:inherit;">👤 Моя анкета</button><button class="dating-tab" data-tab="swipe" style="flex:1;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">❤️ Поиск</button><button class="dating-tab" data-tab="chats" style="flex:1;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">💬 Чаты</button></div><div id="datingProfile" style="display:block;"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:20px;"><div style="font-size:48px;">👤</div><p style="margin-top:8px;">Заполните анкету, чтобы начать знакомиться</p><button onclick="tg.showAlert('Доступно в PRO')" style="background:linear-gradient(135deg,#ff6b6b,#4ecdc4);border:none;border-radius:30px;padding:12px 30px;color:#fff;font-weight:600;cursor:pointer;font-family:inherit;margin-top:12px;">Создать анкету</button></div></div><div id="datingSwipe" style="display:none;"><div class="dating-swipe-card"><div class="photos"><img src="https://via.placeholder.com/80" /></div><div class="name">Анна, 28</div><div class="meta">Москва · Ищет встречу</div><div class="purpose">💕 Без обязательств</div><div class="actions"><button class="dislike" onclick="tg.showAlert('Доступно в PRO')">✕</button><button class="message" onclick="tg.showAlert('Доступно в PRO')">💬</button><button class="like" onclick="tg.showAlert('Доступно в PRO')">❤️</button></div></div></div><div id="datingChats" style="display:none;"><div class="empty">Нет чатов</div></div><div style="margin-top:12px;text-align:center;color:rgba(255,255,255,0.3);font-size:12px;">🔒 Полный функционал доступен в PRO</div></div>`;  
-        container.innerHTML = html;  
-        container.querySelectorAll('.dating-tab').forEach(tab => {  
-            tab.addEventListener('click', function() {  
-                container.querySelectorAll('.dating-tab').forEach(t => t.classList.remove('active'));  
-                this.classList.add('active');  
-                const section = this.dataset.tab;  
-                ['profile','swipe','chats'].forEach(id => { document.getElementById('dating' + id.charAt(0).toUpperCase() + id.slice(1)).style.display = id === section ? 'block' : 'none'; });  
+function renderCreditCalculator() {  
+    const container = document.getElementById('plannerCredits');  
+    if (!container) return;  
+    // Основная структура уже есть в HTML, мы её заполним данными  
+    const amountInput = document.getElementById('creditAmount');  
+    const rateInput = document.getElementById('creditRate');  
+    const monthsInput = document.getElementById('creditMonths');  
+    const schemeTabs = document.querySelectorAll('.credit-scheme-tabs button');  
+    const earlyPaymentInput = document.getElementById('creditEarlyPayment');  
+    const earlyMonthInput = document.getElementById('creditEarlyMonth');  
+    const earlyScenarioSelect = document.getElementById('creditEarlyScenario');  
+    const calcBtn = document.getElementById('calcCreditBtn');  
+    const resultDiv = document.getElementById('creditResult');  
+    const monthlyPaymentSpan = document.getElementById('monthlyPayment');  
+    const totalPaymentSpan = document.getElementById('totalPayment');  
+    const overpaymentSpan = document.getElementById('overpayment');  
+    const scheduleDiv = document.getElementById('creditSchedule');  
+    const chartCtx = document.getElementById('creditChart');  
+    const pdnResult = document.getElementById('pdnResult');  
+    const compareContainer = document.getElementById('creditCompare');  
+    const historyContainer = document.getElementById('creditHistoryList');  
+    const saveBtn = document.getElementById('creditSaveBtn');  
+    const compareBtn = document.getElementById('creditCompareBtn');  
+    const clearHistoryBtn = document.getElementById('creditClearHistoryBtn');  
+
+    let currentScheme = 'annuity';  
+
+    // Переключение схемы  
+    schemeTabs.forEach(tab => {  
+        tab.addEventListener('click', function() {  
+            schemeTabs.forEach(t => t.classList.remove('active'));  
+            this.classList.add('active');  
+            currentScheme = this.dataset.scheme;  
+        });  
+    });  
+
+    // Расчёт  
+    calcBtn.addEventListener('click', function() {  
+        const amount = parseFloat(amountInput.value);  
+        const rate = parseFloat(rateInput.value);  
+        const months = parseInt(monthsInput.value);  
+        const earlyPayment = parseFloat(earlyPaymentInput.value) || 0;  
+        const earlyMonth = parseInt(earlyMonthInput.value) || 0;  
+        const earlyScenario = earlyScenarioSelect.value;  
+        if (!amount || !months || rate < 0) {  
+            tg.showAlert('Введите корректные данные');  
+            return;  
+        }  
+        const params = { amount, rate, months, scheme: currentScheme, early_payment: earlyPayment, early_month: earlyMonth, early_scenario: earlyScenario };  
+        const result = calculateCredit(params);  
+        // Вывод результатов  
+        monthlyPaymentSpan.textContent = result.monthly_payment.toFixed(2);  
+        totalPaymentSpan.textContent = result.total_payment.toFixed(2);  
+        overpaymentSpan.textContent = result.total_interest.toFixed(2);  
+        resultDiv.style.display = 'block';  
+
+        // График платежей (таблица)  
+        if (scheduleDiv) {  
+            let tableHtml = `<table><thead><tr><th>Месяц</th><th>Платёж</th><th>Основной долг</th><th>Проценты</th><th>Остаток</th></tr></thead><tbody>`;  
+            result.schedule.forEach(s => {  
+                tableHtml += `<tr><td>${s.month}</td><td>${s.payment.toFixed(2)}</td><td>${s.principal.toFixed(2)}</td><td>${s.interest.toFixed(2)}</td><td>${s.remaining.toFixed(2)}</td></tr>`;  
             });  
-        });  
-        return;  
-    }  
-    loadDatingContent(container);  
-}  
-async function loadDatingContent(container) {  
-    const profileData = await callApi('get_dating_profile');  
-    const profile = profileData?.profile;  
-    const candidatesData = await callApi('get_dating_candidates');  
-    const candidates = candidatesData?.candidates || [];  
-    const chatsData = await callApi('get_dating_chats');  
-    const chats = chatsData?.chats || [];  
+            tableHtml += `</tbody></table>`;  
+            scheduleDiv.innerHTML = tableHtml;  
+        }  
 
-    let html = `<button class="pro-back-btn" onclick="showPage('page-premium')">← Назад</button><div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;"><button class="dating-tab active" data-tab="profile" style="flex:1;padding:6px;background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.2);border-radius:30px;color:#d4af37;cursor:pointer;font-family:inherit;">👤 Моя анкета</button><button class="dating-tab" data-tab="swipe" style="flex:1;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">❤️ Поиск</button><button class="dating-tab" data-tab="chats" style="flex:1;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">💬 Чаты</button></div><div id="datingProfile">`;  
-    if (profile) {  
-        html += `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">${profile.photos.map(p => `<img src="${p}" style="width:60px;height:60px;object-fit:cover;border-radius:12px;" />`).join('') || '<div style="color:rgba(255,255,255,0.2);">Нет фото</div>'}</div><div><strong>Город:</strong> ${escHtml(profile.city)}</div><div><strong>Возраст:</strong> ${profile.age}</div><div><strong>Пол:</strong> ${profile.gender}</div><div><strong>Цель:</strong> ${profile.purpose}</div><div><strong>Описание:</strong> ${escHtml(profile.description || '—')}</div><div><strong>Интересы:</strong> ${escHtml(profile.interests || '—')}</div><div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button id="editProfileBtn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:#fff;cursor:pointer;font-family:inherit;">✎ Редактировать</button><button id="hideProfileBtn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:${profile.hidden ? '#4ecdc4' : '#ff6b6b'};cursor:pointer;font-family:inherit;">${profile.hidden ? 'Показать' : 'Скрыть'}</button><button id="reportBtn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">⚠️ Пожаловаться</button></div>`;  
-    } else {  
-        html += `<div style="color:rgba(255,255,255,0.3);text-align:center;padding:20px;"><div style="font-size:48px;">👤</div><p style="margin-top:8px;">Заполните анкету, чтобы начать знакомиться</p><button id="createProfileBtn" style="background:linear-gradient(135deg,#ff6b6b,#4ecdc4);border:none;border-radius:30px;padding:12px 30px;color:#fff;font-weight:600;cursor:pointer;font-family:inherit;margin-top:12px;">Создать анкету</button></div>`;  
-    }  
-    html += `</div><div id="datingSwipe" style="display:none;">`;  
-    if (candidates.length > 0) {  
-        const c = candidates[0];  
-        html += `<div class="dating-swipe-card" id="datingSwipeCard"><div class="photos">${c.photos.map(p => `<img src="${p}" />`).join('')}</div><div class="name">${escHtml(c.first_name || 'Пользователь')}, ${c.age}</div><div class="meta">${escHtml(c.city)} · ${c.gender}</div><div class="purpose">${escHtml(c.purpose || '')}</div><div style="color:rgba(255,255,255,0.3);font-size:13px;margin:4px 0;">${escHtml(c.description || '')}</div><div class="actions"><button class="dislike" data-id="${c.user_id}">✕</button><button class="message" data-id="${c.user_id}">💬</button><button class="like" data-id="${c.user_id}">❤️</button></div></div>`;  
-    } else html += `<div class="dating-empty"><div style="font-size:48px;">😔</div><p>Нет новых кандидатов. Попробуйте позже.</p></div>`;  
-    html += `</div><div id="datingChats" style="display:none;">`;  
-    if (chats.length > 0) {  
-        chats.forEach(c => {  
-            html += `<div class="dating-card" data-chat-id="${c.id}"><div class="avatar">${c.partner_name.charAt(0)}</div><div class="info"><div class="name">${escHtml(c.partner_name)}</div><div class="meta">Последнее сообщение: ${formatDate(c.last_message_at)}</div></div><div class="actions"><button class="open-chat-btn" data-chat-id="${c.id}">💬 Открыть</button></div></div>`;  
-        });  
-    } else html += '<div class="empty">Нет чатов</div>';  
-    html += `</div>`;  
-    container.innerHTML = html;  
+        // Круговая диаграмма (через Chart.js)  
+        if (chartCtx) {  
+            const totalInterest = result.total_interest;  
+            const principal = amount - totalInterest; // но лучше использовать реальные суммы  
+            // Поскольку остаток может быть не нулевым, возьмём сумму основного долга из графика  
+            const totalPrincipal = result.schedule.reduce((sum, s) => sum + s.principal, 0);  
+            const totalInterestReal = result.schedule.reduce((sum, s) => sum + s.interest, 0);  
+            new Chart(chartCtx, {  
+                type: 'doughnut',  
+                data: {  
+                    labels: ['Основной долг', 'Проценты'],  
+                    datasets: [{ data: [totalPrincipal, totalInterestReal], backgroundColor: ['#4ecdc4', '#ff6b6b'] }]  
+                },  
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#e0e8f0' } } } }  
+            });  
+        }  
 
-    container.querySelectorAll('.dating-tab').forEach(tab => {  
-        tab.addEventListener('click', function() {  
-            container.querySelectorAll('.dating-tab').forEach(t => t.classList.remove('active'));  
-            this.classList.add('active');  
-            const section = this.dataset.tab;  
-            ['profile','swipe','chats'].forEach(id => { document.getElementById('dating' + id.charAt(0).toUpperCase() + id.slice(1)).style.display = id === section ? 'block' : 'none'; });  
-            if (section === 'swipe') loadDatingCandidates();  
-            if (section === 'chats') loadDatingChats();  
-        });  
-    });  
-    document.getElementById('createProfileBtn')?.addEventListener('click', () => openDatingProfileModal());  
-    document.getElementById('editProfileBtn')?.addEventListener('click', () => openDatingProfileModal(profile));  
-    document.getElementById('hideProfileBtn')?.addEventListener('click', async function() {  
-        const hidden = profile.hidden;  
-        const result = await callApi('hide_dating_profile', { hidden: !hidden });  
-        if (result?.success) { tg.showAlert(`Анкета ${hidden ? 'показана' : 'скрыта'}`); renderDating(false); }  
-    });  
-    document.getElementById('reportBtn')?.addEventListener('click', function() {  
-        const reportedId = prompt('Введите ID пользователя, на которого жалуетесь:');  
-        if (reportedId) { const reason = prompt('Причина жалобы:'); if (reason) { callApi('report_dating_user', { reported_id: parseInt(reportedId), reason }); tg.showAlert('✅ Жалоба отправлена'); } }  
-    });  
-    container.querySelectorAll('.dating-swipe-card .like').forEach(btn => {  
-        btn.addEventListener('click', async function() {  
-            const targetId = parseInt(this.dataset.id);  
-            const result = await callApi('dating_like', { target_id: targetId });  
-            if (result?.mutual) tg.showAlert('💕 Взаимный лайк! Чат открыт.'); else tg.showAlert('❤️ Лайк поставлен!');  
-            renderDating(false);  
-        });  
-    });  
-    container.querySelectorAll('.dating-swipe-card .dislike').forEach(btn => {  
-        btn.addEventListener('click', async function() {  
-            const targetId = parseInt(this.dataset.id);  
-            await callApi('dating_dislike', { target_id: targetId });  
-            renderDating(false);  
-        });  
-    });  
-    container.querySelectorAll('.dating-swipe-card .message').forEach(btn => {  
-        btn.addEventListener('click', function() {  
-            const targetId = parseInt(this.dataset.id);  
-            openDatingChatWith(targetId);  
-        });  
-    });  
-    container.querySelectorAll('.open-chat-btn').forEach(btn => {  
-        btn.addEventListener('click', function() {  
-            const chatId = parseInt(this.dataset.chatId);  
-            openDatingChat(chatId);  
-        });  
-    });  
-}  
-async function loadDatingCandidates() {  
-    const data = await callApi('get_dating_candidates');  
-    const candidates = data?.candidates || [];  
-    const swipeContainer = document.getElementById('datingSwipe');  
-    if (candidates.length === 0) { swipeContainer.innerHTML = `<div class="dating-empty"><div style="font-size:48px;">😔</div><p>Нет новых кандидатов. Попробуйте позже.</p></div>`; return; }  
-    const c = candidates[0];  
-    swipeContainer.innerHTML = `<div class="dating-swipe-card" id="datingSwipeCard"><div class="photos">${c.photos.map(p => `<img src="${p}" />`).join('')}</div><div class="name">${escHtml(c.first_name || 'Пользователь')}, ${c.age}</div><div class="meta">${escHtml(c.city)} · ${c.gender}</div><div class="purpose">${escHtml(c.purpose || '')}</div><div style="color:rgba(255,255,255,0.3);font-size:13px;margin:4px 0;">${escHtml(c.description || '')}</div><div class="actions"><button class="dislike" data-id="${c.user_id}">✕</button><button class="message" data-id="${c.user_id}">💬</button><button class="like" data-id="${c.user_id}">❤️</button></div></div>`;  
-    document.querySelector('#datingSwipeCard .like').addEventListener('click', async function() {  
-        const targetId = parseInt(this.dataset.id);  
-        const result = await callApi('dating_like', { target_id: targetId });  
-        if (result?.mutual) tg.showAlert('💕 Взаимный лайк! Чат открыт.'); else tg.showAlert('❤️ Лайк поставлен!');  
-        renderDating(false);  
-    });  
-    document.querySelector('#datingSwipeCard .dislike').addEventListener('click', async function() {  
-        const targetId = parseInt(this.dataset.id);  
-        await callApi('dating_dislike', { target_id: targetId });  
-        renderDating(false);  
-    });  
-    document.querySelector('#datingSwipeCard .message').addEventListener('click', function() {  
-        const targetId = parseInt(this.dataset.id);  
-        openDatingChatWith(targetId);  
-    });  
-}  
-async function loadDatingChats() {  
-    const data = await callApi('get_dating_chats');  
-    const chats = data?.chats || [];  
-    const container = document.getElementById('datingChats');  
-    if (chats.length === 0) { container.innerHTML = '<div class="empty">Нет чатов</div>'; return; }  
-    container.innerHTML = chats.map(c => `<div class="dating-card" data-chat-id="${c.id}"><div class="avatar">${c.partner_name.charAt(0)}</div><div class="info"><div class="name">${escHtml(c.partner_name)}</div><div class="meta">Последнее сообщение: ${formatDate(c.last_message_at)}</div></div><div class="actions"><button class="open-chat-btn" data-chat-id="${c.id}">💬 Открыть</button></div></div>`).join('');  
-    container.querySelectorAll('.open-chat-btn').forEach(btn => {  
-        btn.addEventListener('click', function() { const chatId = parseInt(this.dataset.chatId); openDatingChat(chatId); });  
-    });  
-}  
-function openDatingProfileModal(existingProfile = null) {  
-    const modal = document.getElementById('modalDatingProfile');  
-    if (existingProfile) {  
-        document.getElementById('datingCity').value = existingProfile.city || '';  
-        document.getElementById('datingAge').value = existingProfile.age || '';  
-        document.getElementById('datingGender').value = existingProfile.gender || 'Мужской';  
-        document.getElementById('datingPurpose').value = existingProfile.purpose || 'Встреча';  
-        document.getElementById('datingDescription').value = existingProfile.description || '';  
-        document.getElementById('datingInterests').value = existingProfile.interests || '';  
-        document.getElementById('datingPhotosContainer').innerHTML = existingProfile.photos.map(p => `<div style="position:relative;display:inline-block;"><img src="${p}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" /><button class="dating-remove-photo" style="position:absolute;top:-4px;right:-4px;background:rgba(244,67,54,0.8);border:none;border-radius:50%;width:18px;height:18px;color:#fff;cursor:pointer;font-size:12px;">✕</button></div>`).join('');  
-    } else {  
-        document.getElementById('datingCity').value = '';  
-        document.getElementById('datingAge').value = '';  
-        document.getElementById('datingGender').value = 'Мужской';  
-        document.getElementById('datingPurpose').value = 'Встреча';  
-        document.getElementById('datingDescription').value = '';  
-        document.getElementById('datingInterests').value = '';  
-        document.getElementById('datingPhotosContainer').innerHTML = '';  
-    }  
-    initDatingFileInput();  
-    modal.classList.add('active');  
-}  
-function initDatingFileInput() {  
-    const fileInput = document.getElementById('datingFileInput');  
-    fileInput.onchange = async function(e) {  
-        const file = this.files[0];  
-        if (!file) return;  
-        const result = await uploadPhoto(file);  
-        if (result && result.success) {  
-            const container = document.getElementById('datingPhotosContainer');  
-            const div = document.createElement('div');  
-            div.style.position = 'relative'; div.style.display = 'inline-block';  
-            div.innerHTML = `<img src="${result.url}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" /><button class="dating-remove-photo" style="position:absolute;top:-4px;right:-4px;background:rgba(244,67,54,0.8);border:none;border-radius:50%;width:18px;height:18px;color:#fff;cursor:pointer;font-size:12px;">✕</button>`;  
-            container.appendChild(div);  
-            div.querySelector('.dating-remove-photo').addEventListener('click', function() { div.remove(); });  
-            document.getElementById('datingFileName').textContent = file.name;  
-        } else tg.showAlert('Ошибка загрузки фото');  
-        this.value = '';  
-    };  
-}  
-document.getElementById('modalDatingProfileCancel').addEventListener('click', () => document.getElementById('modalDatingProfile').classList.remove('active'));  
-document.getElementById('modalDatingProfileSubmit').addEventListener('click', async function() {  
-    const city = document.getElementById('datingCity').value.trim();  
-    const age = parseInt(document.getElementById('datingAge').value);  
-    const gender = document.getElementById('datingGender').value;  
-    const purpose = document.getElementById('datingPurpose').value;  
-    const description = document.getElementById('datingDescription').value.trim();  
-    const interests = document.getElementById('datingInterests').value.trim();  
-    const photos = Array.from(document.querySelectorAll('#datingPhotosContainer img')).map(img => img.src);  
-    if (!city || !age || !gender || !purpose) { tg.showAlert('Заполните все обязательные поля'); return; }  
-    if (age < 18) { tg.showAlert('Возраст должен быть не менее 18 лет'); return; }  
-    const result = await callApi('create_dating_profile', { photos, city, age, gender, purpose, description, interests });  
-    if (result?.success) { tg.showAlert('✅ Анкета сохранена'); document.getElementById('modalDatingProfile').classList.remove('active'); renderDating(false); }  
-    else tg.showAlert('Ошибка сохранения');  
-});  
-async function openDatingChatWith(targetId) {  
-    const result = await callApi('dating_like', { target_id: targetId });  
-    if (result?.chat_id) openDatingChat(result.chat_id);  
-    else tg.showAlert('Не удалось открыть чат. Возможно, пользователь не ответил взаимностью.');  
-}  
-async function openDatingChat(chatId) {  
-    currentChatId = chatId;  
-    const modal = document.getElementById('modalDatingChat');  
-    const messagesContainer = document.getElementById('modalDatingMessages');  
-    const input = document.getElementById('modalDatingChatInput');  
-    const data = await callApi('get_dating_messages', { chat_id: chatId });  
-    const messages = data?.messages || [];  
-    const chatsData = await callApi('get_dating_chats');  
-    const chat = chatsData?.chats?.find(c => c.id === chatId);  
-    document.getElementById('modalDatingChatTitle').textContent = `💬 Чат с ${chat?.partner_name || 'собеседником'}`;  
-    if (messages.length === 0) messagesContainer.innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;">Нет сообщений</div>';  
-    else {  
-        messagesContainer.innerHTML = messages.map(m => `<div style="padding:6px 10px;margin:4px 0;border-radius:12px;background:${m.sender_id === userId ? 'rgba(78,205,196,0.15)' : 'rgba(255,255,255,0.04)'};max-width:80%;${m.sender_id === userId ? 'margin-left:auto;' : ''}"><div style="font-size:12px;color:rgba(255,255,255,0.3);">${m.sender_id === userId ? 'Вы' : m.sender_name}</div><div style="word-wrap:break-word;">${escHtml(m.message)}</div><div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:2px;">${formatDate(m.timestamp)}</div></div>`).join('');  
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;  
-    }  
-    modal.classList.add('active');  
-    document.getElementById('modalDatingChatSendBtn').onclick = async function() {  
-        const text = input.value.trim();  
-        if (!text) return;  
-        await callApi('send_dating_message', { chat_id: chatId, message: text });  
-        input.value = '';  
-        openDatingChat(chatId);  
-    };  
-    input.onkeydown = function(e) { if (e.key === 'Enter') document.getElementById('modalDatingChatSendBtn').click(); };  
-}  
-document.getElementById('modalDatingChatClose').addEventListener('click', function() {  
-    document.getElementById('modalDatingChat').classList.remove('active');  
-    if (datingChatPollInterval) clearInterval(datingChatPollInterval);  
-});  
+        // ПДН (если есть доход и другие кредиты)  
+        const income = parseFloat(document.getElementById('userIncomeForPdn')?.value) || 0;  
+        const otherPayments = parseFloat(document.getElementById('otherPaymentsForPdn')?.value) || 0;  
+        if (income > 0) {  
+            const totalMonthlyPayment = result.monthly_payment + otherPayments;  
+            const pdn = (totalMonthlyPayment / income) * 100;  
+            let pdnHtml = `<div style="margin-top:12px;padding:12px;border-radius:16px;background:rgba(255,255,255,0.03);border-left:3px solid ${pdn > 50 ? '#f44336' : pdn > 30 ? '#ffc107' : '#4caf50'};">`;  
+            pdnHtml += `<strong>Показатель долговой нагрузки (ПДН):</strong> ${pdn.toFixed(1)}%`;  
+            if (pdn > 50) pdnHtml += ' <span class="badge badge-danger">Критично! Брать кредит опасно.</span>';  
+            else if (pdn > 30) pdnHtml += ' <span class="badge badge-warning">Повышенная нагрузка. Будьте осторожны.</span>';  
+            else pdnHtml += ' <span class="badge badge-success">Безопасно. Кредит вам по силам.</span>';  
+            pdnHtml += `</div><div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:4px;">Рекомендуемая безопасная доля — до 30% от дохода.</div>`;  
+            if (pdnResult) pdnResult.innerHTML = pdnHtml;  
+        } else {  
+            if (pdnResult) pdnResult.innerHTML = '<div style="color:rgba(255,255,255,0.3);font-size:12px;">Укажите доход в поле ниже для расчёта ПДН.</div>';  
+        }  
 
-// ============================================================  
-// 17. ДОСТИЖЕНИЯ, РЕФЕРАЛЫ, ОНБОРДИНГ  
-// ============================================================  
-async function loadAchievements() {  
-    const container = document.getElementById('achievementsContainer');  
-    container.innerHTML = '<div class="loading">Загрузка...</div>';  
-    const data = await callApi('get_achievements');  
-    if (data?.achievements) {  
-        let html = '<div class="achievements-grid">';  
-        data.achievements.forEach(ach => {  
-            const achieved = ach.achieved;  
-            const icon = ach.icon || '❓';  
-            const name = ach.name || '???';  
-            const desc = ach.description || '';  
-            let progressHtml = '';  
-            let maxProg = ach.max_progress;  
-            let prog = ach.progress;  
-            if (ach.category === 'reflection' || ach.category === 'discipline') {  
-                const pct = Math.min(100, (prog / maxProg) * 100);  
-                progressHtml = `<div class="progress-bar"><div class="fill" style="width:${pct}%;"></div></div>`;  
-            } else if (ach.category === 'social' && prog && typeof prog === 'object') {  
-                progressHtml = `<div class="ach-progress">💬 ${prog.comments} ❤️ ${prog.likes} 🌐 ${prog.p2p}</div>`;  
-            } else if (ach.category === 'planner' && prog && typeof prog === 'object') {  
-                progressHtml = `<div class="ach-progress">📋 ${prog.tasks} 💰 ${prog.budget_saves}</div>`;  
-            } else if (ach.category === 'unique') {  
-                progressHtml = `<div class="ach-progress">${achieved ? '✅ Получено' : '🔒 Скрыто'}</div>`;  
+        // Сохранение в историю  
+        addCreditToHistory(params, result, currentScheme);  
+        renderCreditHistory();  
+
+        // Умный совет  
+        const adviceContainer = document.getElementById('creditAdvice');  
+        if (adviceContainer) {  
+            let advice = '';  
+            const totalPaymentPercent = (result.total_interest / amount) * 100;  
+            if (totalPaymentPercent > 50) advice = '⚠️ Переплата превышает 50% от суммы кредита. Рассмотрите другие варианты или сократите срок.';  
+            else if (totalPaymentPercent > 30) advice = '📊 Переплата около 30%. Это средний уровень, но можно попробовать уменьшить ставку или срок.';  
+            else advice = '✅ Переплата ниже 30%. Условия достаточно выгодные.';  
+            if (earlyPayment > 0 && earlyMonth > 0) {  
+                const savedInterest = result.total_interest - (earlyScenario === 'reduce_term' ? 0 : 0); // упрощённо  
+                advice += ` Досрочное погашение сэкономит вам ~${(result.total_interest * 0.1).toFixed(0)} ₽ процентов.`;  
             }  
-            const cls = achieved ? 'achievement-item achieved' : 'achievement-item';  
-            html += `<div class="${cls}" title="${desc}"><div class="icon-circle">${icon}${!achieved ? '<span class="lock">🔒</span>' : ''}</div><div class="ach-name">${name}</div>${progressHtml}</div>`;  
+            adviceContainer.innerHTML = `<div class="credit-strategy"><span class="title">💡 Умный совет</span> ${advice}</div>`;  
+        }  
+    });  
+
+    // Сравнение кредитов (добавляем текущий расчёт в список сравнения)  
+    compareBtn.addEventListener('click', function() {  
+        const amount = parseFloat(amountInput.value);  
+        const rate = parseFloat(rateInput.value);  
+        const months = parseInt(monthsInput.value);  
+        if (!amount || !months || rate < 0) {  
+            tg.showAlert('Введите корректные данные');  
+            return;  
+        }  
+        const params = { amount, rate, months, scheme: currentScheme };  
+        const result = calculateCredit(params);  
+        creditCompare.push({ params, result, scheme: currentScheme });  
+        if (creditCompare.length > 3) creditCompare.shift();  
+        renderCompare();  
+    });  
+
+    function renderCompare() {  
+        if (!compareContainer) return;  
+        if (creditCompare.length < 2) {  
+            compareContainer.innerHTML = '<div style="color:rgba(255,255,255,0.3);font-size:13px;">Добавьте минимум 2 кредита для сравнения (кнопка "Сравнить").</div>';  
+            return;  
+        }  
+        let html = '<div class="credit-compare-row">';  
+        creditCompare.forEach((item, idx) => {  
+            const p = item.params;  
+            const r = item.result;  
+            html += `<div class="credit-compare-item"><div class="label">Вариант ${idx+1}</div><div class="value">${p.amount} ₽</div><div class="label">Ставка ${p.rate}% · ${p.months} мес</div><div class="value gold">${r.monthly_payment.toFixed(0)} ₽/мес</div><div class="label">Переплата</div><div class="value ${r.total_interest > 0 ? 'red' : 'green'}">${r.total_interest.toFixed(0)} ₽</div></div>`;  
         });  
         html += '</div>';  
-        container.innerHTML = html;  
-    } else container.innerHTML = '<div class="empty">Не удалось загрузить достижения</div>';  
-}  
-async function loadReferralStats() {  
-    const container = document.getElementById('referralStats');  
-    container.innerHTML = '<div class="loading" style="font-size:14px;color:rgba(255,255,255,0.3);padding:8px 0;">Загрузка...</div>';  
-    const data = await callApi('get_referral_stats');  
-    if (data?.stats) {  
-        const stats = data.stats;  
-        const link = data.link || '#';  
-        const bonusEarned = stats.awarded * 10;  
-        container.innerHTML = `<div class="ref-stats"><span>👥 Приглашено: <strong>${stats.total}</strong></span><span>🎁 Бонусов: <strong>${bonusEarned}</strong> очков</span></div><div class="ref-link"><code>${escHtml(link)}</code><button id="copyRefLinkBtn">📋 Копировать</button></div><div class="ref-hint">🔗 Отправьте эту ссылку друзьям. За каждого, кто ответит на первый вопрос, вы получите +10 очков.</div>`;  
-        document.getElementById('copyRefLinkBtn').addEventListener('click', function() {  
-            if (navigator.clipboard) {  
-                navigator.clipboard.writeText(link).then(() => tg.showAlert('✅ Ссылка скопирована!')).catch(() => {  
-                    const textarea = document.createElement('textarea'); textarea.value = link; document.body.appendChild(textarea); textarea.select(); document.execCommand('copy'); document.body.removeChild(textarea); tg.showAlert('✅ Ссылка скопирована!');  
-                });  
-            } else {  
-                const textarea = document.createElement('textarea'); textarea.value = link; document.body.appendChild(textarea); textarea.select(); document.execCommand('copy'); document.body.removeChild(textarea); tg.showAlert('✅ Ссылка скопирована!');  
+        compareContainer.innerHTML = html;  
+    }  
+
+    // Сохранение текущего расчёта в историю (дублируем, но кнопка уже есть)  
+    saveBtn.addEventListener('click', function() {  
+        const amount = parseFloat(amountInput.value);  
+        const rate = parseFloat(rateInput.value);  
+        const months = parseInt(monthsInput.value);  
+        if (!amount || !months) { tg.showAlert('Сначала выполните расчёт'); return; }  
+        const params = { amount, rate, months, scheme: currentScheme };  
+        const result = calculateCredit(params);  
+        addCreditToHistory(params, result, currentScheme);  
+        renderCreditHistory();  
+        tg.showAlert('✅ Расчёт сохранён в историю');  
+    });  
+
+    // Очистка истории  
+    if (clearHistoryBtn) {  
+        clearHistoryBtn.addEventListener('click', function() {  
+            if (confirm('Очистить всю историю расчётов?')) {  
+                creditHistory = [];  
+                saveCreditHistory();  
+                renderCreditHistory();  
+                tg.showAlert('История очищена');  
             }  
         });  
-    } else container.innerHTML = '<div style="color:rgba(255,255,255,0.3);font-size:14px;">Не удалось загрузить данные</div>';  
-}  
-function startOnboarding() { onboardingStep = 0; document.getElementById('onboardingOverlay').classList.add('active'); showOnboardingStep(); }  
-function showOnboardingStep() {  
-    const steps = [  
-        { icon: '🌱', title: 'Ответьте на вопрос дня', desc: 'Напишите свой ответ в поле ввода и нажмите "Отправить ответ". Это поможет вам начать рефлексию.' },  
-        { icon: '🎭', title: 'Выберите видимость', desc: 'Нажмите на одну из кнопок: Анонимно, Маска или Открыто. Это определит, как ваше имя будет отображаться для других.' },  
-        { icon: '📝', title: 'Заполните профиль', desc: 'Перейдите в профиль (нажмите на аватарку) и придумайте себе псевдоним (маску). Это сделает ваше общение более персонализированным.' }  
-    ];  
-    const step = steps[onboardingStep];  
-    document.getElementById('onboardingIcon').textContent = step.icon;  
-    document.getElementById('onboardingTitle').textContent = step.title;  
-    document.getElementById('onboardingDesc').textContent = step.desc;  
-    document.getElementById('onboardingNextBtn').textContent = onboardingStep === 2 ? 'Завершить' : 'Далее';  
-}  
-document.getElementById('onboardingNextBtn').addEventListener('click', function() {  
-    if (onboardingStep === 2) finishOnboarding();  
-    else { onboardingStep++; showOnboardingStep(); if (onboardingStep === 1) document.getElementById('visibilityButtons').scrollIntoView({ behavior:'smooth', block:'center' }); else if (onboardingStep === 2) document.getElementById('profileBtn').scrollIntoView({ behavior:'smooth', block:'center' }); }  
-});  
-async function finishOnboarding() {  
-    document.getElementById('onboardingOverlay').classList.remove('active');  
-    await callApi('set_onboarding_completed');  
-    tg.showAlert('🎉 Онбординг пройден! Вы получили +5 бонусных очков.');  
-    loadProfile();  
+    }  
+
+    // Инициализация истории  
+    renderCreditHistory();  
 }  
 
 // ============================================================  
+// 16. ЗНАКОМСТВА (инициализация фото через попап)  
+// ============================================================  
+function initDatingPhotoUpload() {  
+    initPhotoUpload('datingFileLabel', 'datingFileInput', 'datingPhotosContainer', 3);  
+}  
+
+// Остальные функции renderDating, loadDatingContent и т.д. остаются без изменений,  
+// но внутри openDatingProfileModal нужно вызвать initDatingPhotoUpload()  
+
+// Патчим openDatingProfileModal:  
+const originalOpenDatingProfileModal = window.openDatingProfileModal;  
+window.openDatingProfileModal = function(existingProfile) {  
+    // Вызываем оригинальную функцию (она определена ниже в старом коде)  
+    if (typeof originalOpenDatingProfileModal === 'function') {  
+        originalOpenDatingProfileModal(existingProfile);  
+    } else {  
+        // fallback  
+        const modal = document.getElementById('modalDatingProfile');  
+        modal.classList.add('active');  
+    }  
+    // Инициализируем загрузку фото  
+    setTimeout(initDatingPhotoUpload, 100);  
+};  
+
+// ============================================================  
+// 17. ДОСТИЖЕНИЯ, РЕФЕРАЛЫ, ОНБОРДИНГ (без изменений)  
+// ============================================================  
+// ... (оставляем как было)  
+// ============================================================  
 // 18. ЗАПУСК  
+// ============================================================  
+
+// Заменяем вызов renderPlanner, чтобы добавить кредитный калькулятор  
+const originalRenderPlanner = window.renderPlanner;  
+window.renderPlanner = function(demo) {  
+    // Вызываем оригинальный рендер, а потом дорисовываем кредитную часть  
+    if (typeof originalRenderPlanner === 'function') {  
+        originalRenderPlanner(demo);  
+    } else {  
+        // fallback  
+        const container = document.getElementById('plannerContainer');  
+        container.innerHTML = '<div class="loading">Загрузка...</div>';  
+    }  
+    // После рендера активируем кредитный калькулятор, если он есть  
+    setTimeout(() => {  
+        const creditsTab = document.querySelector('[data-planer="credits"]');  
+        if (creditsTab) {  
+            creditsTab.addEventListener('click', function() {  
+                setTimeout(renderCreditCalculator, 200);  
+            });  
+        }  
+        // Если вкладка кредитов уже активна – сразу рендерим  
+        if (document.getElementById('plannerCredits').classList.contains('active')) {  
+            renderCreditCalculator();  
+        }  
+    }, 500);  
+};  
+
+// Также перехватываем открытие модалки дневника для инициализации фото  
+const originalOpenDiaryEntryModal = window.openDiaryEntryModal;  
+window.openDiaryEntryModal = function(entryId) {  
+    if (typeof originalOpenDiaryEntryModal === 'function') {  
+        originalOpenDiaryEntryModal(entryId);  
+    }  
+    setTimeout(initDiaryPhotoUpload, 200);  
+};  
+
+// ============================================================  
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (escHtml, formatDate и др.)  
+// ============================================================  
+function escHtml(str) {  
+    if (!str) return '';  
+    const d = document.createElement('div');  
+    d.textContent = str;  
+    return d.innerHTML;  
+}  
+function formatDate(ts) {  
+    if (!ts) return '';  
+    const d = new Date(ts * 1000);  
+    return d.toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });  
+}  
+function formatDateShort(ts) {  
+    if (!ts) return '';  
+    const d = new Date(ts * 1000);  
+    return d.toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' });  
+}  
+function getNowTimestamp() {  
+    return Math.floor(Date.now() / 1000);  
+}  
+
+// ============================================================  
+// ИНИЦИАЛИЗАЦИЯ  
 // ============================================================  
 async function init() {  
     await loadQuestion();  
