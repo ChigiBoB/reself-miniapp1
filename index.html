@@ -665,9 +665,99 @@ async function callApi(action, data = {}) {
     }
 }
 
-// ===== ЗАГРУЗКА ФОТО ЧЕРЕЗ ПОПАП =====
+// ===== ЗАГРУЗКА ФОТО ЧЕРЕЗ ПОПАП С FALLBACK =====
 async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
     return new Promise((resolve) => {
+        const input = document.getElementById(fileInputId);
+        if (!input) {
+            tg.showAlert('Ошибка: поле ввода не найдено');
+            resolve(false);
+            return;
+        }
+
+        // Функция, которая открывает стандартный диалог выбора файла (без попапа)
+        const openStandardDialog = () => {
+            input.value = '';
+            input.removeAttribute('capture');
+            const handler = async (e) => {
+                input.removeEventListener('change', handler);
+                const file = e.target.files[0];
+                if (!file) {
+                    resolve(false);
+                    return;
+                }
+                // Проверка размера и типа
+                if (file.size > 5 * 1024 * 1024) {
+                    tg.showAlert('Файл слишком большой. Максимум 5 МБ.');
+                    resolve(false);
+                    return;
+                }
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                if (!allowedTypes.includes(file.type)) {
+                    tg.showAlert('Поддерживаются только JPEG, PNG, WebP');
+                    resolve(false);
+                    return;
+                }
+                // Загрузка на сервер
+                const formData = new FormData();
+                formData.append('user_id', userId);
+                formData.append('file', file);
+                try {
+                    const resp = await fetch(`${API_BASE}/upload_photo`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await resp.json();
+                    if (result.success) {
+                        const container = document.getElementById(containerId);
+                        if (container) {
+                            const currentPhotos = container.querySelectorAll('img').length;
+                            if (currentPhotos >= maxPhotos) {
+                                tg.showAlert(`Максимум ${maxPhotos} фото`);
+                                resolve(false);
+                                return;
+                            }
+                            const div = document.createElement('div');
+                            div.style.position = 'relative';
+                            div.style.display = 'inline-block';
+                            div.innerHTML = `<img src="${result.url}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" /><button class="remove-photo-btn" style="position:absolute;top:-4px;right:-4px;background:rgba(244,67,54,0.8);border:none;border-radius:50%;width:18px;height:18px;color:#fff;cursor:pointer;font-size:12px;">✕</button>`;
+                            container.appendChild(div);
+                            div.querySelector('.remove-photo-btn').addEventListener('click', function() { div.remove(); });
+                            const fileNameSpan = document.getElementById(fileInputId.replace('Input', 'FileName'));
+                            if (fileNameSpan) fileNameSpan.textContent = file.name;
+                            resolve(true);
+                        } else {
+                            tg.showAlert('Ошибка: контейнер не найден');
+                            resolve(false);
+                        }
+                    } else {
+                        tg.showAlert('Ошибка загрузки фото');
+                        resolve(false);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    tg.showAlert('Ошибка связи с сервером при загрузке фото');
+                    resolve(false);
+                }
+            };
+            input.addEventListener('change', handler);
+            input.click();
+        };
+
+        // Если tg.showPopup не поддерживается, сразу открываем стандартный диалог
+        if (typeof tg.showPopup !== 'function') {
+            openStandardDialog();
+            return;
+        }
+
+        // Пытаемся открыть попап, но ставим таймаут на случай зависания
+        let popupShown = false;
+        const timeoutId = setTimeout(() => {
+            if (!popupShown) {
+                openStandardDialog();
+            }
+        }, 2000);
+
         tg.showPopup({
             title: 'Выберите источник',
             buttons: [
@@ -676,13 +766,9 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                 { id: 'cancel', text: 'Отмена', type: 'cancel' }
             ]
         }, async (buttonId) => {
+            clearTimeout(timeoutId);
+            popupShown = true;
             if (buttonId === 'cancel') {
-                resolve(false);
-                return;
-            }
-            const input = document.getElementById(fileInputId);
-            if (!input) {
-                tg.showAlert('Ошибка: поле ввода не найдено');
                 resolve(false);
                 return;
             }
@@ -733,9 +819,7 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                             div.style.display = 'inline-block';
                             div.innerHTML = `<img src="${result.url}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" /><button class="remove-photo-btn" style="position:absolute;top:-4px;right:-4px;background:rgba(244,67,54,0.8);border:none;border-radius:50%;width:18px;height:18px;color:#fff;cursor:pointer;font-size:12px;">✕</button>`;
                             container.appendChild(div);
-                            div.querySelector('.remove-photo-btn').addEventListener('click', function() {
-                                div.remove();
-                            });
+                            div.querySelector('.remove-photo-btn').addEventListener('click', function() { div.remove(); });
                             const fileNameSpan = document.getElementById(fileInputId.replace('Input', 'FileName'));
                             if (fileNameSpan) fileNameSpan.textContent = file.name;
                             resolve(true);
@@ -758,16 +842,6 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
         });
     });
 }
-
-function initPhotoUpload(labelId, fileInputId, containerId, maxPhotos = 5) {
-    const label = document.getElementById(labelId);
-    if (!label) return;
-    label.addEventListener('click', function(e) {
-        e.preventDefault();
-        uploadPhotoViaPopup(fileInputId, containerId, maxPhotos);
-    });
-}
-
 // ============================================================
 // 5. ВИДИМОСТЬ И ИМЯ
 // ============================================================
@@ -1328,7 +1402,7 @@ document.getElementById('demoDating').addEventListener('click', () => showPage('
 document.getElementById('demoCredits').addEventListener('click', () => showPage('page-credits', true));
 
 // ============================================================
-// 14. ДНЕВНИК (с исправленной загрузкой фото)
+// 14. ДНЕВНИК (исправленная загрузка фото)
 // ============================================================
 async function loadAutoSaveDiary() {
     const data = await callApi('get_auto_save_diary');
@@ -1338,15 +1412,9 @@ document.getElementById('autoSaveDiaryToggle').addEventListener('change', async 
     await callApi('set_auto_save_diary', { enabled: this.checked });
 });
 
-// Функция инициализации загрузки фото (вызывается при открытии модалки)
+// Инициализация загрузки фото в дневнике
 function initDiaryFileInput() {
-    const modal = document.getElementById('modalDiaryEntry');
-    if (!modal || !modal.classList.contains('active')) {
-        setTimeout(initDiaryFileInput, 200);
-        return;
-    }
-    // Пытаемся найти label
-    const label = modal.querySelector('.file-label');
+    const label = document.getElementById('diaryFileLabel');
     if (label) {
         label.removeEventListener('click', window._diaryFileHandler);
         window._diaryFileHandler = function(e) {
@@ -1354,52 +1422,6 @@ function initDiaryFileInput() {
             uploadPhotoViaPopup('diaryFileInput', 'diaryEntryPhotos', 5);
         };
         label.addEventListener('click', window._diaryFileHandler);
-    } else {
-        // Если label не найден, привязываемся к input напрямую
-        const input = document.getElementById('diaryFileInput');
-        if (input) {
-            input.removeEventListener('change', window._diaryFileChangeHandler);
-            window._diaryFileChangeHandler = async function(e) {
-                const file = this.files[0];
-                if (!file) return;
-                // Проверка размера и типа (дублируем для надёжности)
-                if (file.size > 5 * 1024 * 1024) {
-                    tg.showAlert('Файл слишком большой. Максимум 5 МБ.');
-                    return;
-                }
-                const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-                if (!allowedTypes.includes(file.type)) {
-                    tg.showAlert('Поддерживаются только JPEG, PNG, WebP');
-                    return;
-                }
-                const formData = new FormData();
-                formData.append('user_id', userId);
-                formData.append('file', file);
-                try {
-                    const resp = await fetch(`${API_BASE}/upload_photo`, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const result = await resp.json();
-                    if (result.success) {
-                        const container = document.getElementById('diaryEntryPhotos');
-                        const div = document.createElement('div');
-                        div.style.position = 'relative';
-                        div.style.display = 'inline-block';
-                        div.innerHTML = `<img src="${result.url}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" /><button class="remove-photo-btn" style="position:absolute;top:-4px;right:-4px;background:rgba(244,67,54,0.8);border:none;border-radius:50%;width:18px;height:18px;color:#fff;cursor:pointer;font-size:12px;">✕</button>`;
-                        container.appendChild(div);
-                        div.querySelector('.remove-photo-btn').addEventListener('click', function() { div.remove(); });
-                        document.getElementById('diaryFileName').textContent = file.name;
-                    } else {
-                        tg.showAlert('Ошибка загрузки фото');
-                    }
-                } catch(err) {
-                    console.error(err);
-                    tg.showAlert('Ошибка связи с сервером');
-                }
-            };
-            input.addEventListener('change', window._diaryFileChangeHandler);
-        }
     }
 }
 
@@ -1498,13 +1520,11 @@ async function openDiaryEntryModal(entryId = null) {
         document.getElementById('diaryEntryDate').value = '';
         document.getElementById('diaryEntryPhotos').innerHTML = '';
     }
-    // Показываем модалку
     modal.classList.add('active');
-    // Инициализируем загрузку фото после того, как модалка появилась
+    // Инициализируем загрузку фото после открытия модалки
     setTimeout(initDiaryFileInput, 100);
 }
 
-// Обработчики модалки
 document.getElementById('modalDiaryEntryCancel').addEventListener('click', () => document.getElementById('modalDiaryEntry').classList.remove('active'));
 document.getElementById('modalDiaryEntrySubmit').addEventListener('click', async function() {
     const title = document.getElementById('diaryEntryTitle').value.trim();
@@ -1862,9 +1882,22 @@ function getTodayTimestamp() {
     return Math.floor(d.getTime() / 1000);
 }
 // ============================================================
-// 16. ЗНАКОМСТВА (с исправленной загрузкой фото)
+// 16. ЗНАКОМСТВА (исправленная загрузка фото)
 // ============================================================
 let datingChatPollInterval = null;
+
+// Инициализация загрузки фото в анкете
+function initDatingFileInput() {
+    const label = document.getElementById('datingFileLabel');
+    if (label) {
+        label.removeEventListener('click', window._datingFileHandler);
+        window._datingFileHandler = function(e) {
+            e.preventDefault();
+            uploadPhotoViaPopup('datingFileInput', 'datingPhotosContainer', 3);
+        };
+        label.addEventListener('click', window._datingFileHandler);
+    }
+}
 
 function renderDating(demo) {
     const container = document.getElementById('datingContainer');
@@ -2000,67 +2033,6 @@ async function loadDatingChats() {
     });
 }
 
-function initDatingFileInput() {
-    const modal = document.getElementById('modalDatingProfile');
-    if (!modal || !modal.classList.contains('active')) {
-        setTimeout(initDatingFileInput, 200);
-        return;
-    }
-    const label = modal.querySelector('.file-label');
-    if (label) {
-        label.removeEventListener('click', window._datingFileHandler);
-        window._datingFileHandler = function(e) {
-            e.preventDefault();
-            uploadPhotoViaPopup('datingFileInput', 'datingPhotosContainer', 3);
-        };
-        label.addEventListener('click', window._datingFileHandler);
-    } else {
-        const input = document.getElementById('datingFileInput');
-        if (input) {
-            input.removeEventListener('change', window._datingFileChangeHandler);
-            window._datingFileChangeHandler = async function(e) {
-                const file = this.files[0];
-                if (!file) return;
-                if (file.size > 5 * 1024 * 1024) {
-                    tg.showAlert('Файл слишком большой. Максимум 5 МБ.');
-                    return;
-                }
-                const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-                if (!allowedTypes.includes(file.type)) {
-                    tg.showAlert('Поддерживаются только JPEG, PNG, WebP');
-                    return;
-                }
-                const formData = new FormData();
-                formData.append('user_id', userId);
-                formData.append('file', file);
-                try {
-                    const resp = await fetch(`${API_BASE}/upload_photo`, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const result = await resp.json();
-                    if (result.success) {
-                        const container = document.getElementById('datingPhotosContainer');
-                        const div = document.createElement('div');
-                        div.style.position = 'relative';
-                        div.style.display = 'inline-block';
-                        div.innerHTML = `<img src="${result.url}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" /><button class="remove-photo-btn" style="position:absolute;top:-4px;right:-4px;background:rgba(244,67,54,0.8);border:none;border-radius:50%;width:18px;height:18px;color:#fff;cursor:pointer;font-size:12px;">✕</button>`;
-                        container.appendChild(div);
-                        div.querySelector('.remove-photo-btn').addEventListener('click', function() { div.remove(); });
-                        document.getElementById('datingFileName').textContent = file.name;
-                    } else {
-                        tg.showAlert('Ошибка загрузки фото');
-                    }
-                } catch(err) {
-                    console.error(err);
-                    tg.showAlert('Ошибка связи с сервером');
-                }
-            };
-            input.addEventListener('change', window._datingFileChangeHandler);
-        }
-    }
-}
-
 function openDatingProfileModal(existingProfile = null) {
     const modal = document.getElementById('modalDatingProfile');
     if (existingProfile) {
@@ -2081,6 +2053,7 @@ function openDatingProfileModal(existingProfile = null) {
         document.getElementById('datingPhotosContainer').innerHTML = '';
     }
     modal.classList.add('active');
+    // Инициализируем загрузку фото после открытия модалки
     setTimeout(initDatingFileInput, 100);
 }
 
