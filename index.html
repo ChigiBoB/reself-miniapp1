@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />  
     <style>
-        /* Все стили остаются без изменений (я их не трогаю) */
+        /* Все стили остаются полностью как в оригинале + добавляем новые для кредитного калькулятора */
         * { margin:0; padding:0; box-sizing:border-box; }  
         body { font-family:'Inter',sans-serif; color:#e0e8f0; padding:0 0 80px 0; min-height:100vh; overflow-x:hidden; background:#0a0b1f; }  
         .stars { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1; overflow:hidden; }  
@@ -308,7 +308,7 @@
         .credit-result-item.overpay .value { color:#ff6b6b; }  
         .credit-result-item.payment .value { color:#4ecdc4; }  
         .credit-result-item.total .value { color:#ffd700; }
-        /* Стили для кредитного калькулятора (дополнительные) */
+        /* Новые стили для кредитного калькулятора */
         .credit-tabs { display:flex; gap:6px; margin:8px 0 12px; flex-wrap:wrap; }
         .credit-tabs button { flex:1; padding:8px 4px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:30px; color:rgba(255,255,255,0.4); cursor:pointer; font-weight:500; font-size:12px; transition:0.3s; font-family:inherit; min-width:50px; }
         .credit-tabs button.active { background:rgba(212,175,55,0.15); border-color:#d4af37; color:#d4af37; }
@@ -321,9 +321,10 @@
         .credit-payment-table th { color:rgba(255,255,255,0.3); font-weight:500; }
         .credit-strategy { background:rgba(78,205,196,0.05); border-radius:16px; padding:12px; margin-top:12px; border-left:3px solid #4ecdc4; }
         .credit-strategy .title { font-weight:600; color:#4ecdc4; }
-        .badge-success { background:rgba(76,175,80,0.2); color:#4caf50; padding:2px 10px; border-radius:30px; font-size:12px; display:inline-block; }
-        .badge-warning { background:rgba(255,193,7,0.2); color:#ffc107; padding:2px 10px; border-radius:30px; font-size:12px; display:inline-block; }
-        .badge-danger { background:rgba(244,67,54,0.2); color:#f44336; padding:2px 10px; border-radius:30px; font-size:12px; display:inline-block; }
+        .credit-strategy .badge { display:inline-block; padding:2px 10px; border-radius:30px; font-size:12px; margin-left:8px; }
+        .badge-success { background:rgba(76,175,80,0.2); color:#4caf50; }
+        .badge-warning { background:rgba(255,193,7,0.2); color:#ffc107; }
+        .badge-danger { background:rgba(244,67,54,0.2); color:#f44336; }
         .credit-compare-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
         .credit-compare-item { flex:1; min-width:150px; background:rgba(255,255,255,0.02); border-radius:16px; padding:12px; border:1px solid rgba(255,255,255,0.05); }
         .credit-compare-item .label { font-size:11px; color:rgba(255,255,255,0.3); }
@@ -571,15 +572,6 @@
     <button class="tab-item" data-page="page-vstrecha"><span class="tab-icon">🔮</span>Встреча</button>  
 </div>  
 
-<!-- ====== НОВАЯ РАЗМЕТКА ДЛЯ КРЕДИТНОГО КАЛЬКУЛЯТОРА (внутри plannerCredits) ====== -->  
-<!-- Этот блок будет вставлен скриптом в page-planner, поэтому я его добавляю прямо сюда, но он будет перезаписан.  
-     Чтобы он точно был, я добавлю его в контейнер plannerContainer, но лучше динамически через JS.  
-     Однако для надёжности я добавлю его прямо в HTML внутри page-planner, но переопределю через JS при рендере.  
-     Я просто добавлю его в конец страницы, а JS при рендере планера будет его вставлять.  
-     Но чтобы не дублировать, я добавлю его в контейнер plannerContainer через JS.  
-     Поэтому я сейчас ничего не добавляю, а в скрипте renderPlanner будет создаваться эта разметка.  
--->  
-
 <script>  
 // ============================================================
 // 1. ДИНАМИЧЕСКИЙ API_URL
@@ -588,7 +580,8 @@ const urlParams = new URLSearchParams(window.location.search);
 let apiBase = urlParams.get('api');
 
 if (!apiBase) {
-    apiBase = 'https://garage-courier-everybody.ngrok-free.dev'; // замените на ваш актуальный адрес
+    // !!! ВСТАВЬТЕ ВАШ АКТУАЛЬНЫЙ АДРЕС ngrok (БЕЗ /api в конце)
+    apiBase = 'https://garage-courier-everybody.ngrok-free.dev';
 }
 
 const API_URL = apiBase + '/api';
@@ -635,7 +628,7 @@ async function callApi(action, data = {}) {
     try {  
         const payload = { action, user_id: userId, ...data };  
         console.log('📤', payload);  
-        const resp = await fetch(API_URL, {  
+        const resp = await fetch(`${API_URL}/api`, {  
             method: 'POST',  
             headers: { 'Content-Type': 'application/json' },  
             body: JSON.stringify(payload)  
@@ -673,12 +666,15 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                 resolve(false);  
                 return;  
             }  
+            // Очищаем предыдущий выбор  
             input.value = '';  
+            // Устанавливаем capture для камеры  
             if (buttonId === 'camera') {  
                 input.setAttribute('capture', 'environment');  
             } else {  
                 input.removeAttribute('capture');  
             }  
+            // Вешаем обработчик на выбор файла  
             const handler = async (e) => {  
                 input.removeEventListener('change', handler);  
                 const file = e.target.files[0];  
@@ -686,6 +682,7 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                     resolve(false);  
                     return;  
                 }  
+                // Проверка размера (5 МБ)  
                 if (file.size > 5 * 1024 * 1024) {  
                     tg.showAlert('Файл слишком большой. Максимум 5 МБ.');  
                     resolve(false);  
@@ -697,6 +694,7 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                     resolve(false);  
                     return;  
                 }  
+                // Загружаем на сервер  
                 const formData = new FormData();  
                 formData.append('user_id', userId);  
                 formData.append('file', file);  
@@ -707,8 +705,10 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                     });  
                     const result = await resp.json();  
                     if (result.success) {  
+                        // Добавляем фото в контейнер  
                         const container = document.getElementById(containerId);  
                         if (container) {  
+                            // Проверяем лимит  
                             const currentPhotos = container.querySelectorAll('img').length;  
                             if (currentPhotos >= maxPhotos) {  
                                 tg.showAlert(`Максимум ${maxPhotos} фото`);  
@@ -723,6 +723,7 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                             div.querySelector('.remove-photo-btn').addEventListener('click', function() {  
                                 div.remove();  
                             });  
+                            // Обновляем имя файла  
                             const fileNameSpan = document.getElementById(fileInputId.replace('Input', 'FileName'));  
                             if (fileNameSpan) fileNameSpan.textContent = file.name;  
                             resolve(true);  
@@ -741,14 +742,17 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                 }  
             };  
             input.addEventListener('change', handler);  
+            // Имитируем клик по input  
             input.click();  
         });  
     });  
 }  
 
+// Функция для инициализации кнопок "Выбрать фото" через попап  
 function initPhotoUpload(labelId, fileInputId, containerId, maxPhotos = 5) {  
     const label = document.getElementById(labelId);  
     if (!label) return;  
+    // Убираем стандартное открытие файлового диалога  
     label.addEventListener('click', function(e) {  
         e.preventDefault();  
         uploadPhotoViaPopup(fileInputId, containerId, maxPhotos);  
@@ -756,7 +760,7 @@ function initPhotoUpload(labelId, fileInputId, containerId, maxPhotos = 5) {
 }  
 
 // ============================================================  
-// 5. ВИДИМОСТЬ И ИМЯ (без изменений)  
+// 5. ВИДИМОСТЬ И ИМЯ  
 // ============================================================  
 function updateHeaderName(visibility) {  
     const nameEl = document.getElementById('userInfo');  
@@ -903,11 +907,9 @@ document.getElementById('submitAnswerBtn').addEventListener('click', async funct
 });  
 
 // ============================================================  
-// 8. ГАЛЕРЕЯ (ОТРАЖЕНИЯ) – без изменений  
+// 8. ГАЛЕРЕЯ (ОТРАЖЕНИЯ)  
 // ============================================================  
 async function loadGallery() {  
-    // ... (полный код я не буду повторять, он такой же, как в предыдущей версии)  
-    // Для краткости оставлю заглушку, но в финальном файле должен быть полный код  
     const data = await callApi('get_gallery');  
     if (data?.answers) {  
         const container = document.getElementById('galleryList');  
@@ -932,6 +934,7 @@ async function loadGallery() {
                 const result = await callApi('toggle_answer_reaction', { answer_id: this.dataset.answerId, reaction_type: this.dataset.reaction });  
                 if (result) loadGallery();  
             });  
+            // long press picker  
             let timer;  
             btn.addEventListener('touchstart', function(e) {  
                 timer = setTimeout(() => { e.preventDefault(); showReactionPicker(this, this.dataset.answerId); }, 500);  
@@ -969,10 +972,9 @@ function showReactionPicker(btn, answerId) {
 }  
 
 // ============================================================  
-// 9. P2P (без изменений)  
+// 9. P2P  
 // ============================================================  
 async function loadP2P() {  
-    // ... (аналогично, полный код не привожу для краткости, но он есть в финальном файле)  
     const data = await callApi('get_p2p');  
     if (data?.questions) {  
         const container = document.getElementById('p2pList');  
@@ -1030,10 +1032,9 @@ document.getElementById('p2pAskBtn').addEventListener('click', async function() 
 });  
 
 // ============================================================  
-// 10. ИСКРЫ (без изменений)  
+// 10. ИСКРЫ  
 // ============================================================  
 function checkIskry() {  
-    // ... (полный код)  
     const now = new Date();  
     const hours = now.getHours();  
     const container = document.getElementById('iskryContainer');  
@@ -1071,7 +1072,6 @@ document.getElementById('modalIskrySubmit').addEventListener('click', async func
 });  
 
 async function loadIskryGallery() {  
-    // ... (полный код)  
     const data = await callApi('get_iskry_gallery');  
     if (data?.answers) {  
         const container = document.getElementById('iskryGallery');  
@@ -1130,10 +1130,9 @@ function showReactionPickerIskry(btn, answerId) {
 }  
 
 // ============================================================  
-// 11. КОММЕНТАРИИ (без изменений)  
+// 11. КОММЕНТАРИИ  
 // ============================================================  
 async function openCommentsModal(targetType, targetId) {  
-    // ... (полный код)  
     currentCommentsTarget = { type: targetType, id: targetId };  
     const container = document.getElementById('modalCommentsList');  
     container.innerHTML = '<div class="loading">Загрузка...</div>';  
@@ -1200,10 +1199,9 @@ document.getElementById('modalCommentsSubmit').addEventListener('click', async f
 });  
 
 // ============================================================  
-// 12. ЧАТ (ВСТРЕЧА) – без изменений  
+// 12. ЧАТ (ВСТРЕЧА)  
 // ============================================================  
 async function updateChatStatus() {  
-    // ... (полный код)  
     const data = await callApi('chat_status');  
     if (!data) return;  
     const statusEl = document.getElementById('chatStatus');  
@@ -1273,7 +1271,7 @@ document.getElementById('chatSendBtn').addEventListener('click', async function(
 });  
 
 // ============================================================  
-// 13. PRO (без изменений)  
+// 13. PRO  
 // ============================================================  
 async function loadPremiumStatus() {  
     const data = await callApi('get_premium_status');  
@@ -1301,7 +1299,7 @@ document.getElementById('demoPlanner').addEventListener('click', () => showPage(
 document.getElementById('demoDating').addEventListener('click', () => showPage('page-dating', true));  
 
 // ============================================================  
-// 14. ДНЕВНИК (с исправленной загрузкой фото)  
+// 14. ДНЕВНИК  
 // ============================================================  
 async function loadAutoSaveDiary() {  
     const data = await callApi('get_auto_save_diary');  
@@ -1311,6 +1309,7 @@ document.getElementById('autoSaveDiaryToggle').addEventListener('change', async 
     await callApi('set_auto_save_diary', { enabled: this.checked });  
 });  
 
+// Инициализация загрузки фото в дневнике (через попап)  
 function initDiaryPhotoUpload() {  
     initPhotoUpload('diaryFileLabel', 'diaryFileInput', 'diaryEntryPhotos', 5);  
 }  
@@ -1354,6 +1353,7 @@ async function loadDiaryContent(container) {
     document.getElementById('diarySearch').addEventListener('input', () => applyDiaryFilters(container));  
     document.getElementById('diaryDateFrom').addEventListener('change', () => applyDiaryFilters(container));  
     document.getElementById('diaryDateTo').addEventListener('change', () => applyDiaryFilters(container));  
+    // Инициализация загрузки фото для дневника  
     initDiaryPhotoUpload();  
 }  
 async function applyDiaryFilters(container) {  
@@ -1383,7 +1383,10 @@ async function applyDiaryFilters(container) {
     });  
 }  
 
-function initDiaryFileInput() { /* не используется */ }  
+function initDiaryFileInput() {  
+    // Теперь управление через попап, этот обработчик уже не нужен  
+    // Но оставляем заглушку для совместимости  
+}  
 
 async function openDiaryEntryModal(entryId = null) {  
     editingDiaryEntryId = entryId;  
@@ -1439,11 +1442,12 @@ document.getElementById('modalDiaryCategorySubmit').addEventListener('click', as
 });  
 
 // ============================================================  
-// 15. ПЛАНЕР (с полным кредитным калькулятором)  
+// 15. ПЛАНЕР (включая РАСШИРЕННЫЙ КРЕДИТНЫЙ КАЛЬКУЛЯТОР)  
 // ============================================================  
+
 // === КРЕДИТНЫЙ КАЛЬКУЛЯТОР ===  
 let creditHistory = JSON.parse(localStorage.getItem('creditHistory_' + userId) || '[]');  
-let creditCompare = [];  
+let creditCompare = []; // временное хранилище для сравнения  
 
 function saveCreditHistory() {  
     localStorage.setItem('creditHistory_' + userId, JSON.stringify(creditHistory));  
@@ -1477,6 +1481,8 @@ function renderCreditHistory() {
 }  
 
 function calculateCredit(params) {  
+    // params: amount, rate (годовых, %), months, scheme ('annuity' или 'differential'),  
+    // early_payment (сумма досрочного), early_month (с какого месяца), early_scenario ('reduce_term' или 'reduce_payment')  
     const amount = params.amount;  
     const annualRate = params.rate / 100;  
     const monthlyRate = annualRate / 12;  
@@ -1514,13 +1520,17 @@ function calculateCredit(params) {
             schedule.push({ month: m, payment: principal + interest, principal, interest, remaining: remainingDebt });  
             if (remainingDebt <= 0) break;  
         }  
+        // Если досрочное погашение применено и сценарий "уменьшить срок"  
         if (earlyApplied && earlyScenario === 'reduce_term' && remainingDebt === 0) {  
+            // Укорачиваем график, убираем лишние месяцы  
             schedule = schedule.filter(s => s.remaining >= 0);  
         } else if (earlyApplied && earlyScenario === 'reduce_payment' && remainingDebt > 0) {  
+            // Пересчитываем оставшиеся платежи с меньшей суммой  
             let newMonths = schedule.length - earlyMonth;  
             if (newMonths > 0 && remainingDebt > 0) {  
                 let newMonthlyPayment = remainingDebt * monthlyRate * Math.pow(1 + monthlyRate, newMonths) / (Math.pow(1 + monthlyRate, newMonths) - 1);  
                 if (monthlyRate === 0) newMonthlyPayment = remainingDebt / newMonths;  
+                // Заменяем оставшиеся платежи  
                 let idx = schedule.length - newMonths;  
                 for (let i = 0; i < newMonths; i++) {  
                     let m = idx + i;  
@@ -1540,7 +1550,7 @@ function calculateCredit(params) {
                 monthlyPayment = newMonthlyPayment;  
             }  
         }  
-    } else {  
+    } else { // дифференцированный  
         let basePrincipal = amount / months;  
         for (let m = 1; m <= months; m++) {  
             let interest = remainingDebt * monthlyRate;  
@@ -1558,7 +1568,8 @@ function calculateCredit(params) {
             schedule.push({ month: m, payment, principal, interest, remaining: remainingDebt });  
             if (remainingDebt <= 0) break;  
         }  
-        monthlyPayment = schedule[0] ? schedule[0].payment : 0;  
+        monthlyPayment = schedule[0] ? schedule[0].payment : 0; // первый платёж для дифф.  
+        // Аналогичная логика для досрочного  
         if (earlyApplied && earlyScenario === 'reduce_term' && remainingDebt === 0) {  
             schedule = schedule.filter(s => s.remaining >= 0);  
         } else if (earlyApplied && earlyScenario === 'reduce_payment' && remainingDebt > 0) {  
@@ -1846,7 +1857,7 @@ function initDatingPhotoUpload() {
     initPhotoUpload('datingFileLabel', 'datingFileInput', 'datingPhotosContainer', 3);  
 }  
 
-// Оригинальная функция openDatingProfileModal переопределяется с инициализацией фото  
+// Патчим openDatingProfileModal для инициализации фото  
 const originalOpenDatingProfileModal = window.openDatingProfileModal;  
 window.openDatingProfileModal = function(existingProfile) {  
     if (typeof originalOpenDatingProfileModal === 'function') {  
@@ -1859,26 +1870,345 @@ window.openDatingProfileModal = function(existingProfile) {
 };  
 
 function renderDating(demo) {  
-    // ... (полный код, аналогичный предыдущей версии)  
-    // Я не буду повторять его здесь, но в финальном файле он должен быть.  
-    // Для краткости оставлю заглушку, но в реальном коде он есть.  
+    const container = document.getElementById('datingContainer');  
+    let html = `<button class="pro-back-btn" onclick="showPage('page-premium')">← Назад</button>`;  
+    if (demo || !isPremium) {  
+        html += `<div class="demo-mode"><div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;"><button class="dating-tab active" data-tab="profile" style="flex:1;padding:6px;background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.2);border-radius:30px;color:#d4af37;cursor:pointer;font-family:inherit;">👤 Моя анкета</button><button class="dating-tab" data-tab="swipe" style="flex:1;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">❤️ Поиск</button><button class="dating-tab" data-tab="chats" style="flex:1;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">💬 Чаты</button></div><div id="datingProfile" style="display:block;"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:20px;"><div style="font-size:48px;">👤</div><p style="margin-top:8px;">Заполните анкету, чтобы начать знакомиться</p><button onclick="tg.showAlert('Доступно в PRO')" style="background:linear-gradient(135deg,#ff6b6b,#4ecdc4);border:none;border-radius:30px;padding:12px 30px;color:#fff;font-weight:600;cursor:pointer;font-family:inherit;margin-top:12px;">Создать анкету</button></div></div><div id="datingSwipe" style="display:none;"><div class="dating-swipe-card"><div class="photos"><img src="https://via.placeholder.com/80" /></div><div class="name">Анна, 28</div><div class="meta">Москва · Ищет встречу</div><div class="purpose">💕 Без обязательств</div><div class="actions"><button class="dislike" onclick="tg.showAlert('Доступно в PRO')">✕</button><button class="message" onclick="tg.showAlert('Доступно в PRO')">💬</button><button class="like" onclick="tg.showAlert('Доступно в PRO')">❤️</button></div></div></div><div id="datingChats" style="display:none;"><div class="empty">Нет чатов</div></div><div style="margin-top:12px;text-align:center;color:rgba(255,255,255,0.3);font-size:12px;">🔒 Полный функционал доступен в PRO</div></div>`;  
+        container.innerHTML = html;  
+        container.querySelectorAll('.dating-tab').forEach(tab => {  
+            tab.addEventListener('click', function() {  
+                container.querySelectorAll('.dating-tab').forEach(t => t.classList.remove('active'));  
+                this.classList.add('active');  
+                const section = this.dataset.tab;  
+                ['profile','swipe','chats'].forEach(id => { document.getElementById('dating' + id.charAt(0).toUpperCase() + id.slice(1)).style.display = id === section ? 'block' : 'none'; });  
+            });  
+        });  
+        return;  
+    }  
+    loadDatingContent(container);  
 }  
 
+async function loadDatingContent(container) {  
+    const profileData = await callApi('get_dating_profile');  
+    const profile = profileData?.profile;  
+    const candidatesData = await callApi('get_dating_candidates');  
+    const candidates = candidatesData?.candidates || [];  
+    const chatsData = await callApi('get_dating_chats');  
+    const chats = chatsData?.chats || [];  
+
+    let html = `<button class="pro-back-btn" onclick="showPage('page-premium')">← Назад</button><div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;"><button class="dating-tab active" data-tab="profile" style="flex:1;padding:6px;background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.2);border-radius:30px;color:#d4af37;cursor:pointer;font-family:inherit;">👤 Моя анкета</button><button class="dating-tab" data-tab="swipe" style="flex:1;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">❤️ Поиск</button><button class="dating-tab" data-tab="chats" style="flex:1;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">💬 Чаты</button></div><div id="datingProfile">`;  
+    if (profile) {  
+        html += `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">${profile.photos.map(p => `<img src="${p}" style="width:60px;height:60px;object-fit:cover;border-radius:12px;" />`).join('') || '<div style="color:rgba(255,255,255,0.2);">Нет фото</div>'}</div><div><strong>Город:</strong> ${escHtml(profile.city)}</div><div><strong>Возраст:</strong> ${profile.age}</div><div><strong>Пол:</strong> ${profile.gender}</div><div><strong>Цель:</strong> ${profile.purpose}</div><div><strong>Описание:</strong> ${escHtml(profile.description || '—')}</div><div><strong>Интересы:</strong> ${escHtml(profile.interests || '—')}</div><div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;"><button id="editProfileBtn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:#fff;cursor:pointer;font-family:inherit;">✎ Редактировать</button><button id="hideProfileBtn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:${profile.hidden ? '#4ecdc4' : '#ff6b6b'};cursor:pointer;font-family:inherit;">${profile.hidden ? 'Показать' : 'Скрыть'}</button><button id="reportBtn" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:30px;padding:6px 16px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">⚠️ Пожаловаться</button></div>`;  
+    } else {  
+        html += `<div style="color:rgba(255,255,255,0.3);text-align:center;padding:20px;"><div style="font-size:48px;">👤</div><p style="margin-top:8px;">Заполните анкету, чтобы начать знакомиться</p><button id="createProfileBtn" style="background:linear-gradient(135deg,#ff6b6b,#4ecdc4);border:none;border-radius:30px;padding:12px 30px;color:#fff;font-weight:600;cursor:pointer;font-family:inherit;margin-top:12px;">Создать анкету</button></div>`;  
+    }  
+    html += `</div><div id="datingSwipe" style="display:none;">`;  
+    if (candidates.length > 0) {  
+        const c = candidates[0];  
+        html += `<div class="dating-swipe-card" id="datingSwipeCard"><div class="photos">${c.photos.map(p => `<img src="${p}" />`).join('')}</div><div class="name">${escHtml(c.first_name || 'Пользователь')}, ${c.age}</div><div class="meta">${escHtml(c.city)} · ${c.gender}</div><div class="purpose">${escHtml(c.purpose || '')}</div><div style="color:rgba(255,255,255,0.3);font-size:13px;margin:4px 0;">${escHtml(c.description || '')}</div><div class="actions"><button class="dislike" data-id="${c.user_id}">✕</button><button class="message" data-id="${c.user_id}">💬</button><button class="like" data-id="${c.user_id}">❤️</button></div></div>`;  
+    } else html += `<div class="dating-empty"><div style="font-size:48px;">😔</div><p>Нет новых кандидатов. Попробуйте позже.</p></div>`;  
+    html += `</div><div id="datingChats" style="display:none;">`;  
+    if (chats.length > 0) {  
+        chats.forEach(c => {  
+            html += `<div class="dating-card" data-chat-id="${c.id}"><div class="avatar">${c.partner_name.charAt(0)}</div><div class="info"><div class="name">${escHtml(c.partner_name)}</div><div class="meta">Последнее сообщение: ${formatDate(c.last_message_at)}</div></div><div class="actions"><button class="open-chat-btn" data-chat-id="${c.id}">💬 Открыть</button></div></div>`;  
+        });  
+    } else html += '<div class="empty">Нет чатов</div>';  
+    html += `</div>`;  
+    container.innerHTML = html;  
+
+    container.querySelectorAll('.dating-tab').forEach(tab => {  
+        tab.addEventListener('click', function() {  
+            container.querySelectorAll('.dating-tab').forEach(t => t.classList.remove('active'));  
+            this.classList.add('active');  
+            const section = this.dataset.tab;  
+            ['profile','swipe','chats'].forEach(id => { document.getElementById('dating' + id.charAt(0).toUpperCase() + id.slice(1)).style.display = id === section ? 'block' : 'none'; });  
+            if (section === 'swipe') loadDatingCandidates();  
+            if (section === 'chats') loadDatingChats();  
+        });  
+    });  
+    document.getElementById('createProfileBtn')?.addEventListener('click', () => openDatingProfileModal());  
+    document.getElementById('editProfileBtn')?.addEventListener('click', () => openDatingProfileModal(profile));  
+    document.getElementById('hideProfileBtn')?.addEventListener('click', async function() {  
+        const hidden = profile.hidden;  
+        const result = await callApi('hide_dating_profile', { hidden: !hidden });  
+        if (result?.success) { tg.showAlert(`Анкета ${hidden ? 'показана' : 'скрыта'}`); renderDating(false); }  
+    });  
+    document.getElementById('reportBtn')?.addEventListener('click', function() {  
+        const reportedId = prompt('Введите ID пользователя, на которого жалуетесь:');  
+        if (reportedId) { const reason = prompt('Причина жалобы:'); if (reason) { callApi('report_dating_user', { reported_id: parseInt(reportedId), reason }); tg.showAlert('✅ Жалоба отправлена'); } }  
+    });  
+    container.querySelectorAll('.dating-swipe-card .like').forEach(btn => {  
+        btn.addEventListener('click', async function() {  
+            const targetId = parseInt(this.dataset.id);  
+            const result = await callApi('dating_like', { target_id: targetId });  
+            if (result?.mutual) tg.showAlert('💕 Взаимный лайк! Чат открыт.'); else tg.showAlert('❤️ Лайк поставлен!');  
+            renderDating(false);  
+        });  
+    });  
+    container.querySelectorAll('.dating-swipe-card .dislike').forEach(btn => {  
+        btn.addEventListener('click', async function() {  
+            const targetId = parseInt(this.dataset.id);  
+            await callApi('dating_dislike', { target_id: targetId });  
+            renderDating(false);  
+        });  
+    });  
+    container.querySelectorAll('.dating-swipe-card .message').forEach(btn => {  
+        btn.addEventListener('click', function() {  
+            const targetId = parseInt(this.dataset.id);  
+            openDatingChatWith(targetId);  
+        });  
+    });  
+    container.querySelectorAll('.open-chat-btn').forEach(btn => {  
+        btn.addEventListener('click', function() {  
+            const chatId = parseInt(this.dataset.chatId);  
+            openDatingChat(chatId);  
+        });  
+    });  
+}  
+
+async function loadDatingCandidates() {  
+    const data = await callApi('get_dating_candidates');  
+    const candidates = data?.candidates || [];  
+    const swipeContainer = document.getElementById('datingSwipe');  
+    if (candidates.length === 0) { swipeContainer.innerHTML = `<div class="dating-empty"><div style="font-size:48px;">😔</div><p>Нет новых кандидатов. Попробуйте позже.</p></div>`; return; }  
+    const c = candidates[0];  
+    swipeContainer.innerHTML = `<div class="dating-swipe-card" id="datingSwipeCard"><div class="photos">${c.photos.map(p => `<img src="${p}" />`).join('')}</div><div class="name">${escHtml(c.first_name || 'Пользователь')}, ${c.age}</div><div class="meta">${escHtml(c.city)} · ${c.gender}</div><div class="purpose">${escHtml(c.purpose || '')}</div><div style="color:rgba(255,255,255,0.3);font-size:13px;margin:4px 0;">${escHtml(c.description || '')}</div><div class="actions"><button class="dislike" data-id="${c.user_id}">✕</button><button class="message" data-id="${c.user_id}">💬</button><button class="like" data-id="${c.user_id}">❤️</button></div></div>`;  
+    document.querySelector('#datingSwipeCard .like').addEventListener('click', async function() {  
+        const targetId = parseInt(this.dataset.id);  
+        const result = await callApi('dating_like', { target_id: targetId });  
+        if (result?.mutual) tg.showAlert('💕 Взаимный лайк! Чат открыт.'); else tg.showAlert('❤️ Лайк поставлен!');  
+        renderDating(false);  
+    });  
+    document.querySelector('#datingSwipeCard .dislike').addEventListener('click', async function() {  
+        const targetId = parseInt(this.dataset.id);  
+        await callApi('dating_dislike', { target_id: targetId });  
+        renderDating(false);  
+    });  
+    document.querySelector('#datingSwipeCard .message').addEventListener('click', function() {  
+        const targetId = parseInt(this.dataset.id);  
+        openDatingChatWith(targetId);  
+    });  
+}  
+
+async function loadDatingChats() {  
+    const data = await callApi('get_dating_chats');  
+    const chats = data?.chats || [];  
+    const container = document.getElementById('datingChats');  
+    if (chats.length === 0) { container.innerHTML = '<div class="empty">Нет чатов</div>'; return; }  
+    container.innerHTML = chats.map(c => `<div class="dating-card" data-chat-id="${c.id}"><div class="avatar">${c.partner_name.charAt(0)}</div><div class="info"><div class="name">${escHtml(c.partner_name)}</div><div class="meta">Последнее сообщение: ${formatDate(c.last_message_at)}</div></div><div class="actions"><button class="open-chat-btn" data-chat-id="${c.id}">💬 Открыть</button></div></div>`).join('');  
+    container.querySelectorAll('.open-chat-btn').forEach(btn => {  
+        btn.addEventListener('click', function() { const chatId = parseInt(this.dataset.chatId); openDatingChat(chatId); });  
+    });  
+}  
+
+function openDatingProfileModal(existingProfile = null) {  
+    const modal = document.getElementById('modalDatingProfile');  
+    if (existingProfile) {  
+        document.getElementById('datingCity').value = existingProfile.city || '';  
+        document.getElementById('datingAge').value = existingProfile.age || '';  
+        document.getElementById('datingGender').value = existingProfile.gender || 'Мужской';  
+        document.getElementById('datingPurpose').value = existingProfile.purpose || 'Встреча';  
+        document.getElementById('datingDescription').value = existingProfile.description || '';  
+        document.getElementById('datingInterests').value = existingProfile.interests || '';  
+        document.getElementById('datingPhotosContainer').innerHTML = existingProfile.photos.map(p => `<div style="position:relative;display:inline-block;"><img src="${p}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" /><button class="dating-remove-photo" style="position:absolute;top:-4px;right:-4px;background:rgba(244,67,54,0.8);border:none;border-radius:50%;width:18px;height:18px;color:#fff;cursor:pointer;font-size:12px;">✕</button></div>`).join('');  
+    } else {  
+        document.getElementById('datingCity').value = '';  
+        document.getElementById('datingAge').value = '';  
+        document.getElementById('datingGender').value = 'Мужской';  
+        document.getElementById('datingPurpose').value = 'Встреча';  
+        document.getElementById('datingDescription').value = '';  
+        document.getElementById('datingInterests').value = '';  
+        document.getElementById('datingPhotosContainer').innerHTML = '';  
+    }  
+    initDatingFileInput();  
+    initDatingPhotoUpload(); // добавили инициализацию через попап  
+    modal.classList.add('active');  
+}  
+
+function initDatingFileInput() {  
+    // Теперь управление через попап, этот обработчик уже не нужен  
+    // Но оставляем заглушку для совместимости  
+}  
+
+document.getElementById('modalDatingProfileCancel').addEventListener('click', () => document.getElementById('modalDatingProfile').classList.remove('active'));  
+document.getElementById('modalDatingProfileSubmit').addEventListener('click', async function() {  
+    const city = document.getElementById('datingCity').value.trim();  
+    const age = parseInt(document.getElementById('datingAge').value);  
+    const gender = document.getElementById('datingGender').value;  
+    const purpose = document.getElementById('datingPurpose').value;  
+    const description = document.getElementById('datingDescription').value.trim();  
+    const interests = document.getElementById('datingInterests').value.trim();  
+    const photos = Array.from(document.querySelectorAll('#datingPhotosContainer img')).map(img => img.src);  
+    if (!city || !age || !gender || !purpose) { tg.showAlert('Заполните все обязательные поля'); return; }  
+    if (age < 18) { tg.showAlert('Возраст должен быть не менее 18 лет'); return; }  
+    const result = await callApi('create_dating_profile', { photos, city, age, gender, purpose, description, interests });  
+    if (result?.success) { tg.showAlert('✅ Анкета сохранена'); document.getElementById('modalDatingProfile').classList.remove('active'); renderDating(false); }  
+    else tg.showAlert('Ошибка сохранения');  
+});  
+
+async function openDatingChatWith(targetId) {  
+    const result = await callApi('dating_like', { target_id: targetId });  
+    if (result?.chat_id) openDatingChat(result.chat_id);  
+    else tg.showAlert('Не удалось открыть чат. Возможно, пользователь не ответил взаимностью.');  
+}  
+
+async function openDatingChat(chatId) {  
+    currentChatId = chatId;  
+    const modal = document.getElementById('modalDatingChat');  
+    const messagesContainer = document.getElementById('modalDatingMessages');  
+    const input = document.getElementById('modalDatingChatInput');  
+    const data = await callApi('get_dating_messages', { chat_id: chatId });  
+    const messages = data?.messages || [];  
+    const chatsData = await callApi('get_dating_chats');  
+    const chat = chatsData?.chats?.find(c => c.id === chatId);  
+    document.getElementById('modalDatingChatTitle').textContent = `💬 Чат с ${chat?.partner_name || 'собеседником'}`;  
+    if (messages.length === 0) messagesContainer.innerHTML = '<div style="color:rgba(255,255,255,0.3);text-align:center;">Нет сообщений</div>';  
+    else {  
+        messagesContainer.innerHTML = messages.map(m => `<div style="padding:6px 10px;margin:4px 0;border-radius:12px;background:${m.sender_id === userId ? 'rgba(78,205,196,0.15)' : 'rgba(255,255,255,0.04)'};max-width:80%;${m.sender_id === userId ? 'margin-left:auto;' : ''}"><div style="font-size:12px;color:rgba(255,255,255,0.3);">${m.sender_id === userId ? 'Вы' : m.sender_name}</div><div style="word-wrap:break-word;">${escHtml(m.message)}</div><div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:2px;">${formatDate(m.timestamp)}</div></div>`).join('');  
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;  
+    }  
+    modal.classList.add('active');  
+    document.getElementById('modalDatingChatSendBtn').onclick = async function() {  
+        const text = input.value.trim();  
+        if (!text) return;  
+        await callApi('send_dating_message', { chat_id: chatId, message: text });  
+        input.value = '';  
+        openDatingChat(chatId);  
+    };  
+    input.onkeydown = function(e) { if (e.key === 'Enter') document.getElementById('modalDatingChatSendBtn').click(); };  
+}  
+
+document.getElementById('modalDatingChatClose').addEventListener('click', function() {  
+    document.getElementById('modalDatingChat').classList.remove('active');  
+    if (datingChatPollInterval) clearInterval(datingChatPollInterval);  
+});  
+
 // ============================================================  
-// 17. ДОСТИЖЕНИЯ, РЕФЕРАЛЫ, ОНБОРДИНГ (без изменений)  
+// 17. ДОСТИЖЕНИЯ, РЕФЕРАЛЫ, ОНБОРДИНГ  
 // ============================================================  
 async function loadAchievements() {  
-    // ... (полный код)  
+    const container = document.getElementById('achievementsContainer');  
+    container.innerHTML = '<div class="loading">Загрузка...</div>';  
+    const data = await callApi('get_achievements');  
+    if (data?.achievements) {  
+        let html = '<div class="achievements-grid">';  
+        data.achievements.forEach(ach => {  
+            const achieved = ach.achieved;  
+            const icon = ach.icon || '❓';  
+            const name = ach.name || '???';  
+            const desc = ach.description || '';  
+            let progressHtml = '';  
+            let maxProg = ach.max_progress;  
+            let prog = ach.progress;  
+            if (ach.category === 'reflection' || ach.category === 'discipline') {  
+                const pct = Math.min(100, (prog / maxProg) * 100);  
+                progressHtml = `<div class="progress-bar"><div class="fill" style="width:${pct}%;"></div></div>`;  
+            } else if (ach.category === 'social' && prog && typeof prog === 'object') {  
+                progressHtml = `<div class="ach-progress">💬 ${prog.comments} ❤️ ${prog.likes} 🌐 ${prog.p2p}</div>`;  
+            } else if (ach.category === 'planner' && prog && typeof prog === 'object') {  
+                progressHtml = `<div class="ach-progress">📋 ${prog.tasks} 💰 ${prog.budget_saves}</div>`;  
+            } else if (ach.category === 'unique') {  
+                progressHtml = `<div class="ach-progress">${achieved ? '✅ Получено' : '🔒 Скрыто'}</div>`;  
+            }  
+            const cls = achieved ? 'achievement-item achieved' : 'achievement-item';  
+            html += `<div class="${cls}" title="${desc}"><div class="icon-circle">${icon}${!achieved ? '<span class="lock">🔒</span>' : ''}</div><div class="ach-name">${name}</div>${progressHtml}</div>`;  
+        });  
+        html += '</div>';  
+        container.innerHTML = html;  
+    } else container.innerHTML = '<div class="empty">Не удалось загрузить достижения</div>';  
 }  
+
 async function loadReferralStats() {  
-    // ... (полный код)  
+    const container = document.getElementById('referralStats');  
+    container.innerHTML = '<div class="loading" style="font-size:14px;color:rgba(255,255,255,0.3);padding:8px 0;">Загрузка...</div>';  
+    const data = await callApi('get_referral_stats');  
+    if (data?.stats) {  
+        const stats = data.stats;  
+        const link = data.link || '#';  
+        const bonusEarned = stats.awarded * 10;  
+        container.innerHTML = `<div class="ref-stats"><span>👥 Приглашено: <strong>${stats.total}</strong></span><span>🎁 Бонусов: <strong>${bonusEarned}</strong> очков</span></div><div class="ref-link"><code>${escHtml(link)}</code><button id="copyRefLinkBtn">📋 Копировать</button></div><div class="ref-hint">🔗 Отправьте эту ссылку друзьям. За каждого, кто ответит на первый вопрос, вы получите +10 очков.</div>`;  
+        document.getElementById('copyRefLinkBtn').addEventListener('click', function() {  
+            if (navigator.clipboard) {  
+                navigator.clipboard.writeText(link).then(() => tg.showAlert('✅ Ссылка скопирована!')).catch(() => {  
+                    const textarea = document.createElement('textarea'); textarea.value = link; document.body.appendChild(textarea); textarea.select(); document.execCommand('copy'); document.body.removeChild(textarea); tg.showAlert('✅ Ссылка скопирована!');  
+                });  
+            } else {  
+                const textarea = document.createElement('textarea'); textarea.value = link; document.body.appendChild(textarea); textarea.select(); document.execCommand('copy'); document.body.removeChild(textarea); tg.showAlert('✅ Ссылка скопирована!');  
+            }  
+        });  
+    } else container.innerHTML = '<div style="color:rgba(255,255,255,0.3);font-size:14px;">Не удалось загрузить данные</div>';  
 }  
-function startOnboarding() { /* ... */ }  
-function showOnboardingStep() { /* ... */ }  
-async function finishOnboarding() { /* ... */ }  
+
+function startOnboarding() { onboardingStep = 0; document.getElementById('onboardingOverlay').classList.add('active'); showOnboardingStep(); }  
+function showOnboardingStep() {  
+    const steps = [  
+        { icon: '🌱', title: 'Ответьте на вопрос дня', desc: 'Напишите свой ответ в поле ввода и нажмите "Отправить ответ". Это поможет вам начать рефлексию.' },  
+        { icon: '🎭', title: 'Выберите видимость', desc: 'Нажмите на одну из кнопок: Анонимно, Маска или Открыто. Это определит, как ваше имя будет отображаться для других.' },  
+        { icon: '📝', title: 'Заполните профиль', desc: 'Перейдите в профиль (нажмите на аватарку) и придумайте себе псевдоним (маску). Это сделает ваше общение более персонализированным.' }  
+    ];  
+    const step = steps[onboardingStep];  
+    document.getElementById('onboardingIcon').textContent = step.icon;  
+    document.getElementById('onboardingTitle').textContent = step.title;  
+    document.getElementById('onboardingDesc').textContent = step.desc;  
+    document.getElementById('onboardingNextBtn').textContent = onboardingStep === 2 ? 'Завершить' : 'Далее';  
+}  
+document.getElementById('onboardingNextBtn').addEventListener('click', function() {  
+    if (onboardingStep === 2) finishOnboarding();  
+    else { onboardingStep++; showOnboardingStep(); if (onboardingStep === 1) document.getElementById('visibilityButtons').scrollIntoView({ behavior:'smooth', block:'center' }); else if (onboardingStep === 2) document.getElementById('profileBtn').scrollIntoView({ behavior:'smooth', block:'center' }); }  
+});  
+async function finishOnboarding() {  
+    document.getElementById('onboardingOverlay').classList.remove('active');  
+    await callApi('set_onboarding_completed');  
+    tg.showAlert('🎉 Онбординг пройден! Вы получили +5 бонусных очков.');  
+    loadProfile();  
+}  
 
 // ============================================================  
-// 18. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ  
+// 18. ЗАПУСК  
+// ============================================================  
+
+// Переопределяем renderPlanner так, чтобы после отрисовки вставить кредитный калькулятор  
+// Но мы не переопределяем, а просто добавляем вызов после того, как планер будет готов.  
+// Для этого используем MutationObserver или просто добавим проверку при переключении вкладок.  
+
+// В оригинальном коде есть функция renderPlanner, мы её оставляем, но добавляем обработчик на вкладку "Кредиты"  
+// Так как оригинальный renderPlanner уже есть, мы просто добавим вызов renderCreditCalculator после того, как вкладка станет активной.  
+
+// Используем делегирование событий на plannerContainer  
+document.addEventListener('click', function(e) {  
+    const target = e.target.closest('.planer-tabs button');  
+    if (target && target.dataset.planer === 'credits') {  
+        setTimeout(renderCreditCalculator, 300);  
+    }  
+});  
+
+// Также если вкладка кредитов уже активна при загрузке (например, после перезагрузки), вызываем рендер  
+setTimeout(() => {  
+    const creditsTab = document.querySelector('.planer-tabs button[data-planer="credits"]');  
+    if (creditsTab && creditsTab.classList.contains('active')) {  
+        renderCreditCalculator();  
+    }  
+}, 1000);  
+
+// Инициализация  
+async function init() {  
+    await loadQuestion();  
+    await loadProfile();  
+    await loadGallery();  
+    await loadP2P();  
+    checkIskry();  
+    await loadIskryGallery();  
+    setInterval(() => {  
+        if (document.getElementById('page-moment').classList.contains('active')) loadQuestion();  
+        if (document.getElementById('page-otrazhenie').classList.contains('active')) loadGallery();  
+        if (document.getElementById('page-set').classList.contains('active')) loadP2P();  
+        if (document.getElementById('page-iskry').classList.contains('active')) { checkIskry(); loadIskryGallery(); }  
+    }, 60000);  
+}  
+init();  
+
+// ============================================================  
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (escHtml, formatDate и др.)  
 // ============================================================  
 function escHtml(str) {  
     if (!str) return '';  
@@ -1901,59 +2231,9 @@ function getNowTimestamp() {
 }  
 
 // ============================================================  
-// 19. ПЕРЕОПРЕДЕЛЕНИЕ RENDER PLANNER ДЛЯ ВСТАВКИ КРЕДИТНОГО КАЛЬКУЛЯТОРА  
+// ДОПОЛНИТЕЛЬНО: инициализация фото для профиля (если нужно)  
 // ============================================================  
-const originalRenderPlanner = window.renderPlanner;  
-window.renderPlanner = function(demo) {  
-    if (typeof originalRenderPlanner === 'function') {  
-        originalRenderPlanner(demo);  
-    } else {  
-        // fallback  
-        const container = document.getElementById('plannerContainer');  
-        container.innerHTML = '<div class="loading">Загрузка...</div>';  
-    }  
-    // После рендера активируем кредитный калькулятор, если вкладка кредитов активна  
-    setTimeout(() => {  
-        const creditsTab = document.querySelector('[data-planer="credits"]');  
-        if (creditsTab) {  
-            creditsTab.addEventListener('click', function() {  
-                setTimeout(renderCreditCalculator, 200);  
-            });  
-        }  
-        // Если вкладка кредитов уже активна – сразу рендерим  
-        if (document.getElementById('plannerCredits')?.classList.contains('active')) {  
-            renderCreditCalculator();  
-        }  
-    }, 500);  
-};  
-
-// Также перехватываем открытие модалки дневника для инициализации фото  
-const originalOpenDiaryEntryModal = window.openDiaryEntryModal;  
-window.openDiaryEntryModal = function(entryId) {  
-    if (typeof originalOpenDiaryEntryModal === 'function') {  
-        originalOpenDiaryEntryModal(entryId);  
-    }  
-    setTimeout(initDiaryPhotoUpload, 200);  
-};  
-
-// ============================================================  
-// 20. ИНИЦИАЛИЗАЦИЯ  
-// ============================================================  
-async function init() {  
-    await loadQuestion();  
-    await loadProfile();  
-    await loadGallery();  
-    await loadP2P();  
-    checkIskry();  
-    await loadIskryGallery();  
-    setInterval(() => {  
-        if (document.getElementById('page-moment').classList.contains('active')) loadQuestion();  
-        if (document.getElementById('page-otrazhenie').classList.contains('active')) loadGallery();  
-        if (document.getElementById('page-set').classList.contains('active')) loadP2P();  
-        if (document.getElementById('page-iskry').classList.contains('active')) { checkIskry(); loadIskryGallery(); }  
-    }, 60000);  
-}  
-init();  
+// В профиле у нас нет загрузки фото, только аватарка из Telegram, поэтому ничего не делаем.  
 </script>  
 </body>  
 </html>
