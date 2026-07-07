@@ -742,6 +742,7 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
 function initPhotoUpload(labelId, fileInputId, containerId, maxPhotos = 5) {  
     const label = document.getElementById(labelId);  
     if (!label) return;  
+    // Убираем стандартное открытие файлового диалога  
     label.addEventListener('click', function(e) {  
         e.preventDefault();  
         uploadPhotoViaPopup(fileInputId, containerId, maxPhotos);  
@@ -1429,11 +1430,11 @@ document.getElementById('modalDiaryCategorySubmit').addEventListener('click', as
 // ============================================================  
 // 15. ПЛАНЕР (с РАСШИРЕННЫМ КРЕДИТНЫМ КАЛЬКУЛЯТОРОМ)  
 // ============================================================  
-// === ОСНОВНАЯ ЛОГИКА ПЛАНЕРА (задачи, бюджет, календарь, статистика) – остаётся без изменений ===  
-// Мы просто добавляем код кредитного калькулятора в функцию renderPlanner,  
-// и он будет рендериться внутри вкладки "Кредиты".  
+// === ВЕСЬ КОД ПЛАНЕРА (ЗАДАЧИ, БЮДЖЕТ, КАЛЕНДАРЬ, СТАТИСТИКА) ОСТАЁТСЯ БЕЗ ИЗМЕНЕНИЙ ===  
+// Я НЕ ПЕРЕПИСЫВАЮ renderPlanner, ПОТОМУ ЧТ ОН УЖЕ РАБОТАЕТ.  
+// Я ПРОСТО ДОБАВЛЯЮ КРЕДИТНЫЙ КАЛЬКУЛЯТОР КАК НОВУЮ ВКЛАДКУ.  
 
-// --- КРЕДИТНЫЙ КАЛЬКУЛЯТОР (НОВЫЙ КОД) ---  
+// ===== КРЕДИТНЫЙ КАЛЬКУЛЯТОР (НОВЫЙ КОД) =====  
 let creditHistory = JSON.parse(localStorage.getItem('creditHistory_' + userId) || '[]');  
 let creditCompare = [];  
 
@@ -1820,16 +1821,7 @@ function renderCreditCalculator() {
     }  
 }  
 
-// === ОСНОВНАЯ ФУНКЦИЯ RENDER PLANNER (ОСТАЁТСЯ БЕЗ ИЗМЕНЕНИЙ, КРОМЕ ВСТАВКИ КРЕДИТНОГО КАЛЬКУЛЯТОРА) ===  
-// Я копирую её из оригинального рабочего файла, но добавляю вызов renderCreditCalculator при активации вкладки "Кредиты".  
-// Поскольку оригинальный renderPlanner очень длинный, я не буду переписывать его здесь полностью —  
-// я предполагаю, что у вас уже есть рабочий renderPlanner в текущем файле (он есть в вашей версии).  
-// Поэтому я лишь добавлю обработчик для вкладки кредитов, который вызывает renderCreditCalculator.  
-
-// В вашем текущем файле renderPlanner уже существует и полностью рабочий.  
-// Я просто добавлю после него слушатель на вкладку "Кредиты".  
-
-// ===== ДОПОЛНИТЕЛЬНО: ПОДПИСКА НА ВКЛАДКУ "КРЕДИТЫ" =====  
+// ===== ПОДПИСКА НА ВКЛАДКУ "КРЕДИТЫ" =====  
 document.addEventListener('click', function(e) {  
     const target = e.target.closest('.planer-tabs button[data-planer="credits"]');  
     if (target) {  
