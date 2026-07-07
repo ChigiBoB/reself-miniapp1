@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />  
     <style>  
+        /* ===== ВСЕ СТИЛИ (полный набор из вашего исходника) ===== */  
         * { margin:0; padding:0; box-sizing:border-box; }  
         body { font-family:'Inter',sans-serif; color:#e0e8f0; padding:0 0 80px 0; min-height:100vh; overflow-x:hidden; background:#0a0b1f; }  
         .stars { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1; overflow:hidden; }  
@@ -333,7 +334,12 @@
         .credit-history-item .date { font-size:11px; color:rgba(255,255,255,0.3); }  
         .credit-history-item .details { font-size:13px; color:rgba(255,255,255,0.6); }  
         .credit-history-item .amount { float:right; color:#d4af37; font-weight:600; }  
-        .premium-credit-block { margin-top:16px; border-top:1px solid rgba(212,175,55,0.2); padding-top:16px; }  
+        .credit-locked { text-align:center; padding:40px 20px; }  
+        .credit-locked .icon { font-size:56px; margin-bottom:16px; opacity:0.3; }  
+        .credit-locked h2 { color:#d4af37; margin-bottom:8px; }  
+        .credit-locked p { color:rgba(255,255,255,0.3); font-size:15px; }  
+        .credit-locked .btn-buy { background:linear-gradient(135deg,#d4af37,#ffd700); color:#1a140e; border:none; border-radius:30px; padding:12px 30px; font-weight:600; font-size:16px; cursor:pointer; font-family:inherit; transition:0.3s; margin-top:12px; }  
+        .credit-locked .btn-buy:hover { transform:scale(1.02); }  
     </style>  
 </head>  
 <body>  
@@ -348,6 +354,7 @@
         </div>  
     </div>  
 
+    <!-- ===== ВСЕ СТРАНИЦЫ (без изменений, кроме добавленной page-credits) ===== -->  
     <!-- Момент -->  
     <div id="page-moment" class="page active">  
         <div class="info-hint" data-hint="moment">  
@@ -452,7 +459,7 @@
         </div>  
     </div>  
 
-    <!-- PRO -->  
+    <!-- PRO (оставляем как есть, но убираем из него кредитный калькулятор) -->  
     <div id="page-premium" class="page">  
         <div class="center-piece"><div class="symbol" style="color:#d4af37;">⭐</div><div class="label" style="color:#d4af37;">PRO</div></div>  
         <div class="glass" id="premiumContainer">  
@@ -464,6 +471,7 @@
                     <div><span style="font-size:24px;">📔</span><br>Дневник</div>  
                     <div><span style="font-size:24px;">📋</span><br>Планер</div>  
                     <div><span style="font-size:24px;">❤️</span><br>Знакомства</div>  
+                    <div><span style="font-size:24px;">💳</span><br>Кредиты</div>  
                 </div>  
                 <p style="color:rgba(255,255,255,0.3); font-size:14px;">Стоимость: <strong style="color:#d4af37; font-size:22px;">500 Stars</strong> (навсегда)</p>  
                 <button class="btn-primary" id="premiumBuyBtn" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e; margin-top:16px; max-width:300px; margin-left:auto; margin-right:auto;">Купить PRO</button>  
@@ -471,6 +479,7 @@
                     <div class="pro-card locked" id="demoDiary"><span class="icon">📔</span><span class="label">Дневник 🔒</span></div>  
                     <div class="pro-card locked" id="demoPlanner"><span class="icon">📋</span><span class="label">Планер 🔒</span></div>  
                     <div class="pro-card locked" id="demoDating"><span class="icon">❤️</span><span class="label">Знакомства 🔒</span></div>  
+                    <div class="pro-card locked" id="demoCredits"><span class="icon">💳</span><span class="label">Кредиты 🔒</span></div>  
                 </div>  
                 <p style="color:rgba(255,255,255,0.3); font-size:12px; margin-top:12px;">Нажмите на любую карточку, чтобы увидеть демо-версию</p>  
             </div>  
@@ -484,17 +493,7 @@
                     <div class="pro-card" id="proDiary"><span class="icon">📔</span><span class="label">Дневник</span></div>  
                     <div class="pro-card" id="proPlanner"><span class="icon">📋</span><span class="label">Планер</span></div>  
                     <div class="pro-card" id="proDating"><span class="icon">❤️</span><span class="label">Знакомства</span></div>  
-                </div>  
-                <!-- НОВЫЙ БЛОК: КРЕДИТНЫЙ КАЛЬКУЛЯТОР ДЛЯ PRO -->  
-                <div class="premium-credit-block" id="premiumCreditBlock">  
-                    <div style="text-align:center; margin-bottom:12px;">  
-                        <span style="font-size:24px;">💳</span>  
-                        <h3 style="color:#d4af37; margin-top:4px;">Кредитный калькулятор PRO</h3>  
-                        <p style="color:rgba(255,255,255,0.3); font-size:13px;">Управляйте своими кредитами, планируйте досрочное погашение и контролируйте долговую нагрузку</p>  
-                    </div>  
-                    <div id="creditCalculatorContainer">  
-                        <div class="loading">Загрузка калькулятора...</div>  
-                    </div>  
+                    <div class="pro-card" id="proCredits"><span class="icon">💳</span><span class="label">Кредиты</span></div>  
                 </div>  
                 <div style="margin-top:12px; text-align:center;">  
                     <button class="btn-primary" id="premiumCloseBtn" style="background:rgba(255,255,255,0.1); max-width:200px; margin-left:auto; margin-right:auto;">Закрыть</button>  
@@ -554,9 +553,18 @@
         <div class="center-piece"><div class="symbol" style="color:#ff6b6b;">❤️</div><div class="label" style="color:#ff6b6b;">Знакомства</div></div>  
         <div class="glass" id="datingContainer"></div>  
     </div>  
+
+    <!-- ===== НОВАЯ СТРАНИЦА: КРЕДИТЫ ===== -->  
+    <div id="page-credits" class="page">  
+        <div class="center-piece"><div class="symbol" style="color:#d4af37;">💳</div><div class="label" style="color:#d4af37;">Кредиты</div></div>  
+        <div class="glass" id="creditsContainer">  
+            <!-- сюда будет вставлен калькулятор или заглушка -->  
+            <div class="loading">Загрузка...</div>  
+        </div>  
+    </div>  
 </div>  
 
-<!-- Модалки (полный набор) -->  
+<!-- ===== МОДАЛКИ (полный набор, без изменений) ===== -->  
 <div class="modal-overlay" id="modalComments"><div class="modal-card"><div class="modal-title" id="modalCommentsTitle">💬 Комментарии</div><div id="modalCommentsList" style="max-height:300px; overflow-y:auto; margin-bottom:12px;"><div style="color:rgba(255,255,255,0.3); text-align:center;">Нет комментариев</div></div><div style="margin-bottom:10px;"><textarea id="modalCommentsInput" placeholder="Напишите комментарий..." rows="2" style="width:100%; padding:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:16px; color:#fff; font-size:15px; resize:vertical; font-family:inherit;"></textarea></div><div class="modal-buttons"><button class="modal-submit" id="modalCommentsSubmit">Отправить</button><button class="modal-cancel" id="modalCommentsCancel">Закрыть</button></div></div></div>  
 <div class="modal-overlay" id="modalP2P"><div class="modal-card"><div class="modal-title">💬 Ответить на вопрос</div><div class="modal-question" id="modalP2PQuestion">Загрузка...</div><textarea id="modalP2PInput" placeholder="Напишите ответ..." rows="3"></textarea><div class="modal-buttons"><button class="modal-submit" id="modalP2PSubmit">Отправить</button><button class="modal-cancel" id="modalP2PCancel">Отмена</button></div></div></div>  
 <div class="modal-overlay" id="modalIskry"><div class="modal-card"><div class="modal-title">🔥 Ответить на вопрос 18+</div><div class="modal-question" id="modalIskryQuestion">Загрузка...</div><textarea id="modalIskryInput" placeholder="Напишите ответ..." rows="3"></textarea><div class="modal-buttons"><button class="modal-submit" id="modalIskrySubmit">Отправить</button><button class="modal-cancel" id="modalIskryCancel">Отмена</button></div></div></div>  
@@ -570,13 +578,14 @@
 <!-- Онбординг -->  
 <div class="onboarding-overlay" id="onboardingOverlay"><div class="onboarding-card" id="onboardingCard"><div class="step-icon" id="onboardingIcon">🌱</div><h2 id="onboardingTitle">Добро пожаловать!</h2><p id="onboardingDesc">Давайте познакомимся с приложением за 3 простых шага.</p><button class="btn-primary" id="onboardingNextBtn">Далее</button></div></div>  
 
-<!-- Нижнее меню (5 пунктов) -->  
+<!-- ===== НИЖНЕЕ МЕНЮ (ДОБАВЛЕНА ВКЛАДКА "Кредиты") ===== -->  
 <div class="tab-bar">  
     <button class="tab-item active" data-page="page-moment"><span class="tab-icon">✦</span>Момент</button>  
     <button class="tab-item" data-page="page-otrazhenie"><span class="tab-icon">👁</span>Отражения</button>  
     <button class="tab-item" data-page="page-set"><span class="tab-icon">🧠</span>Сеть</button>  
     <button class="tab-item" data-page="page-iskry"><span class="tab-icon">🔥</span>Искры</button>  
     <button class="tab-item" data-page="page-vstrecha"><span class="tab-icon">🔮</span>Встреча</button>  
+    <button class="tab-item" data-page="page-credits"><span class="tab-icon">💳</span>Кредиты</button>  
 </div>  
 
 <script>  
@@ -587,7 +596,7 @@ const urlParams = new URLSearchParams(window.location.search);
 let apiBase = urlParams.get('api');
 
 if (!apiBase) {
-    // ВСТАВЬТЕ ВАШ АКТУАЛЬНЫЙ АДРЕС (БЕЗ /api в конце)
+    // !!! ВСТАВЬТЕ ВАШ АКТУАЛЬНЫЙ АДРЕС (БЕЗ /api в конце)
     apiBase = 'https://garage-courier-everybody.ngrok-free.dev';
 }
 
@@ -656,7 +665,7 @@ async function callApi(action, data = {}) {
     }
 }
 
-// ===== ЗАГРУЗКА ФОТО ЧЕРЕЗ ПОПАП (ВМЕСТО СТАНДАРТНОГО INPUT) =====
+// ===== ЗАГРУЗКА ФОТО ЧЕРЕЗ ПОПАП =====
 async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
     return new Promise((resolve) => {
         tg.showPopup({
@@ -759,10 +768,6 @@ function initPhotoUpload(labelId, fileInputId, containerId, maxPhotos = 5) {
     });
 }
 
-// ===== ПЕРЕОПРЕДЕЛЯЕМ ФУНКЦИИ ЗАГРУЗКИ ФОТО В ДНЕВНИКЕ И ЗНАКОМСТВАХ =====
-// Оригинальные функции initDiaryFileInput и initDatingFileInput заменяются на версии с попапом.
-// Мы переопределим их после объявления всех функций.
-
 // ============================================================
 // 5. ВИДИМОСТЬ И ИМЯ
 // ============================================================
@@ -788,7 +793,7 @@ document.querySelectorAll('#visibilityButtons button').forEach(btn => {
 });
 
 // ============================================================
-// 6. НАВИГАЦИЯ
+// 6. НАВИГАЦИЯ (добавлена обработка page-credits)
 // ============================================================
 function showPage(pageId, demo = false) {
     isDemoMode = demo;
@@ -801,12 +806,13 @@ function showPage(pageId, demo = false) {
     if (pageId === 'page-otrazhenie') loadGallery();
     else if (pageId === 'page-set') loadP2P();
     else if (pageId === 'page-iskry') { checkIskry(); loadIskryGallery(); }
-    else if (pageId === 'page-premium') { loadPremiumStatus(); if (isPremium) renderCreditCalculator(); }
+    else if (pageId === 'page-premium') loadPremiumStatus();
     else if (pageId === 'page-profile') { loadProfile(); loadAchievements(); loadReferralStats(); loadAutoSaveDiary(); }
     else if (pageId === 'page-diary') renderDiary(demo);
     else if (pageId === 'page-planner') renderPlanner(demo);
     else if (pageId === 'page-dating') renderDating(demo);
     else if (pageId === 'page-moment') loadQuestion();
+    else if (pageId === 'page-credits') renderCreditsPage();
 }
 document.getElementById('topPremiumBtn').addEventListener('click', () => showPage('page-premium'));
 document.getElementById('profileBtn').addEventListener('click', () => showPage('page-profile'));
@@ -818,7 +824,7 @@ document.querySelectorAll('.tab-item').forEach(tab => {
 });
 
 // ============================================================
-// 7. ОСНОВНЫЕ ФУНКЦИИ (вопрос, профиль, ответ)
+// 7. ОСНОВНЫЕ ФУНКЦИИ (вопрос, профиль, ответ) – БЕЗ ИЗМЕНЕНИЙ
 // ============================================================
 async function loadQuestion() {
     const data = await callApi('get_question');
@@ -857,9 +863,6 @@ async function loadProfile() {
         if (data.premium_until !== undefined) {
             isPremium = data.premium_until > Math.floor(Date.now() / 1000);
             updatePremiumUI();
-            if (document.getElementById('page-premium').classList.contains('active') && isPremium) {
-                renderCreditCalculator();
-            }
         }
         if (data.onboarding_completed !== undefined && !data.onboarding_completed) startOnboarding();
         if (photoUrl) {
@@ -923,7 +926,7 @@ document.getElementById('submitAnswerBtn').addEventListener('click', async funct
 });
 
 // ============================================================
-// 8. ГАЛЕРЕЯ (ОТРАЖЕНИЯ)
+// 8. ГАЛЕРЕЯ (ОТРАЖЕНИЯ) – БЕЗ ИЗМЕНЕНИЙ
 // ============================================================
 async function loadGallery() {
     const data = await callApi('get_gallery');
@@ -987,7 +990,7 @@ function showReactionPicker(btn, answerId) {
 }
 
 // ============================================================
-// 9. P2P
+// 9. P2P – БЕЗ ИЗМЕНЕНИЙ
 // ============================================================
 async function loadP2P() {
     const data = await callApi('get_p2p');
@@ -1051,7 +1054,7 @@ document.getElementById('p2pAskBtn').addEventListener('click', async function() 
 });
 
 // ============================================================
-// 10. ИСКРЫ
+// 10. ИСКРЫ – БЕЗ ИЗМЕНЕНИЙ
 // ============================================================
 function checkIskry() {
     const now = new Date();
@@ -1151,7 +1154,7 @@ function showReactionPickerIskry(btn, answerId) {
 }
 
 // ============================================================
-// 11. КОММЕНТАРИИ
+// 11. КОММЕНТАРИИ – БЕЗ ИЗМЕНЕНИЙ
 // ============================================================
 async function openCommentsModal(targetType, targetId) {
     currentCommentsTarget = { type: targetType, id: targetId };
@@ -1223,7 +1226,7 @@ document.getElementById('modalCommentsSubmit').addEventListener('click', async f
 });
 
 // ============================================================
-// 12. ЧАТ (ВСТРЕЧА)
+// 12. ЧАТ (ВСТРЕЧА) – БЕЗ ИЗМЕНЕНИЙ
 // ============================================================
 async function updateChatStatus() {
     const data = await callApi('chat_status');
@@ -1295,7 +1298,7 @@ document.getElementById('chatSendBtn').addEventListener('click', async function(
 });
 
 // ============================================================
-// 13. PRO
+// 13. PRO – БЕЗ ИЗМЕНЕНИЙ (кредитный калькулятор вынесен в отдельную вкладку)
 // ============================================================
 async function loadPremiumStatus() {
     const data = await callApi('get_premium_status');
@@ -1305,9 +1308,6 @@ function updatePremiumUI() {
     document.getElementById('premiumLocked').style.display = isPremium ? 'none' : 'block';
     document.getElementById('premiumContent').style.display = isPremium ? 'block' : 'none';
     document.getElementById('topPremiumBtn').classList.toggle('active', isPremium);
-    if (isPremium && document.getElementById('page-premium').classList.contains('active')) {
-        renderCreditCalculator();
-    }
 }
 document.getElementById('premiumBuyBtn').addEventListener('click', async function() {
     const result = await callApi('purchase_premium');
@@ -1321,12 +1321,14 @@ document.getElementById('premiumCloseBtn').addEventListener('click', () => showP
 document.getElementById('proDiary').addEventListener('click', () => { if (!isPremium) { tg.showAlert('Доступно только в PRO'); return; } showPage('page-diary', false); });
 document.getElementById('proPlanner').addEventListener('click', () => { if (!isPremium) { tg.showAlert('Доступно только в PRO'); return; } showPage('page-planner', false); });
 document.getElementById('proDating').addEventListener('click', () => { if (!isPremium) { tg.showAlert('Доступно только в PRO'); return; } showPage('page-dating', false); });
+document.getElementById('proCredits').addEventListener('click', () => { if (!isPremium) { tg.showAlert('Доступно только в PRO'); return; } showPage('page-credits', false); });
 document.getElementById('demoDiary').addEventListener('click', () => showPage('page-diary', true));
 document.getElementById('demoPlanner').addEventListener('click', () => showPage('page-planner', true));
 document.getElementById('demoDating').addEventListener('click', () => showPage('page-dating', true));
+document.getElementById('demoCredits').addEventListener('click', () => showPage('page-credits', true));
 
 // ============================================================
-// 14. ДНЕВНИК (с исправленной загрузкой фото)
+// 14. ДНЕВНИК (с попап-загрузкой фото) – БЕЗ ИЗМЕНЕНИЙ
 // ============================================================
 async function loadAutoSaveDiary() {
     const data = await callApi('get_auto_save_diary');
@@ -1336,7 +1338,6 @@ document.getElementById('autoSaveDiaryToggle').addEventListener('change', async 
     await callApi('set_auto_save_diary', { enabled: this.checked });
 });
 
-// ПЕРЕОПРЕДЕЛЯЕМ initDiaryFileInput ДЛЯ ИСПОЛЬЗОВАНИЯ ПОПАПА
 function initDiaryFileInput() {
     const label = document.querySelector('#modalDiaryEntry .file-label');
     if (label) {
@@ -1388,7 +1389,6 @@ async function loadDiaryContent(container) {
     document.getElementById('diarySearch').addEventListener('input', () => applyDiaryFilters(container));
     document.getElementById('diaryDateFrom').addEventListener('change', () => applyDiaryFilters(container));
     document.getElementById('diaryDateTo').addEventListener('change', () => applyDiaryFilters(container));
-    // Вызываем переопределённую функцию
     initDiaryFileInput();
 }
 async function applyDiaryFilters(container) {
@@ -1471,6 +1471,7 @@ document.getElementById('modalDiaryCategorySubmit').addEventListener('click', as
     else tg.showAlert(result?.error || 'Ошибка');
 });
 
+// ============================================================
 // 15. ПЛАНЕР (ПОЛНЫЙ ФУНКЦИОНАЛ)
 // ============================================================
 function renderPlanner(demo) {
@@ -1800,15 +1801,12 @@ function getTodayTimestamp() {
     return Math.floor(d.getTime() / 1000);
 }
 // ============================================================
-// 16. ЗНАКОМСТВА (ИСПРАВЛЕННАЯ ВЕРСИЯ)
+// 16. ЗНАКОМСТВА (ПОЛНЫЙ ФУНКЦИОНАЛ)
 // ============================================================
-let datingChatPollInterval = null;
-
 function renderDating(demo) {
     const container = document.getElementById('datingContainer');
     let html = `<button class="pro-back-btn" onclick="showPage('page-premium')">← Назад</button>`;
     if (demo || !isPremium) {
-        // Демо-режим (без PRO)
         html += `<div class="demo-mode"><div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;"><button class="dating-tab active" data-tab="profile" style="flex:1;padding:6px;background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.2);border-radius:30px;color:#d4af37;cursor:pointer;font-family:inherit;">👤 Моя анкета</button><button class="dating-tab" data-tab="swipe" style="flex:1;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">❤️ Поиск</button><button class="dating-tab" data-tab="chats" style="flex:1;padding:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:30px;color:rgba(255,255,255,0.5);cursor:pointer;font-family:inherit;">💬 Чаты</button></div><div id="datingProfile" style="display:block;"><div style="color:rgba(255,255,255,0.3);text-align:center;padding:20px;"><div style="font-size:48px;">👤</div><p style="margin-top:8px;">Заполните анкету, чтобы начать знакомиться</p><button onclick="tg.showAlert('Доступно в PRO')" style="background:linear-gradient(135deg,#ff6b6b,#4ecdc4);border:none;border-radius:30px;padding:12px 30px;color:#fff;font-weight:600;cursor:pointer;font-family:inherit;margin-top:12px;">Создать анкету</button></div></div><div id="datingSwipe" style="display:none;"><div class="dating-swipe-card"><div class="photos"><img src="https://via.placeholder.com/80" /></div><div class="name">Анна, 28</div><div class="meta">Москва · Ищет встречу</div><div class="purpose">💕 Без обязательств</div><div class="actions"><button class="dislike" onclick="tg.showAlert('Доступно в PRO')">✕</button><button class="message" onclick="tg.showAlert('Доступно в PRO')">💬</button><button class="like" onclick="tg.showAlert('Доступно в PRO')">❤️</button></div></div></div><div id="datingChats" style="display:none;"><div class="empty">Нет чатов</div></div><div style="margin-top:12px;text-align:center;color:rgba(255,255,255,0.3);font-size:12px;">🔒 Полный функционал доступен в PRO</div></div>`;
         container.innerHTML = html;
         container.querySelectorAll('.dating-tab').forEach(tab => {
@@ -1821,7 +1819,6 @@ function renderDating(demo) {
         });
         return;
     }
-    // Режим PRO – загружаем реальные данные
     loadDatingContent(container);
 }
 
@@ -1852,9 +1849,6 @@ async function loadDatingContent(container) {
     } else html += '<div class="empty">Нет чатов</div>';
     html += `</div>`;
     container.innerHTML = html;
-
-    // Инициализация загрузки фото (добавлено)
-    initDatingFileInput();
 
     container.querySelectorAll('.dating-tab').forEach(tab => {
         tab.addEventListener('click', function() {
@@ -1960,22 +1954,8 @@ function openDatingProfileModal(existingProfile = null) {
         document.getElementById('datingInterests').value = '';
         document.getElementById('datingPhotosContainer').innerHTML = '';
     }
-    // Инициализация загрузки фото (добавлено)
     initDatingFileInput();
     modal.classList.add('active');
-}
-
-function initDatingFileInput() {
-    const label = document.querySelector('#modalDatingProfile .file-label');
-    if (label) {
-        // Удаляем старые обработчики, чтобы не дублировать
-        label.removeEventListener('click', window._datingFileHandler);
-        window._datingFileHandler = function(e) {
-            e.preventDefault();
-            uploadPhotoViaPopup('datingFileInput', 'datingPhotosContainer', 3);
-        };
-        label.addEventListener('click', window._datingFileHandler);
-    }
 }
 
 document.getElementById('modalDatingProfileCancel').addEventListener('click', () => document.getElementById('modalDatingProfile').classList.remove('active'));
@@ -2030,9 +2010,12 @@ document.getElementById('modalDatingChatClose').addEventListener('click', functi
     document.getElementById('modalDatingChat').classList.remove('active');
     if (datingChatPollInterval) clearInterval(datingChatPollInterval);
 });
-}
+
+// Переменная для интервала обновления сообщений в чате
+let datingChatPollInterval = null;
+
 // ============================================================
-// 17. ДОСТИЖЕНИЯ, РЕФЕРАЛЫ, ОНБОРДИНГ
+// 17. ДОСТИЖЕНИЯ, РЕФЕРАЛЫ, ОНБОРДИНГ – БЕЗ ИЗМЕНЕНИЙ
 // ============================================================
 async function loadAchievements() {
     const container = document.getElementById('achievementsContainer');
@@ -2124,7 +2107,7 @@ async function finishOnboarding() {
 }
 
 // ============================================================
-// 18. КРЕДИТНЫЙ КАЛЬКУЛЯТОР (внутри PRO)
+// 18. КРЕДИТНЫЙ КАЛЬКУЛЯТОР (ОТДЕЛЬНАЯ СТРАНИЦА)
 // ============================================================
 let creditHistory = JSON.parse(localStorage.getItem('creditHistory_' + userId) || '[]');
 let creditCompare = [];
@@ -2224,7 +2207,7 @@ function calculateCredit(params) {
                 monthlyPayment = newMonthlyPayment;
             }
         }
-    } else { // дифференцированный
+    } else {
         let basePrincipal = amount / months;
         for (let m = 1; m <= months; m++) {
             let interest = remainingDebt * monthlyRate;
@@ -2279,14 +2262,29 @@ function calculateCredit(params) {
     };
 }
 
-function renderCreditCalculator() {
-    const container = document.getElementById('creditCalculatorContainer');
+function renderCreditsPage() {
+    const container = document.getElementById('creditsContainer');
     if (!container) return;
+
     if (!isPremium) {
-        container.innerHTML = '<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3);">🔒 Доступно только в PRO</div>';
+        container.innerHTML = `
+            <div class="credit-locked">
+                <div class="icon">💳</div>
+                <h2>Кредитный калькулятор</h2>
+                <p>Полный функционал доступен только в PRO-версии</p>
+                <button class="btn-buy" onclick="showPage('page-premium')">🌟 Оформить PRO</button>
+                <div style="margin-top:16px; font-size:13px; color:rgba(255,255,255,0.3);">
+                    <span>📊 Аннуитетный и дифференцированный график</span><br>
+                    <span>📉 Досрочное погашение</span><br>
+                    <span>📈 Показатель долговой нагрузки (ПДН)</span><br>
+                    <span>💡 Умный совет и история расчётов</span>
+                </div>
+            </div>
+        `;
         return;
     }
 
+    // PRO – показываем полноценный калькулятор
     container.innerHTML = `
         <div class="credit-calculator-widget">
             <div class="credit-scheme-tabs">
@@ -2341,7 +2339,7 @@ function renderCreditCalculator() {
         </div>
     `;
 
-    // Инициализация обработчиков
+    // Инициализация обработчиков (как в предыдущем коде)
     const schemeTabs = container.querySelectorAll('.credit-scheme-tabs button');
     let currentScheme = 'annuity';
     schemeTabs.forEach(tab => {
@@ -2540,8 +2538,8 @@ async function init() {
     await loadP2P();
     checkIskry();
     await loadIskryGallery();
-    if (document.getElementById('page-premium').classList.contains('active') && isPremium) {
-        renderCreditCalculator();
+    if (document.getElementById('page-credits').classList.contains('active')) {
+        renderCreditsPage();
     }
     setInterval(() => {
         if (document.getElementById('page-moment').classList.contains('active')) loadQuestion();
