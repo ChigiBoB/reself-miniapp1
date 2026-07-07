@@ -1328,7 +1328,7 @@ document.getElementById('demoDating').addEventListener('click', () => showPage('
 document.getElementById('demoCredits').addEventListener('click', () => showPage('page-credits', true));
 
 // ============================================================
-// 14. ДНЕВНИК (с попап-загрузкой фото) – БЕЗ ИЗМЕНЕНИЙ
+// 14. ДНЕВНИК (с исправленной загрузкой фото)
 // ============================================================
 async function loadAutoSaveDiary() {
     const data = await callApi('get_auto_save_diary');
@@ -1338,8 +1338,15 @@ document.getElementById('autoSaveDiaryToggle').addEventListener('change', async 
     await callApi('set_auto_save_diary', { enabled: this.checked });
 });
 
+// Функция инициализации загрузки фото (вызывается при открытии модалки)
 function initDiaryFileInput() {
-    const label = document.querySelector('#modalDiaryEntry .file-label');
+    const modal = document.getElementById('modalDiaryEntry');
+    if (!modal || !modal.classList.contains('active')) {
+        setTimeout(initDiaryFileInput, 200);
+        return;
+    }
+    // Пытаемся найти label
+    const label = modal.querySelector('.file-label');
     if (label) {
         label.removeEventListener('click', window._diaryFileHandler);
         window._diaryFileHandler = function(e) {
@@ -1347,6 +1354,52 @@ function initDiaryFileInput() {
             uploadPhotoViaPopup('diaryFileInput', 'diaryEntryPhotos', 5);
         };
         label.addEventListener('click', window._diaryFileHandler);
+    } else {
+        // Если label не найден, привязываемся к input напрямую
+        const input = document.getElementById('diaryFileInput');
+        if (input) {
+            input.removeEventListener('change', window._diaryFileChangeHandler);
+            window._diaryFileChangeHandler = async function(e) {
+                const file = this.files[0];
+                if (!file) return;
+                // Проверка размера и типа (дублируем для надёжности)
+                if (file.size > 5 * 1024 * 1024) {
+                    tg.showAlert('Файл слишком большой. Максимум 5 МБ.');
+                    return;
+                }
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                if (!allowedTypes.includes(file.type)) {
+                    tg.showAlert('Поддерживаются только JPEG, PNG, WebP');
+                    return;
+                }
+                const formData = new FormData();
+                formData.append('user_id', userId);
+                formData.append('file', file);
+                try {
+                    const resp = await fetch(`${API_BASE}/upload_photo`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await resp.json();
+                    if (result.success) {
+                        const container = document.getElementById('diaryEntryPhotos');
+                        const div = document.createElement('div');
+                        div.style.position = 'relative';
+                        div.style.display = 'inline-block';
+                        div.innerHTML = `<img src="${result.url}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" /><button class="remove-photo-btn" style="position:absolute;top:-4px;right:-4px;background:rgba(244,67,54,0.8);border:none;border-radius:50%;width:18px;height:18px;color:#fff;cursor:pointer;font-size:12px;">✕</button>`;
+                        container.appendChild(div);
+                        div.querySelector('.remove-photo-btn').addEventListener('click', function() { div.remove(); });
+                        document.getElementById('diaryFileName').textContent = file.name;
+                    } else {
+                        tg.showAlert('Ошибка загрузки фото');
+                    }
+                } catch(err) {
+                    console.error(err);
+                    tg.showAlert('Ошибка связи с сервером');
+                }
+            };
+            input.addEventListener('change', window._diaryFileChangeHandler);
+        }
     }
 }
 
@@ -1360,6 +1413,7 @@ function renderDiary(demo) {
     }
     loadDiaryContent(container);
 }
+
 async function loadDiaryContent(container) {
     const catsData = await callApi('get_diary_categories');
     diaryCategories = catsData?.categories || [];
@@ -1375,6 +1429,7 @@ async function loadDiaryContent(container) {
     }
     html += `</div>`;
     container.innerHTML = html;
+
     document.getElementById('diaryAddEntryBtn').addEventListener('click', () => openDiaryEntryModal());
     document.getElementById('diaryAddCategoryBtn').addEventListener('click', () => document.getElementById('modalDiaryCategory').classList.add('active'));
     container.querySelectorAll('.diary-edit-btn').forEach(btn => { btn.addEventListener('click', function() { openDiaryEntryModal(parseInt(this.dataset.id)); }); });
@@ -1385,12 +1440,13 @@ async function loadDiaryContent(container) {
             if (result?.success) { tg.showAlert('✅ Запись удалена'); loadDiaryContent(container); }
         });
     });
+
     document.getElementById('diaryFilterCategory').addEventListener('change', () => applyDiaryFilters(container));
     document.getElementById('diarySearch').addEventListener('input', () => applyDiaryFilters(container));
     document.getElementById('diaryDateFrom').addEventListener('change', () => applyDiaryFilters(container));
     document.getElementById('diaryDateTo').addEventListener('change', () => applyDiaryFilters(container));
-    initDiaryFileInput();
 }
+
 async function applyDiaryFilters(container) {
     const category_id = document.getElementById('diaryFilterCategory').value;
     const search = document.getElementById('diarySearch').value;
@@ -1442,9 +1498,13 @@ async function openDiaryEntryModal(entryId = null) {
         document.getElementById('diaryEntryDate').value = '';
         document.getElementById('diaryEntryPhotos').innerHTML = '';
     }
-    initDiaryFileInput();
+    // Показываем модалку
     modal.classList.add('active');
+    // Инициализируем загрузку фото после того, как модалка появилась
+    setTimeout(initDiaryFileInput, 100);
 }
+
+// Обработчики модалки
 document.getElementById('modalDiaryEntryCancel').addEventListener('click', () => document.getElementById('modalDiaryEntry').classList.remove('active'));
 document.getElementById('modalDiaryEntrySubmit').addEventListener('click', async function() {
     const title = document.getElementById('diaryEntryTitle').value.trim();
@@ -1462,6 +1522,7 @@ document.getElementById('modalDiaryEntrySubmit').addEventListener('click', async
     if (result?.success) { tg.showAlert('✅ Запись сохранена'); document.getElementById('modalDiaryEntry').classList.remove('active'); renderDiary(false); }
     else tg.showAlert('Ошибка сохранения');
 });
+
 document.getElementById('modalDiaryCategoryCancel').addEventListener('click', () => document.getElementById('modalDiaryCategory').classList.remove('active'));
 document.getElementById('modalDiaryCategorySubmit').addEventListener('click', async function() {
     const name = document.getElementById('diaryCategoryName').value.trim();
@@ -1801,8 +1862,10 @@ function getTodayTimestamp() {
     return Math.floor(d.getTime() / 1000);
 }
 // ============================================================
-// 16. ЗНАКОМСТВА (ПОЛНЫЙ ФУНКЦИОНАЛ)
+// 16. ЗНАКОМСТВА (с исправленной загрузкой фото)
 // ============================================================
+let datingChatPollInterval = null;
+
 function renderDating(demo) {
     const container = document.getElementById('datingContainer');
     let html = `<button class="pro-back-btn" onclick="showPage('page-premium')">← Назад</button>`;
@@ -1860,6 +1923,7 @@ async function loadDatingContent(container) {
             if (section === 'chats') loadDatingChats();
         });
     });
+
     document.getElementById('createProfileBtn')?.addEventListener('click', () => openDatingProfileModal());
     document.getElementById('editProfileBtn')?.addEventListener('click', () => openDatingProfileModal(profile));
     document.getElementById('hideProfileBtn')?.addEventListener('click', async function() {
@@ -1871,6 +1935,7 @@ async function loadDatingContent(container) {
         const reportedId = prompt('Введите ID пользователя, на которого жалуетесь:');
         if (reportedId) { const reason = prompt('Причина жалобы:'); if (reason) { callApi('report_dating_user', { reported_id: parseInt(reportedId), reason }); tg.showAlert('✅ Жалоба отправлена'); } }
     });
+
     container.querySelectorAll('.dating-swipe-card .like').forEach(btn => {
         btn.addEventListener('click', async function() {
             const targetId = parseInt(this.dataset.id);
@@ -1935,6 +2000,67 @@ async function loadDatingChats() {
     });
 }
 
+function initDatingFileInput() {
+    const modal = document.getElementById('modalDatingProfile');
+    if (!modal || !modal.classList.contains('active')) {
+        setTimeout(initDatingFileInput, 200);
+        return;
+    }
+    const label = modal.querySelector('.file-label');
+    if (label) {
+        label.removeEventListener('click', window._datingFileHandler);
+        window._datingFileHandler = function(e) {
+            e.preventDefault();
+            uploadPhotoViaPopup('datingFileInput', 'datingPhotosContainer', 3);
+        };
+        label.addEventListener('click', window._datingFileHandler);
+    } else {
+        const input = document.getElementById('datingFileInput');
+        if (input) {
+            input.removeEventListener('change', window._datingFileChangeHandler);
+            window._datingFileChangeHandler = async function(e) {
+                const file = this.files[0];
+                if (!file) return;
+                if (file.size > 5 * 1024 * 1024) {
+                    tg.showAlert('Файл слишком большой. Максимум 5 МБ.');
+                    return;
+                }
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                if (!allowedTypes.includes(file.type)) {
+                    tg.showAlert('Поддерживаются только JPEG, PNG, WebP');
+                    return;
+                }
+                const formData = new FormData();
+                formData.append('user_id', userId);
+                formData.append('file', file);
+                try {
+                    const resp = await fetch(`${API_BASE}/upload_photo`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await resp.json();
+                    if (result.success) {
+                        const container = document.getElementById('datingPhotosContainer');
+                        const div = document.createElement('div');
+                        div.style.position = 'relative';
+                        div.style.display = 'inline-block';
+                        div.innerHTML = `<img src="${result.url}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;" /><button class="remove-photo-btn" style="position:absolute;top:-4px;right:-4px;background:rgba(244,67,54,0.8);border:none;border-radius:50%;width:18px;height:18px;color:#fff;cursor:pointer;font-size:12px;">✕</button>`;
+                        container.appendChild(div);
+                        div.querySelector('.remove-photo-btn').addEventListener('click', function() { div.remove(); });
+                        document.getElementById('datingFileName').textContent = file.name;
+                    } else {
+                        tg.showAlert('Ошибка загрузки фото');
+                    }
+                } catch(err) {
+                    console.error(err);
+                    tg.showAlert('Ошибка связи с сервером');
+                }
+            };
+            input.addEventListener('change', window._datingFileChangeHandler);
+        }
+    }
+}
+
 function openDatingProfileModal(existingProfile = null) {
     const modal = document.getElementById('modalDatingProfile');
     if (existingProfile) {
@@ -1954,8 +2080,8 @@ function openDatingProfileModal(existingProfile = null) {
         document.getElementById('datingInterests').value = '';
         document.getElementById('datingPhotosContainer').innerHTML = '';
     }
-    initDatingFileInput();
     modal.classList.add('active');
+    setTimeout(initDatingFileInput, 100);
 }
 
 document.getElementById('modalDatingProfileCancel').addEventListener('click', () => document.getElementById('modalDatingProfile').classList.remove('active'));
@@ -2010,9 +2136,6 @@ document.getElementById('modalDatingChatClose').addEventListener('click', functi
     document.getElementById('modalDatingChat').classList.remove('active');
     if (datingChatPollInterval) clearInterval(datingChatPollInterval);
 });
-
-// Переменная для интервала обновления сообщений в чате
-let datingChatPollInterval = null;
 
 // ============================================================
 // 17. ДОСТИЖЕНИЯ, РЕФЕРАЛЫ, ОНБОРДИНГ – БЕЗ ИЗМЕНЕНИЙ
