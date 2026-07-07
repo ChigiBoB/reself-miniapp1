@@ -580,7 +580,7 @@ const urlParams = new URLSearchParams(window.location.search);
 let apiBase = urlParams.get('api');
 
 if (!apiBase) {
-    // !!! ВСТАВЬТЕ ВАШ АКТУАЛЬНЫЙ АДРЕС ngrok (БЕЗ /api в конце)
+    // !!! ВСТАВЬТЕ ВАШ АКТУАЛЬНЫЙ АДРЕС (БЕЗ /api в конце)
     apiBase = 'https://garage-courier-everybody.ngrok-free.dev';
 }
 
@@ -628,7 +628,8 @@ async function callApi(action, data = {}) {
     try {  
         const payload = { action, user_id: userId, ...data };  
         console.log('📤', payload);  
-        const resp = await fetch(`${API_URL}/api`, {  
+        // ИСПРАВЛЕНО: используем API_URL без добавления /api
+        const resp = await fetch(API_URL, {  
             method: 'POST',  
             headers: { 'Content-Type': 'application/json' },  
             body: JSON.stringify(payload)  
@@ -666,15 +667,12 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                 resolve(false);  
                 return;  
             }  
-            // Очищаем предыдущий выбор  
             input.value = '';  
-            // Устанавливаем capture для камеры  
             if (buttonId === 'camera') {  
                 input.setAttribute('capture', 'environment');  
             } else {  
                 input.removeAttribute('capture');  
             }  
-            // Вешаем обработчик на выбор файла  
             const handler = async (e) => {  
                 input.removeEventListener('change', handler);  
                 const file = e.target.files[0];  
@@ -682,7 +680,6 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                     resolve(false);  
                     return;  
                 }  
-                // Проверка размера (5 МБ)  
                 if (file.size > 5 * 1024 * 1024) {  
                     tg.showAlert('Файл слишком большой. Максимум 5 МБ.');  
                     resolve(false);  
@@ -694,7 +691,6 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                     resolve(false);  
                     return;  
                 }  
-                // Загружаем на сервер  
                 const formData = new FormData();  
                 formData.append('user_id', userId);  
                 formData.append('file', file);  
@@ -705,10 +701,8 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                     });  
                     const result = await resp.json();  
                     if (result.success) {  
-                        // Добавляем фото в контейнер  
                         const container = document.getElementById(containerId);  
                         if (container) {  
-                            // Проверяем лимит  
                             const currentPhotos = container.querySelectorAll('img').length;  
                             if (currentPhotos >= maxPhotos) {  
                                 tg.showAlert(`Максимум ${maxPhotos} фото`);  
@@ -723,7 +717,6 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                             div.querySelector('.remove-photo-btn').addEventListener('click', function() {  
                                 div.remove();  
                             });  
-                            // Обновляем имя файла  
                             const fileNameSpan = document.getElementById(fileInputId.replace('Input', 'FileName'));  
                             if (fileNameSpan) fileNameSpan.textContent = file.name;  
                             resolve(true);  
@@ -742,9 +735,17 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                 }  
             };  
             input.addEventListener('change', handler);  
-            // Имитируем клик по input  
             input.click();  
         });  
+    });  
+}  
+
+function initPhotoUpload(labelId, fileInputId, containerId, maxPhotos = 5) {  
+    const label = document.getElementById(labelId);  
+    if (!label) return;  
+    label.addEventListener('click', function(e) {  
+        e.preventDefault();  
+        uploadPhotoViaPopup(fileInputId, containerId, maxPhotos);  
     });  
 }  
 
