@@ -630,6 +630,7 @@ async function callApi(action, data = {}) {
         const headers = {
             'Content-Type': 'application/json',
             'X-Telegram-WebApp-InitData': tg.initData
+             'ngrok-skip-browser-warning': '1'
         };
         const resp = await fetch(API_URL, {
             method: 'POST',
@@ -669,8 +670,10 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                 const resp = await fetch(`${API_BASE}/upload_photo`, {
                     method: 'POST',
                     body: formData,
-                    headers: { 'X-Telegram-WebApp-InitData': tg.initData }
-                });
+                    headers: {
+                         'X-Telegram-WebApp-InitData': tg.initData,
+                          'ngrok-skip-browser-warning': '1'   // <-- добавь
+                    }
                 const result = await resp.json();
                 if (result.success) {
                     const container = document.getElementById(containerId);
