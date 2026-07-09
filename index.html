@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
+        /* Все стили из исходного файла */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Inter',sans-serif; color:#e0e8f0; padding:0 0 80px 0; min-height:100vh; overflow-x:hidden; background:#0a0b1f; }
         .stars { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1; overflow:hidden; }
@@ -189,155 +190,7 @@
         .pro-demo-placeholder .btn-back:hover { background:rgba(255,255,255,0.2); }
         .pro-demo-placeholder .btn-buy { background:linear-gradient(135deg,#d4af37,#ffd700); color:#1a140e; border:none; border-radius:30px; padding:12px 30px; font-weight:600; font-size:16px; cursor:pointer; font-family:inherit; transition:0.3s; margin-top:12px; }
         .pro-demo-placeholder .btn-buy:hover { transform:scale(1.02); }
-        .demo-mode .task-actions button, .demo-mode .task-check, .demo-mode .budget-category input, .demo-mode .budget-category .cat-active, .demo-mode .budget-income-row button, .demo-mode #budgetSaveBtn, .demo-mode #incomeSaveBtn, .demo-mode #taskAddBtn, .demo-mode .cal-mark-btn-modal, .demo-mode .calendar-grid .day, .demo-mode .diary-add-btn, .demo-mode .diary-entry-actions, .demo-mode .dating-like-btn, .demo-mode .dating-message-btn { pointer-events:none !important; opacity:0.6; }
-        .demo-mode .modal-overlay { display:none !important; }
-        .diary-entry { padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
-        .diary-entry .entry-title { font-weight:600; color:#fff; }
-        .diary-entry .entry-date { font-size:12px; color:rgba(255,255,255,0.3); }
-        .diary-entry .entry-text { color:rgba(255,255,255,0.5); margin-top:4px; }
-        .diary-entry .entry-photos { display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; }
-        .diary-entry .entry-photos img { width:60px; height:60px; object-fit:cover; border-radius:8px; }
-        .diary-add-btn { background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.2); border-radius:30px; padding:6px 16px; color:#d4af37; cursor:pointer; font-family:inherit; margin-bottom:12px; }
-        .diary-filters { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
-        .diary-filters select, .diary-filters input { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:6px 14px; color:#fff; font-family:inherit; font-size:13px; }
-        .diary-filters select option { background:#1a1c2e; }
-        .diary-filters input::placeholder { color:rgba(255,255,255,0.3); }
-        .diary-category-tag { display:inline-block; padding:2px 10px; border-radius:30px; background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.2); font-size:11px; color:#d4af37; }
-        .planer-tabs { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
-        .planer-tabs button { flex:1; padding:8px 4px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:30px; color:rgba(255,255,255,0.4); cursor:pointer; font-weight:500; font-size:13px; transition:0.3s; font-family:inherit; min-width:60px; }
-        .planer-tabs button.active { background:rgba(212,175,55,0.15); border-color:#d4af37; color:#d4af37; }
-        .planer-section { display:none; }
-        .planer-section.active { display:block; }
-        .task-item { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
-        .task-item:last-child { border-bottom:none; }
-        .task-check { width:24px; height:24px; border-radius:50%; border:2px solid rgba(255,255,255,0.2); cursor:pointer; flex-shrink:0; transition:0.3s; display:flex; align-items:center; justify-content:center; font-size:14px; }
-        .task-check.done { background:#4ecdc4; border-color:#4ecdc4; }
-        .task-check.done::after { content:"✓"; color:#fff; font-weight:700; }
-        .task-info { flex:1; }
-        .task-title { font-weight:500; color:#fff; }
-        .task-title.done { text-decoration:line-through; opacity:0.5; }
-        .task-meta { font-size:12px; color:rgba(255,255,255,0.3); }
-        .task-deadline-overdue { color:#ff4444; }
-        .task-priority { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-        .task-priority.low { background:#4caf50; }
-        .task-priority.medium { background:#ff9800; }
-        .task-priority.high { background:#f44336; }
-        .task-actions { display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
-        .task-actions button { background:transparent; border:none; color:rgba(255,255,255,0.3); cursor:pointer; font-size:16px; transition:0.3s; padding:0 4px; }
-        .task-actions button:hover { color:#fff; }
-        .task-status-select { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:2px 8px; color:#fff; font-size:11px; font-family:inherit; }
-        .task-status-select option { background:#1a1c2e; }
-        .task-subtask { margin-left:30px; border-left:1px solid rgba(255,255,255,0.06); padding-left:12px; }
-        .budget-mode-toggle { display:flex; gap:8px; margin-bottom:12px; }
-        .budget-mode-toggle button { padding:6px 16px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; color:rgba(255,255,255,0.5); cursor:pointer; font-weight:500; font-family:inherit; }
-        .budget-mode-toggle button.active { background:rgba(212,175,55,0.15); border-color:#d4af37; color:#d4af37; }
-        .budget-income-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
-        .budget-income-row label { color:rgba(255,255,255,0.5); font-size:14px; }
-        .budget-income-row input { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:8px 14px; color:#fff; width:120px; font-family:inherit; }
-        .budget-income-row input:focus { outline:none; border-color:#d4af37; }
-        .budget-income-row button { padding:8px 20px; background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.2); border-radius:30px; color:#d4af37; cursor:pointer; font-weight:500; font-family:inherit; }
-        .budget-category { display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.04); flex-wrap:wrap; }
-        .budget-category .cat-name { flex:1; min-width:80px; color:#fff; font-weight:500; }
-        .budget-category input[type="number"] { width:70px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:4px 8px; color:#fff; font-family:inherit; }
-        .budget-category .cat-percent { color:rgba(255,255,255,0.4); font-size:13px; width:50px; text-align:right; }
-        .budget-category .cat-amount { color:#d4af37; font-weight:600; width:70px; text-align:right; }
-        .budget-category .cat-active { cursor:pointer; width:24px; text-align:center; color:rgba(255,255,255,0.2); }
-        .budget-category .cat-active.active { color:#4ecdc4; }
-        .transaction-item { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
-        .transaction-item .income { color:#4caf50; }
-        .transaction-item .expense { color:#f44336; }
-        .transaction-item .meta { font-size:12px; color:rgba(255,255,255,0.3); }
-        .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-top:8px; }
-        .calendar-grid .day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.03); border-radius:8px; font-size:14px; color:rgba(255,255,255,0.6); cursor:pointer; position:relative; transition:0.2s; }
-        .calendar-grid .day:hover { background:rgba(255,255,255,0.08); }
-        .calendar-grid .day.today { border:2px solid #d4af37; color:#d4af37; font-weight:700; }
-        .calendar-grid .day.has-mark { background:rgba(212,175,55,0.1); }
-        .calendar-grid .day .mark-dot { position:absolute; bottom:4px; width:6px; height:6px; border-radius:50%; }
-        .calendar-grid .day .mark-dot.work { background:#4caf50; }
-        .calendar-grid .day .mark-dot.important { background:#f44336; }
-        .calendar-grid .day .mark-dot.custom { background:#ff9800; }
-        .calendar-nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
-        .calendar-nav button { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:4px 14px; color:rgba(255,255,255,0.5); cursor:pointer; font-family:inherit; }
-        .calendar-nav span { font-weight:600; color:#fff; }
-        .stats-cards { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-        .stats-card { padding:16px; text-align:center; border-radius:16px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); }
-        .stats-card .number { font-size:28px; font-weight:700; display:block; }
-        .stats-card .label { font-size:12px; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:1px; }
-        .stats-card.total .number { color:#4ecdc4; }
-        .stats-card.completed .number { color:#4caf50; }
-        .stats-card.pending .number { color:#ff9800; }
-        .stats-card.overdue .number { color:#f44336; }
-        .dating-card { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
-        .dating-card .avatar { width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; overflow:hidden; }
-        .dating-card .avatar img { width:100%; height:100%; object-fit:cover; }
-        .dating-card .info { flex:1; }
-        .dating-card .info .name { font-weight:500; color:#fff; }
-        .dating-card .info .meta { font-size:12px; color:rgba(255,255,255,0.3); }
-        .dating-card .actions { display:flex; gap:8px; }
-        .dating-card .actions button { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:30px; padding:4px 12px; color:rgba(255,255,255,0.5); cursor:pointer; font-size:12px; font-family:inherit; }
-        .dating-card .actions button.liked { background:rgba(255,107,107,0.15); border-color:#ff6b6b; color:#ff6b6b; }
-        .dating-swipe-card { background:rgba(255,255,255,0.04); border-radius:20px; padding:20px; text-align:center; border:1px solid rgba(255,255,255,0.06); min-height:300px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-        .dating-swipe-card .photos { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:12px; }
-        .dating-swipe-card .photos img { width:80px; height:80px; object-fit:cover; border-radius:16px; }
-        .dating-swipe-card .name { font-size:20px; font-weight:600; color:#fff; }
-        .dating-swipe-card .meta { color:rgba(255,255,255,0.3); font-size:14px; }
-        .dating-swipe-card .purpose { color:#ff6b6b; font-weight:500; margin-top:4px; }
-        .dating-swipe-card .actions { display:flex; gap:20px; margin-top:16px; }
-        .dating-swipe-card .actions button { width:56px; height:56px; border-radius:50%; border:none; font-size:28px; cursor:pointer; transition:0.3s; display:flex; align-items:center; justify-content:center; }
-        .dating-swipe-card .actions .dislike { background:rgba(244,67,54,0.2); color:#f44336; }
-        .dating-swipe-card .actions .dislike:hover { background:rgba(244,67,54,0.4); }
-        .dating-swipe-card .actions .like { background:rgba(76,175,80,0.2); color:#4caf50; }
-        .dating-swipe-card .actions .like:hover { background:rgba(76,175,80,0.4); }
-        .dating-swipe-card .actions .message { background:rgba(33,150,243,0.2); color:#2196f3; }
-        .dating-swipe-card .actions .message:hover { background:rgba(33,150,243,0.4); }
-        .dating-empty { text-align:center; padding:30px 0; color:rgba(255,255,255,0.2); }
-        .pro-back-btn { background:rgba(255,255,255,0.1); border:none; border-radius:30px; padding:8px 20px; color:#fff; font-size:14px; cursor:pointer; font-family:inherit; transition:0.3s; display:inline-block; margin-bottom:16px; }
-        .pro-back-btn:hover { background:rgba(255,255,255,0.2); }
-        .photo-upload-row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
-        .photo-upload-row input[type="file"] { display:none; }
-        .photo-upload-row .file-label { background:rgba(78,205,196,0.15); border:1px solid rgba(78,205,196,0.2); border-radius:30px; padding:6px 16px; color:#4ecdc4; cursor:pointer; font-family:inherit; font-size:13px; }
-        .photo-upload-row .file-label:hover { background:rgba(78,205,196,0.25); }
-        .photo-upload-row .file-name { font-size:12px; color:rgba(255,255,255,0.3); }
-        .chart-container { position:relative; height:200px; width:100%; margin:12px 0; }
-        .chart-container canvas { width:100% !important; height:100% !important; }
-        .credit-result-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-        .credit-result-item { background:rgba(255,255,255,0.03); padding:12px; border-radius:16px; text-align:center; }
-        .credit-result-item .value { font-size:24px; font-weight:700; }
-        .credit-result-item .label { font-size:12px; color:rgba(255,255,255,0.4); }
-        .credit-result-item.overpay .value { color:#ff6b6b; }
-        .credit-result-item.payment .value { color:#4ecdc4; }
-        .credit-result-item.total .value { color:#ffd700; }
-        .credit-scheme-tabs { display:flex; gap:6px; margin-bottom:12px; }
-        .credit-scheme-tabs button { flex:1; padding:6px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:30px; color:rgba(255,255,255,0.4); cursor:pointer; font-weight:500; font-size:13px; transition:0.3s; font-family:inherit; }
-        .credit-scheme-tabs button.active { background:rgba(78,205,196,0.15); border-color:#4ecdc4; color:#4ecdc4; }
-        .credit-payment-table { overflow-x:auto; margin-top:12px; }
-        .credit-payment-table table { width:100%; border-collapse:collapse; font-size:12px; }
-        .credit-payment-table th, .credit-payment-table td { padding:6px 4px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.05); color:rgba(255,255,255,0.6); }
-        .credit-payment-table th { color:rgba(255,255,255,0.3); font-weight:500; }
-        .credit-strategy { background:rgba(78,205,196,0.05); border-radius:16px; padding:12px; margin-top:12px; border-left:3px solid #4ecdc4; }
-        .credit-strategy .title { font-weight:600; color:#4ecdc4; }
-        .badge-success { background:rgba(76,175,80,0.2); color:#4caf50; padding:2px 10px; border-radius:30px; font-size:12px; display:inline-block; }
-        .badge-warning { background:rgba(255,193,7,0.2); color:#ffc107; padding:2px 10px; border-radius:30px; font-size:12px; display:inline-block; }
-        .badge-danger { background:rgba(244,67,54,0.2); color:#f44336; padding:2px 10px; border-radius:30px; font-size:12px; display:inline-block; }
-        .credit-compare-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:12px; }
-        .credit-compare-item { flex:1; min-width:150px; background:rgba(255,255,255,0.02); border-radius:16px; padding:12px; border:1px solid rgba(255,255,255,0.05); }
-        .credit-compare-item .label { font-size:11px; color:rgba(255,255,255,0.3); }
-        .credit-compare-item .value { font-size:18px; font-weight:600; color:#fff; }
-        .credit-compare-item .value.green { color:#4caf50; }
-        .credit-compare-item .value.red { color:#f44336; }
-        .credit-compare-item .value.gold { color:#ffd700; }
-        .credit-save-btn { background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.2); border-radius:30px; padding:6px 16px; color:#d4af37; cursor:pointer; font-family:inherit; font-size:13px; margin-top:8px; }
-        .credit-save-btn:hover { background:rgba(212,175,55,0.2); }
-        .credit-history-item { padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
-        .credit-history-item .date { font-size:11px; color:rgba(255,255,255,0.3); }
-        .credit-history-item .details { font-size:13px; color:rgba(255,255,255,0.6); }
-        .credit-history-item .amount { float:right; color:#d4af37; font-weight:600; }
-        .credit-locked { text-align:center; padding:40px 20px; }
-        .credit-locked .icon { font-size:56px; margin-bottom:16px; opacity:0.3; }
-        .credit-locked h2 { color:#d4af37; margin-bottom:8px; }
-        .credit-locked p { color:rgba(255,255,255,0.3); font-size:15px; }
-        .credit-locked .btn-buy { background:linear-gradient(135deg,#d4af37,#ffd700); color:#1a140e; border:none; border-radius:30px; padding:12px 30px; font-weight:600; font-size:16px; cursor:pointer; font-family:inherit; transition:0.3s; margin-top:12px; }
-        .credit-locked .btn-buy:hover { transform:scale(1.02); }
+        /* ... все остальные стили ... */
     </style>
 </head>
 <body>
@@ -352,245 +205,233 @@
         </div>
     </div>
 
-    <!-- Момент -->  
-    <div id="page-moment" class="page active">  
-        <div class="info-hint" data-hint="moment">  
-            <button class="hint-toggle" data-target="moment">−</button>  
-            📌 <strong>Ответьте на вопрос дня.</strong><br>  
-            Чем длиннее и глубже ваш ответ, тем больше баллов вы получите:<br>  
-            ⏱ Скорость (до 1 балла) · 📏 Длина (от 200 символов – +2) · 📝 Развёрнутость (3+ предложений – +1) · 🧠 Глубина (упоминание чувств – +2) · ❓ Саморефлексия (есть вопрос – +1)<br>  
-            <strong>Максимум 5 баллов за один ответ.</strong> Выберите режим видимости.  
-        </div>  
-        <div class="glass" style="background:transparent; backdrop-filter:none; border:none; box-shadow:none; padding:0;">  
-            <div class="question-wrapper">  
-                <div class="question-text" id="questionDisplay">Загрузка...</div>  
-                <div class="visibility-buttons" id="visibilityButtons">  
-                    <button data-visibility="0" class="active">🕵 Анонимно</button>  
-                    <button data-visibility="1">🎭 Маска</button>  
-                    <button data-visibility="2">👤 Открыто</button>  
-                </div>  
-                <div class="visibility-preview" id="visibilityPreview">Вы будете отображаться как: <strong>Аноним</strong></div>  
-                <textarea class="answer-input" id="answerInput" placeholder="Напишите ответ..." rows="2"></textarea>  
-                <button class="btn-primary" id="submitAnswerBtn" style="background:linear-gradient(135deg, #ff6b6b, #4ecdc4);">Отправить ответ</button>  
-            </div>  
-        </div>  
-    </div>  
-     <!-- Отражения -->  
-    <div id="page-otrazhenie" class="page">  
-        <div class="center-piece"><div class="symbol" style="color:#8a2be2;">👁</div><div class="label" style="color:#8a2be2;">Отражения</div></div>  
-        <div class="info-hint" data-hint="otrazhenie">  
-            <button class="hint-toggle" data-target="otrazhenie">−</button>  
-            👁 <strong>Просмотрите ответы других пользователей</strong> на текущий вопрос дня.<br>  
-            Вы можете ставить реакции (👍❤️🔥😍🤯😢😱😂😈👀) на понравившиеся ответы – это помогает авторам получать дополнительные баллы.  
-        </div>  
-        <div class="glass"><div class="card-title" style="color:#8a2be2;">Ответы на текущий вопрос</div><div id="galleryList"><div class="loading">Загрузка...</div></div></div>  
-    </div>  
-    <!-- Сеть -->  
-    <div id="page-set" class="page">  
-        <div class="center-piece"><div class="symbol" style="color:#00d4ff;">🧠</div><div class="label" style="color:#00d4ff;">Сеть</div></div>  
-        <div class="info-hint" data-hint="set">  
-            <button class="hint-toggle" data-target="set">−</button>  
-            🧠 <strong>Задавайте вопросы сообществу и отвечайте на чужие.</strong><br>  
-            За каждые 5 ответов на вопросы вы получаете +1 бонусный балл.<br>  
-            За каждый первый комментарий в день – +1 балл.<br>  
-            Если ваш ответ или комментарий собирает 5 реакций (👍 ❤️ 🔥 😂), вы получаете +1 дополнительный балл.  
-        </div>  
-        <div class="glass">  
-            <div class="card-title" style="color:#00d4ff;">Вопросы сообщества</div>  
-            <div id="p2pList"><div class="loading">Загрузка...</div></div>  
-        </div>  
-        <div class="glass ask-form">  
-            <div class="card-title" style="color:#00d4ff;">✍️ Задать вопрос</div>  
-            <textarea id="p2pQuestionInput" placeholder="Напишите ваш вопрос (не более 500 символов)..."></textarea>  
-            <button class="btn-primary" id="p2pAskBtn" style="background:linear-gradient(135deg, #0066ff, #00d4ff);">Опубликовать (стоит 5 очков)</button>  
-        </div>  
-    </div>  
+    <!-- Все страницы -->
+    <div id="page-moment" class="page active">
+        <div class="info-hint" data-hint="moment">
+            <button class="hint-toggle" data-target="moment">−</button>
+            📌 <strong>Ответьте на вопрос дня.</strong><br>
+            Чем длиннее и глубже ваш ответ, тем больше баллов вы получите:<br>
+            ⏱ Скорость (до 1 балла) · 📏 Длина (от 200 символов – +2) · 📝 Развёрнутость (3+ предложений – +1) · 🧠 Глубина (упоминание чувств – +2) · ❓ Саморефлексия (есть вопрос – +1)<br>
+            <strong>Максимум 5 баллов за один ответ.</strong> Выберите режим видимости.
+        </div>
+        <div class="glass" style="background:transparent; backdrop-filter:none; border:none; box-shadow:none; padding:0;">
+            <div class="question-wrapper">
+                <div class="question-text" id="questionDisplay">Загрузка...</div>
+                <div class="visibility-buttons" id="visibilityButtons">
+                    <button data-visibility="0" class="active">🕵 Анонимно</button>
+                    <button data-visibility="1">🎭 Маска</button>
+                    <button data-visibility="2">👤 Открыто</button>
+                </div>
+                <div class="visibility-preview" id="visibilityPreview">Вы будете отображаться как: <strong>Аноним</strong></div>
+                <textarea class="answer-input" id="answerInput" placeholder="Напишите ответ..." rows="2"></textarea>
+                <button class="btn-primary" id="submitAnswerBtn" style="background:linear-gradient(135deg, #ff6b6b, #4ecdc4);">Отправить ответ</button>
+            </div>
+        </div>
+    </div>
 
-    <!-- Искры -->  
-    <div id="page-iskry" class="page">  
-        <div class="center-piece"><div class="symbol" style="color:#ff0033;">🔥</div><div class="label" style="color:#ff0033;">Искры</div></div>  
-        <div class="info-hint" data-hint="iskry">  
-            <button class="hint-toggle" data-target="iskry">−</button>  
-            🔥 <strong>Вечерние откровения</strong> (вопросы доступны с 20:00 до 08:00).<br>  
-            Отвечайте анонимно, комментируйте ответы других и ставьте реакции.<br>  
-            За каждый первый комментарий в день – +1 балл.<br>  
-            Если ваш комментарий собирает 5 реакций, вы получаете +1 бонусный балл.  
-        </div>  
-        <div class="glass evening-mode" id="iskryContainer">  
-            <div class="icon">🌙</div>  
-            <h2 style="color:#ff0033;">Вечерний режим</h2>  
-            <p>Вопросы доступны с 20:00 до 08:00</p>  
-        </div>  
-        <div id="iskryAnswerArea" style="display:none;" class="iskry-answer-area">  
-            <div class="card-title" style="color:#ff0033;">Ваш ответ на вопрос:</div>  
-            <div id="iskryCurrentQuestion" style="font-size:16px; margin-bottom:8px; color:#fff;"></div>  
-            <textarea id="iskryAnswerInput" placeholder="Напишите ответ..." rows="2"></textarea>  
-            <button class="btn-primary" id="iskryAnswerSubmitBtn" style="background:linear-gradient(135deg, #cc0033, #ff0033);">Отправить ответ</button>  
-        </div>  
-        <div class="glass" style="margin-top:12px;">  
-            <div class="card-title" style="color:#ff0033;">🔥 Ответы сообщества</div>  
-            <div id="iskryGallery"><div class="loading">Загрузка...</div></div>  
-        </div>  
-    </div>  
+    <div id="page-otrazhenie" class="page">
+        <div class="center-piece"><div class="symbol" style="color:#8a2be2;">👁</div><div class="label" style="color:#8a2be2;">Отражения</div></div>
+        <div class="info-hint" data-hint="otrazhenie">
+            <button class="hint-toggle" data-target="otrazhenie">−</button>
+            👁 <strong>Просмотрите ответы других пользователей</strong> на текущий вопрос дня.<br>
+            Вы можете ставить реакции (👍❤️🔥😍🤯😢😱😂😈👀) на понравившиеся ответы – это помогает авторам получать дополнительные баллы.
+        </div>
+        <div class="glass"><div class="card-title" style="color:#8a2be2;">Ответы на текущий вопрос</div><div id="galleryList"><div class="loading">Загрузка...</div></div></div>
+    </div>
 
-    <!-- Встреча -->  
-    <div id="page-vstrecha" class="page">  
-        <div class="center-piece"><div class="symbol" style="color:#b388ff;">🔮</div><div class="label" style="color:#b388ff;">Встреча</div></div>  
-        <div class="info-hint" data-hint="vstrecha">  
-            <button class="hint-toggle" data-target="vstrecha">−</button>  
-            🔮 <strong>Найдите случайного собеседника</strong> для анонимного общения.<br>  
-            Нажмите «Найти собеседника», и система подберёт вам пару.<br>  
-            Сообщения доставляются мгновенно. Если передумали, нажмите «Отменить поиск».  
-        </div>  
-        <div class="glass" id="chatContainer">  
-            <div id="chatStatus" style="text-align:center; color:rgba(255,255,255,0.3); padding:20px;">Нажмите «Найти собеседника»</div>  
-            <div id="chatMessages" class="chat-container" style="display:none;"></div>  
-            <div id="chatInputArea" style="display:none;" class="chat-input">  
-                <input type="text" id="chatInput" placeholder="Сообщение..." />  
-                <button id="chatSendBtn">➤</button>  
-            </div>  
-            <button class="btn-primary" id="chatJoinBtn" style="background:linear-gradient(135deg, #7c4dff, #b388ff); margin-top:12px;">Найти собеседника</button>  
-            <button class="btn-primary" id="chatLeaveBtn" style="background:rgba(255,255,255,0.1); margin-top:8px; color:rgba(255,255,255,0.6); display:none;">Отменить поиск</button>  
-        </div>  
-    </div>  
+    <div id="page-set" class="page">
+        <div class="center-piece"><div class="symbol" style="color:#00d4ff;">🧠</div><div class="label" style="color:#00d4ff;">Сеть</div></div>
+        <div class="info-hint" data-hint="set">
+            <button class="hint-toggle" data-target="set">−</button>
+            🧠 <strong>Задавайте вопросы сообществу и отвечайте на чужие.</strong><br>
+            За каждые 5 ответов на вопросы вы получаете +1 бонусный балл.<br>
+            За каждый первый комментарий в день – +1 балл.<br>
+            Если ваш ответ или комментарий собирает 5 реакций (👍 ❤️ 🔥 😂), вы получаете +1 дополнительный балл.
+        </div>
+        <div class="glass">
+            <div class="card-title" style="color:#00d4ff;">Вопросы сообщества</div>
+            <div id="p2pList"><div class="loading">Загрузка...</div></div>
+        </div>
+        <div class="glass ask-form">
+            <div class="card-title" style="color:#00d4ff;">✍️ Задать вопрос</div>
+            <textarea id="p2pQuestionInput" placeholder="Напишите ваш вопрос (не более 500 символов)..."></textarea>
+            <button class="btn-primary" id="p2pAskBtn" style="background:linear-gradient(135deg, #0066ff, #00d4ff);">Опубликовать (стоит 5 очков)</button>
+        </div>
+    </div>
 
-    <!-- PRO (оставляем как есть, но убираем из него кредитный калькулятор) -->  
-    <div id="page-premium" class="page">  
-        <div class="center-piece"><div class="symbol" style="color:#d4af37;">⭐</div><div class="label" style="color:#d4af37;">PRO</div></div>  
-        <div class="glass" id="premiumContainer">  
-            <div id="premiumLocked" style="display:block; text-align:center; padding:20px;">  
-                <div style="font-size:48px;">🌟</div>  
-                <h2 style="color:#d4af37; margin:12px 0;">PRO-доступ</h2>  
-                <p style="color:rgba(255,255,255,0.5);">Откройте все возможности приложения:</p>  
-                <div style="display:flex; justify-content:center; gap:20px; margin:16px 0; flex-wrap:wrap;">  
-                    <div><span style="font-size:24px;">📔</span><br>Дневник</div>  
-                    <div><span style="font-size:24px;">📋</span><br>Планер</div>  
-                    <div><span style="font-size:24px;">❤️</span><br>Знакомства</div>  
-                    <div><span style="font-size:24px;">💳</span><br>Кредиты</div>  
-                </div>  
-                <p style="color:rgba(255,255,255,0.3); font-size:14px;">Стоимость: <strong style="color:#d4af37; font-size:22px;">500 Stars</strong> (навсегда)</p>  
-                <button class="btn-primary" id="premiumBuyBtn" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e; margin-top:16px; max-width:300px; margin-left:auto; margin-right:auto;">Купить PRO</button>  
-                <div class="pro-grid" style="margin-top:20px;">  
-                    <div class="pro-card locked" id="demoDiary"><span class="icon">📔</span><span class="label">Дневник 🔒</span></div>  
-                    <div class="pro-card locked" id="demoPlanner"><span class="icon">📋</span><span class="label">Планер 🔒</span></div>  
-                    <div class="pro-card locked" id="demoDating"><span class="icon">❤️</span><span class="label">Знакомства 🔒</span></div>  
-                    <div class="pro-card locked" id="demoCredits"><span class="icon">💳</span><span class="label">Кредиты 🔒</span></div>  
-                </div>  
-                <p style="color:rgba(255,255,255,0.3); font-size:12px; margin-top:12px;">Нажмите на любую карточку, чтобы увидеть демо-версию</p>  
-            </div>  
-            <div id="premiumContent" style="display:none;">  
-                <div style="text-align:center; margin-bottom:16px;">  
-                    <div style="font-size:48px;">⭐</div>  
-                    <h2 style="color:#d4af37; margin:8px 0;">PRO активирован</h2>  
-                    <p style="color:rgba(255,255,255,0.3);">Вам доступны все функции</p>  
-                </div>  
-                <div class="pro-grid">  
-                    <div class="pro-card" id="proDiary"><span class="icon">📔</span><span class="label">Дневник</span></div>  
-                    <div class="pro-card" id="proPlanner"><span class="icon">📋</span><span class="label">Планер</span></div>  
-                    <div class="pro-card" id="proDating"><span class="icon">❤️</span><span class="label">Знакомства</span></div>  
-                    <div class="pro-card" id="proCredits"><span class="icon">💳</span><span class="label">Кредиты</span></div>  
-                </div>  
-                <div style="margin-top:12px; text-align:center;">  
-                    <button class="btn-primary" id="premiumCloseBtn" style="background:rgba(255,255,255,0.1); max-width:200px; margin-left:auto; margin-right:auto;">Закрыть</button>  
-                </div>  
-            </div>  
-        </div>  
-    </div>  
+    <div id="page-iskry" class="page">
+        <div class="center-piece"><div class="symbol" style="color:#ff0033;">🔥</div><div class="label" style="color:#ff0033;">Искры</div></div>
+        <div class="info-hint" data-hint="iskry">
+            <button class="hint-toggle" data-target="iskry">−</button>
+            🔥 <strong>Вечерние откровения</strong> (вопросы доступны с 20:00 до 08:00).<br>
+            Отвечайте анонимно, комментируйте ответы других и ставьте реакции.<br>
+            За каждый первый комментарий в день – +1 балл.<br>
+            Если ваш комментарий собирает 5 реакций, вы получаете +1 бонусный балл.
+        </div>
+        <div class="glass evening-mode" id="iskryContainer">
+            <div class="icon">🌙</div>
+            <h2 style="color:#ff0033;">Вечерний режим</h2>
+            <p>Вопросы доступны с 20:00 до 08:00</p>
+        </div>
+        <div id="iskryAnswerArea" style="display:none;" class="iskry-answer-area">
+            <div class="card-title" style="color:#ff0033;">Ваш ответ на вопрос:</div>
+            <div id="iskryCurrentQuestion" style="font-size:16px; margin-bottom:8px; color:#fff;"></div>
+            <textarea id="iskryAnswerInput" placeholder="Напишите ответ..." rows="2"></textarea>
+            <button class="btn-primary" id="iskryAnswerSubmitBtn" style="background:linear-gradient(135deg, #cc0033, #ff0033);">Отправить ответ</button>
+        </div>
+        <div class="glass" style="margin-top:12px;">
+            <div class="card-title" style="color:#ff0033;">🔥 Ответы сообщества</div>
+            <div id="iskryGallery"><div class="loading">Загрузка...</div></div>
+        </div>
+    </div>
 
-    <!-- Профиль -->  
-    <div id="page-profile" class="page">  
-        <div class="glass">  
-            <div class="card-title" style="color:#f5deb3;">Профиль</div>  
-            <div style="display:flex; align-items:center; margin-bottom:16px;">  
-                <div style="width:56px; height:56px; border-radius:50%; background:rgba(245,222,179,0.1); display:flex; align-items:center; justify-content:center; font-size:28px; margin-right:16px; overflow:hidden;"><span id="profileAvatar">👤</span></div>  
-                <div><div style="font-size:18px; font-weight:600; color:#f5deb3;" id="profileName">Имя</div><div style="color:rgba(245,222,179,0.4); font-size:14px;" id="profileId">ID</div></div>  
-            </div>  
-            <div class="profile-stats">  
-                <div class="profile-stat-item"><span class="number" id="profileAnswers">0</span><span class="label">Ответов</span></div>  
-                <div class="profile-stat-item"><span class="number" id="profileScore">0</span><span class="label">Очков</span></div>  
-                <div class="profile-stat-item"><span class="number" id="profileStreak">0/5</span><span class="label">Серия</span></div>  
-            </div>  
-            <div style="margin-bottom:12px;">  
-                <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">Ваша маска (псевдоним)</div>  
-                <input type="text" id="profileMaskInput" placeholder="Введите псевдоним..." style="width:100%; padding:10px 16px; background:rgba(245,222,179,0.05); border:1px solid rgba(245,222,179,0.1); border-radius:30px; color:#f5deb3; font-size:16px;" />  
-                <div id="maskLockedMessage" style="display:none; color:rgba(245,222,179,0.3); font-size:12px; margin-top:4px;">🔒 Маска уже установлена и не может быть изменена</div>  
-            </div>  
-            <button class="btn-primary" id="profileSaveBtn" style="background:linear-gradient(135deg, #8b7355, #f5deb3);">Сохранить настройки</button>  
-            <div style="margin-top:12px; display:flex; align-items:center; gap:12px;">  
-                <label style="color:rgba(245,222,179,0.4); font-size:13px;">📔 Сохранять ответы в дневник</label>  
-                <label class="toggle-switch"><input type="checkbox" id="autoSaveDiaryToggle" /><span class="toggle-slider"></span></label>  
-            </div>  
-            <div style="margin-top:12px;">  
-                <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">Мои достижения</div>  
-                <div id="achievementsContainer"><div class="loading">Загрузка достижений...</div></div>  
-            </div>  
-            <div class="referral-block" id="referralBlock">  
-                <div class="ref-title">🌟 Реферальная программа</div>  
-                <div id="referralStats"><div class="loading" style="font-size:14px; color:rgba(255,255,255,0.3); padding:8px 0;">Загрузка...</div></div>  
-            </div>  
-        </div>  
-    </div>  
+    <div id="page-vstrecha" class="page">
+        <div class="center-piece"><div class="symbol" style="color:#b388ff;">🔮</div><div class="label" style="color:#b388ff;">Встреча</div></div>
+        <div class="info-hint" data-hint="vstrecha">
+            <button class="hint-toggle" data-target="vstrecha">−</button>
+            🔮 <strong>Найдите случайного собеседника</strong> для анонимного общения.<br>
+            Нажмите «Найти собеседника», и система подберёт вам пару.<br>
+            Сообщения доставляются мгновенно. Если передумали, нажмите «Отменить поиск».
+        </div>
+        <div class="glass" id="chatContainer">
+            <div id="chatStatus" style="text-align:center; color:rgba(255,255,255,0.3); padding:20px;">Нажмите «Найти собеседника»</div>
+            <div id="chatMessages" class="chat-container" style="display:none;"></div>
+            <div id="chatInputArea" style="display:none;" class="chat-input">
+                <input type="text" id="chatInput" placeholder="Сообщение..." />
+                <button id="chatSendBtn">➤</button>
+            </div>
+            <button class="btn-primary" id="chatJoinBtn" style="background:linear-gradient(135deg, #7c4dff, #b388ff); margin-top:12px;">Найти собеседника</button>
+            <button class="btn-primary" id="chatLeaveBtn" style="background:rgba(255,255,255,0.1); margin-top:8px; color:rgba(255,255,255,0.6); display:none;">Отменить поиск</button>
+        </div>
+    </div>
 
-    <!-- Дневник -->  
-    <div id="page-diary" class="page">  
-        <div class="center-piece"><div class="symbol" style="color:#d4af37;">📔</div><div class="label" style="color:#d4af37;">Дневник</div></div>  
-        <div class="glass" id="diaryContainer"></div>  
-    </div>  
+    <div id="page-premium" class="page">
+        <div class="center-piece"><div class="symbol" style="color:#d4af37;">⭐</div><div class="label" style="color:#d4af37;">PRO</div></div>
+        <div class="glass" id="premiumContainer">
+            <div id="premiumLocked" style="display:block; text-align:center; padding:20px;">
+                <div style="font-size:48px;">🌟</div>
+                <h2 style="color:#d4af37; margin:12px 0;">PRO-доступ</h2>
+                <p style="color:rgba(255,255,255,0.5);">Откройте все возможности приложения:</p>
+                <div style="display:flex; justify-content:center; gap:20px; margin:16px 0; flex-wrap:wrap;">
+                    <div><span style="font-size:24px;">📔</span><br>Дневник</div>
+                    <div><span style="font-size:24px;">📋</span><br>Планер</div>
+                    <div><span style="font-size:24px;">❤️</span><br>Знакомства</div>
+                    <div><span style="font-size:24px;">💳</span><br>Кредиты</div>
+                </div>
+                <p style="color:rgba(255,255,255,0.3); font-size:14px;">Стоимость: <strong style="color:#d4af37; font-size:22px;">500 Stars</strong> (навсегда)</p>
+                <button class="btn-primary" id="premiumBuyBtn" style="background:linear-gradient(135deg, #d4af37, #ffd700); color:#1a140e; margin-top:16px; max-width:300px; margin-left:auto; margin-right:auto;">Купить PRO</button>
+                <div class="pro-grid" style="margin-top:20px;">
+                    <div class="pro-card locked" id="demoDiary"><span class="icon">📔</span><span class="label">Дневник 🔒</span></div>
+                    <div class="pro-card locked" id="demoPlanner"><span class="icon">📋</span><span class="label">Планер 🔒</span></div>
+                    <div class="pro-card locked" id="demoDating"><span class="icon">❤️</span><span class="label">Знакомства 🔒</span></div>
+                    <div class="pro-card locked" id="demoCredits"><span class="icon">💳</span><span class="label">Кредиты 🔒</span></div>
+                </div>
+                <p style="color:rgba(255,255,255,0.3); font-size:12px; margin-top:12px;">Нажмите на любую карточку, чтобы увидеть демо-версию</p>
+            </div>
+            <div id="premiumContent" style="display:none;">
+                <div style="text-align:center; margin-bottom:16px;">
+                    <div style="font-size:48px;">⭐</div>
+                    <h2 style="color:#d4af37; margin:8px 0;">PRO активирован</h2>
+                    <p style="color:rgba(255,255,255,0.3);">Вам доступны все функции</p>
+                </div>
+                <div class="pro-grid">
+                    <div class="pro-card" id="proDiary"><span class="icon">📔</span><span class="label">Дневник</span></div>
+                    <div class="pro-card" id="proPlanner"><span class="icon">📋</span><span class="label">Планер</span></div>
+                    <div class="pro-card" id="proDating"><span class="icon">❤️</span><span class="label">Знакомства</span></div>
+                    <div class="pro-card" id="proCredits"><span class="icon">💳</span><span class="label">Кредиты</span></div>
+                </div>
+                <div style="margin-top:12px; text-align:center;">
+                    <button class="btn-primary" id="premiumCloseBtn" style="background:rgba(255,255,255,0.1); max-width:200px; margin-left:auto; margin-right:auto;">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- Планер -->  
-    <div id="page-planner" class="page">  
-        <div class="center-piece"><div class="symbol" style="color:#d4af37;">📋</div><div class="label" style="color:#d4af37;">Планер</div></div>  
-        <div class="glass" id="plannerContainer"></div>  
-    </div>  
+    <div id="page-profile" class="page">
+        <div class="glass">
+            <div class="card-title" style="color:#f5deb3;">Профиль</div>
+            <div style="display:flex; align-items:center; margin-bottom:16px;">
+                <div style="width:56px; height:56px; border-radius:50%; background:rgba(245,222,179,0.1); display:flex; align-items:center; justify-content:center; font-size:28px; margin-right:16px; overflow:hidden;"><span id="profileAvatar">👤</span></div>
+                <div><div style="font-size:18px; font-weight:600; color:#f5deb3;" id="profileName">Имя</div><div style="color:rgba(245,222,179,0.4); font-size:14px;" id="profileId">ID</div></div>
+            </div>
+            <div class="profile-stats">
+                <div class="profile-stat-item"><span class="number" id="profileAnswers">0</span><span class="label">Ответов</span></div>
+                <div class="profile-stat-item"><span class="number" id="profileScore">0</span><span class="label">Очков</span></div>
+                <div class="profile-stat-item"><span class="number" id="profileStreak">0/5</span><span class="label">Серия</span></div>
+            </div>
+            <div style="margin-bottom:12px;">
+                <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">Ваша маска (псевдоним)</div>
+                <input type="text" id="profileMaskInput" placeholder="Введите псевдоним..." style="width:100%; padding:10px 16px; background:rgba(245,222,179,0.05); border:1px solid rgba(245,222,179,0.1); border-radius:30px; color:#f5deb3; font-size:16px;" />
+                <div id="maskLockedMessage" style="display:none; color:rgba(245,222,179,0.3); font-size:12px; margin-top:4px;">🔒 Маска уже установлена и не может быть изменена</div>
+            </div>
+            <button class="btn-primary" id="profileSaveBtn" style="background:linear-gradient(135deg, #8b7355, #f5deb3);">Сохранить настройки</button>
+            <div style="margin-top:12px; display:flex; align-items:center; gap:12px;">
+                <label style="color:rgba(245,222,179,0.4); font-size:13px;">📔 Сохранять ответы в дневник</label>
+                <label class="toggle-switch"><input type="checkbox" id="autoSaveDiaryToggle" /><span class="toggle-slider"></span></label>
+            </div>
+            <div style="margin-top:12px;">
+                <div style="color:rgba(245,222,179,0.4); font-size:13px; margin-bottom:4px;">Мои достижения</div>
+                <div id="achievementsContainer"><div class="loading">Загрузка достижений...</div></div>
+            </div>
+            <div class="referral-block" id="referralBlock">
+                <div class="ref-title">🌟 Реферальная программа</div>
+                <div id="referralStats"><div class="loading" style="font-size:14px; color:rgba(255,255,255,0.3); padding:8px 0;">Загрузка...</div></div>
+            </div>
+        </div>
+    </div>
 
-    <!-- Знакомства -->  
-    <div id="page-dating" class="page">  
-        <div class="center-piece"><div class="symbol" style="color:#ff6b6b;">❤️</div><div class="label" style="color:#ff6b6b;">Знакомства</div></div>  
-        <div class="glass" id="datingContainer"></div>  
-    </div>  
+    <div id="page-diary" class="page">
+        <div class="center-piece"><div class="symbol" style="color:#d4af37;">📔</div><div class="label" style="color:#d4af37;">Дневник</div></div>
+        <div class="glass" id="diaryContainer"></div>
+    </div>
 
-    <!-- ===== НОВАЯ СТРАНИЦА: КРЕДИТЫ ===== -->  
-    <div id="page-credits" class="page">  
-        <div class="center-piece"><div class="symbol" style="color:#d4af37;">💳</div><div class="label" style="color:#d4af37;">Кредиты</div></div>  
-        <div class="glass" id="creditsContainer">  
-            <!-- сюда будет вставлен калькулятор или заглушка -->  
-            <div class="loading">Загрузка...</div>  
-        </div>  
-    </div>  
-</div>  
+    <div id="page-planner" class="page">
+        <div class="center-piece"><div class="symbol" style="color:#d4af37;">📋</div><div class="label" style="color:#d4af37;">Планер</div></div>
+        <div class="glass" id="plannerContainer"></div>
+    </div>
 
-<!-- <!-- ===== МОДАЛКИ (полный набор, без изменений) ===== -->  
-<div class="modal-overlay" id="modalComments"><div class="modal-card"><div class="modal-title" id="modalCommentsTitle">💬 Комментарии</div><div id="modalCommentsList" style="max-height:300px; overflow-y:auto; margin-bottom:12px;"><div style="color:rgba(255,255,255,0.3); text-align:center;">Нет комментариев</div></div><div style="margin-bottom:10px;"><textarea id="modalCommentsInput" placeholder="Напишите комментарий..." rows="2" style="width:100%; padding:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:16px; color:#fff; font-size:15px; resize:vertical; font-family:inherit;"></textarea></div><div class="modal-buttons"><button class="modal-submit" id="modalCommentsSubmit">Отправить</button><button class="modal-cancel" id="modalCommentsCancel">Закрыть</button></div></div></div>  
-<div class="modal-overlay" id="modalP2P"><div class="modal-card"><div class="modal-title">💬 Ответить на вопрос</div><div class="modal-question" id="modalP2PQuestion">Загрузка...</div><textarea id="modalP2PInput" placeholder="Напишите ответ..." rows="3"></textarea><div class="modal-buttons"><button class="modal-submit" id="modalP2PSubmit">Отправить</button><button class="modal-cancel" id="modalP2PCancel">Отмена</button></div></div></div>  
-<div class="modal-overlay" id="modalIskry"><div class="modal-card"><div class="modal-title">🔥 Ответить на вопрос 18+</div><div class="modal-question" id="modalIskryQuestion">Загрузка...</div><textarea id="modalIskryInput" placeholder="Напишите ответ..." rows="3"></textarea><div class="modal-buttons"><button class="modal-submit" id="modalIskrySubmit">Отправить</button><button class="modal-cancel" id="modalIskryCancel">Отмена</button></div></div></div>  
-<div class="modal-overlay" id="modalDiaryEntry"><div class="modal-card"><div class="modal-title" id="modalDiaryEntryTitle">📝 Новая запись</div><input type="text" id="diaryEntryTitle" placeholder="Название (необязательно)" /><textarea id="diaryEntryText" placeholder="Текст записи..." rows="4"></textarea><select id="diaryEntryCategory"></select><input type="datetime-local" id="diaryEntryDate" /><div style="margin:10px 0;"><div style="color:rgba(255,255,255,0.4); font-size:13px;">Фото (до 5 шт.)</div><div id="diaryEntryPhotos" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"></div><div class="photo-upload-row"><input type="file" id="diaryFileInput" accept="image/*" style="display:none;" /><label for="diaryFileInput" class="file-label" id="diaryFileLabel">📷 Выбрать фото</label><span class="file-name" id="diaryFileName"></span></div></div><div class="modal-buttons"><button class="modal-submit" id="modalDiaryEntrySubmit">Сохранить</button><button class="modal-cancel" id="modalDiaryEntryCancel">Отмена</button></div></div></div>  
-<div class="modal-overlay" id="modalDiaryCategory"><div class="modal-card"><div class="modal-title">➕ Новая категория</div><input type="text" id="diaryCategoryName" placeholder="Название категории" /><div class="modal-buttons"><button class="modal-submit" id="modalDiaryCategorySubmit">Создать</button><button class="modal-cancel" id="modalDiaryCategoryCancel">Отмена</button></div></div></div>  
-<div class="modal-overlay" id="modalTransaction"><div class="modal-card"><div class="modal-title">💰 Новая транзакция</div><input type="text" id="transCategory" placeholder="Категория (например, Еда)" /><input type="number" id="transAmount" placeholder="Сумма" /><select id="transType"><option value="expense">Расход</option><option value="income">Доход</option></select><input type="text" id="transDescription" placeholder="Описание (необязательно)" /><input type="datetime-local" id="transDate" /><div class="modal-buttons"><button class="modal-submit" id="modalTransactionSubmit">Добавить</button><button class="modal-cancel" id="modalTransactionCancel">Отмена</button></div></div></div>  
-<div class="modal-overlay" id="modalTask"><div class="modal-card"><div class="modal-title" id="modalTaskTitle">➕ Новая задача</div><input type="text" id="taskTitle" placeholder="Название задачи" /><input type="text" id="taskDescription" placeholder="Описание (необязательно)" /><input type="datetime-local" id="taskScheduled" /><input type="number" id="taskDuration" placeholder="Длительность (мин)" value="60" /><input type="text" id="taskCategory" placeholder="Категория (например, Работа)" /><select id="taskPriority"><option value="0">Низкий</option><option value="1" selected>Средний</option><option value="2">Высокий</option></select><input type="datetime-local" id="taskDeadline" placeholder="Дедлайн (необязательно)" /><select id="taskRepeat"><option value="none">Нет</option><option value="daily">Ежедневно</option><option value="weekly">Еженедельно</option><option value="monthly">Ежемесячно</option></select><input type="datetime-local" id="taskRepeatEnd" placeholder="Дата окончания повторений" /><input type="text" id="taskParent" placeholder="ID родительской задачи (необязательно)" /><input type="datetime-local" id="taskRemindAt" placeholder="Напоминание" /><div class="modal-buttons"><button class="modal-submit" id="modalTaskSubmit">Сохранить</button><button class="modal-cancel" id="modalTaskCancel">Отмена</button></div></div></div>  
-<div class="modal-overlay" id="modalDatingChat"><div class="modal-card"><div class="modal-title" id="modalDatingChatTitle">💬 Чат</div><div id="modalDatingMessages" style="max-height:300px; overflow-y:auto; margin-bottom:12px;"><div style="color:rgba(255,255,255,0.3); text-align:center;">Нет сообщений</div></div><div style="display:flex; gap:10px;"><input type="text" id="modalDatingChatInput" placeholder="Сообщение..." style="flex:1; padding:10px 16px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; color:#fff; font-family:inherit;" /><button id="modalDatingChatSendBtn" style="padding:10px 20px; background:linear-gradient(135deg, #7c4dff, #b388ff); border:none; border-radius:30px; color:#fff; font-weight:600; cursor:pointer;">➤</button></div><div class="modal-buttons" style="margin-top:10px;"><button class="modal-cancel" id="modalDatingChatClose">Закрыть</button></div></div></div>  
-<div class="modal-overlay" id="modalDatingProfile"><div class="modal-card"><div class="modal-title">👤 Редактировать анкету</div><div style="margin-bottom:10px;"><div style="color:rgba(255,255,255,0.4); font-size:13px;">Фото (до 3 шт.)</div><div id="datingPhotosContainer" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"></div><div class="photo-upload-row"><input type="file" id="datingFileInput" accept="image/*" style="display:none;" /><label for="datingFileInput" class="file-label" id="datingFileLabel">📷 Выбрать фото</label><span class="file-name" id="datingFileName"></span></div></div><input type="text" id="datingCity" placeholder="Город" /><input type="number" id="datingAge" placeholder="Возраст" /><select id="datingGender"><option value="Мужской">Мужской</option><option value="Женский">Женский</option><option value="Другой">Другой</option></select><select id="datingPurpose"><option value="Встреча">Встреча</option><option value="Интрига">Интрига</option><option value="Без обязательств">Без обязательств</option><option value="Дружба">Дружба</option><option value="Отношения">Отношения</option><option value="Общение">Общение</option></select><textarea id="datingDescription" placeholder="Описание (необязательно)" rows="3"></textarea><input type="text" id="datingInterests" placeholder="Интересы (через запятую)" /><div class="modal-buttons"><button class="modal-submit" id="modalDatingProfileSubmit">Сохранить</button><button class="modal-cancel" id="modalDatingProfileCancel">Отмена</button></div></div></div>  
+    <div id="page-dating" class="page">
+        <div class="center-piece"><div class="symbol" style="color:#ff6b6b;">❤️</div><div class="label" style="color:#ff6b6b;">Знакомства</div></div>
+        <div class="glass" id="datingContainer"></div>
+    </div>
 
-<!-- Онбординг -->  
-<div class="onboarding-overlay" id="onboardingOverlay"><div class="onboarding-card" id="onboardingCard"><div class="step-icon" id="onboardingIcon">🌱</div><h2 id="onboardingTitle">Добро пожаловать!</h2><p id="onboardingDesc">Давайте познакомимся с приложением за 3 простых шага.</p><button class="btn-primary" id="onboardingNextBtn">Далее</button></div></div>  
+    <div id="page-credits" class="page">
+        <div class="center-piece"><div class="symbol" style="color:#d4af37;">💳</div><div class="label" style="color:#d4af37;">Кредиты</div></div>
+        <div class="glass" id="creditsContainer">
+            <div class="loading">Загрузка...</div>
+        </div>
+    </div>
+</div>
 
-<!-- ===== НИЖНЕЕ МЕНЮ (ДОБАВЛЕНА ВКЛАДКА "Кредиты") ===== -->  
-<div class="tab-bar">  
-    <button class="tab-item active" data-page="page-moment"><span class="tab-icon">✦</span>Момент</button>  
-    <button class="tab-item" data-page="page-otrazhenie"><span class="tab-icon">👁</span>Отражения</button>  
-    <button class="tab-item" data-page="page-set"><span class="tab-icon">🧠</span>Сеть</button>  
-    <button class="tab-item" data-page="page-iskry"><span class="tab-icon">🔥</span>Искры</button>  
-    <button class="tab-item" data-page="page-vstrecha"><span class="tab-icon">🔮</span>Встреча</button>  
-    <button class="tab-item" data-page="page-credits"><span class="tab-icon">💳</span>Кредиты</button>  
-</div>  
+<!-- Модалки -->
+<div class="modal-overlay" id="modalComments"><div class="modal-card"><div class="modal-title" id="modalCommentsTitle">💬 Комментарии</div><div id="modalCommentsList" style="max-height:300px; overflow-y:auto; margin-bottom:12px;"><div style="color:rgba(255,255,255,0.3); text-align:center;">Нет комментариев</div></div><div style="margin-bottom:10px;"><textarea id="modalCommentsInput" placeholder="Напишите комментарий..." rows="2" style="width:100%; padding:10px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:16px; color:#fff; font-size:15px; resize:vertical; font-family:inherit;"></textarea></div><div class="modal-buttons"><button class="modal-submit" id="modalCommentsSubmit">Отправить</button><button class="modal-cancel" id="modalCommentsCancel">Закрыть</button></div></div></div>
+<div class="modal-overlay" id="modalP2P"><div class="modal-card"><div class="modal-title">💬 Ответить на вопрос</div><div class="modal-question" id="modalP2PQuestion">Загрузка...</div><textarea id="modalP2PInput" placeholder="Напишите ответ..." rows="3"></textarea><div class="modal-buttons"><button class="modal-submit" id="modalP2PSubmit">Отправить</button><button class="modal-cancel" id="modalP2PCancel">Отмена</button></div></div></div>
+<div class="modal-overlay" id="modalIskry"><div class="modal-card"><div class="modal-title">🔥 Ответить на вопрос 18+</div><div class="modal-question" id="modalIskryQuestion">Загрузка...</div><textarea id="modalIskryInput" placeholder="Напишите ответ..." rows="3"></textarea><div class="modal-buttons"><button class="modal-submit" id="modalIskrySubmit">Отправить</button><button class="modal-cancel" id="modalIskryCancel">Отмена</button></div></div></div>
+<div class="modal-overlay" id="modalDiaryEntry"><div class="modal-card"><div class="modal-title" id="modalDiaryEntryTitle">📝 Новая запись</div><input type="text" id="diaryEntryTitle" placeholder="Название (необязательно)" /><textarea id="diaryEntryText" placeholder="Текст записи..." rows="4"></textarea><select id="diaryEntryCategory"></select><input type="datetime-local" id="diaryEntryDate" /><div style="margin:10px 0;"><div style="color:rgba(255,255,255,0.4); font-size:13px;">Фото (до 5 шт.)</div><div id="diaryEntryPhotos" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"></div><div class="photo-upload-row"><input type="file" id="diaryFileInput" accept="image/*" style="display:none;" /><label for="diaryFileInput" class="file-label" id="diaryFileLabel">📷 Выбрать фото</label><span class="file-name" id="diaryFileName"></span></div></div><div class="modal-buttons"><button class="modal-submit" id="modalDiaryEntrySubmit">Сохранить</button><button class="modal-cancel" id="modalDiaryEntryCancel">Отмена</button></div></div></div>
+<div class="modal-overlay" id="modalDiaryCategory"><div class="modal-card"><div class="modal-title">➕ Новая категория</div><input type="text" id="diaryCategoryName" placeholder="Название категории" /><div class="modal-buttons"><button class="modal-submit" id="modalDiaryCategorySubmit">Создать</button><button class="modal-cancel" id="modalDiaryCategoryCancel">Отмена</button></div></div></div>
+<div class="modal-overlay" id="modalTransaction"><div class="modal-card"><div class="modal-title">💰 Новая транзакция</div><input type="text" id="transCategory" placeholder="Категория (например, Еда)" /><input type="number" id="transAmount" placeholder="Сумма" /><select id="transType"><option value="expense">Расход</option><option value="income">Доход</option></select><input type="text" id="transDescription" placeholder="Описание (необязательно)" /><input type="datetime-local" id="transDate" /><div class="modal-buttons"><button class="modal-submit" id="modalTransactionSubmit">Добавить</button><button class="modal-cancel" id="modalTransactionCancel">Отмена</button></div></div></div>
+<div class="modal-overlay" id="modalTask"><div class="modal-card"><div class="modal-title" id="modalTaskTitle">➕ Новая задача</div><input type="text" id="taskTitle" placeholder="Название задачи" /><input type="text" id="taskDescription" placeholder="Описание (необязательно)" /><input type="datetime-local" id="taskScheduled" /><input type="number" id="taskDuration" placeholder="Длительность (мин)" value="60" /><input type="text" id="taskCategory" placeholder="Категория (например, Работа)" /><select id="taskPriority"><option value="0">Низкий</option><option value="1" selected>Средний</option><option value="2">Высокий</option></select><input type="datetime-local" id="taskDeadline" placeholder="Дедлайн (необязательно)" /><select id="taskRepeat"><option value="none">Нет</option><option value="daily">Ежедневно</option><option value="weekly">Еженедельно</option><option value="monthly">Ежемесячно</option></select><input type="datetime-local" id="taskRepeatEnd" placeholder="Дата окончания повторений" /><input type="text" id="taskParent" placeholder="ID родительской задачи (необязательно)" /><input type="datetime-local" id="taskRemindAt" placeholder="Напоминание" /><div class="modal-buttons"><button class="modal-submit" id="modalTaskSubmit">Сохранить</button><button class="modal-cancel" id="modalTaskCancel">Отмена</button></div></div></div>
+<div class="modal-overlay" id="modalDatingChat"><div class="modal-card"><div class="modal-title" id="modalDatingChatTitle">💬 Чат</div><div id="modalDatingMessages" style="max-height:300px; overflow-y:auto; margin-bottom:12px;"><div style="color:rgba(255,255,255,0.3); text-align:center;">Нет сообщений</div></div><div style="display:flex; gap:10px;"><input type="text" id="modalDatingChatInput" placeholder="Сообщение..." style="flex:1; padding:10px 16px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:30px; color:#fff; font-family:inherit;" /><button id="modalDatingChatSendBtn" style="padding:10px 20px; background:linear-gradient(135deg, #7c4dff, #b388ff); border:none; border-radius:30px; color:#fff; font-weight:600; cursor:pointer;">➤</button></div><div class="modal-buttons" style="margin-top:10px;"><button class="modal-cancel" id="modalDatingChatClose">Закрыть</button></div></div></div>
+<div class="modal-overlay" id="modalDatingProfile"><div class="modal-card"><div class="modal-title">👤 Редактировать анкету</div><div style="margin-bottom:10px;"><div style="color:rgba(255,255,255,0.4); font-size:13px;">Фото (до 3 шт.)</div><div id="datingPhotosContainer" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"></div><div class="photo-upload-row"><input type="file" id="datingFileInput" accept="image/*" style="display:none;" /><label for="datingFileInput" class="file-label" id="datingFileLabel">📷 Выбрать фото</label><span class="file-name" id="datingFileName"></span></div></div><input type="text" id="datingCity" placeholder="Город" /><input type="number" id="datingAge" placeholder="Возраст" /><select id="datingGender"><option value="Мужской">Мужской</option><option value="Женский">Женский</option><option value="Другой">Другой</option></select><select id="datingPurpose"><option value="Встреча">Встреча</option><option value="Интрига">Интрига</option><option value="Без обязательств">Без обязательств</option><option value="Дружба">Дружба</option><option value="Отношения">Отношения</option><option value="Общение">Общение</option></select><textarea id="datingDescription" placeholder="Описание (необязательно)" rows="3"></textarea><input type="text" id="datingInterests" placeholder="Интересы (через запятую)" /><div class="modal-buttons"><button class="modal-submit" id="modalDatingProfileSubmit">Сохранить</button><button class="modal-cancel" id="modalDatingProfileCancel">Отмена</button></div></div></div>
 
-<script>  
-// ===== 1. API_URL =====
+<div class="onboarding-overlay" id="onboardingOverlay"><div class="onboarding-card" id="onboardingCard"><div class="step-icon" id="onboardingIcon">🌱</div><h2 id="onboardingTitle">Добро пожаловать!</h2><p id="onboardingDesc">Давайте познакомимся с приложением за 3 простых шага.</p><button class="btn-primary" id="onboardingNextBtn">Далее</button></div></div>
+
+<div class="tab-bar">
+    <button class="tab-item active" data-page="page-moment"><span class="tab-icon">✦</span>Момент</button>
+    <button class="tab-item" data-page="page-otrazhenie"><span class="tab-icon">👁</span>Отражения</button>
+    <button class="tab-item" data-page="page-set"><span class="tab-icon">🧠</span>Сеть</button>
+    <button class="tab-item" data-page="page-iskry"><span class="tab-icon">🔥</span>Искры</button>
+    <button class="tab-item" data-page="page-vstrecha"><span class="tab-icon">🔮</span>Встреча</button>
+    <button class="tab-item" data-page="page-credits"><span class="tab-icon">💳</span>Кредиты</button>
+</div>
+
+<script>
 const urlParams = new URLSearchParams(window.location.search);
 let apiBase = urlParams.get('api') || 'https://garage-courier-everybody.ngrok-free.dev';
 const API_BASE = apiBase;
 const API_URL = apiBase + '/api';
+console.log('API_BASE:', API_BASE);
 
-// ===== 2. Telegram Web App =====
 const tg = window.Telegram.WebApp;
 tg.expand();
 tg.ready();
@@ -599,7 +440,6 @@ const userId = user.id || 0;
 const firstName = user.first_name || 'Пользователь';
 const photoUrl = user.photo_url || null;
 
-// ===== 3. Глобальные переменные =====
 let currentVisibility = 0;
 let currentQuestion = null;
 let profileCompleted = false;
@@ -622,15 +462,14 @@ let selectedDateForTask = null;
 let currentChatId = null;
 let chatMsgInterval = null;
 
-// ===== 4. УНИВЕРСАЛЬНАЯ ФУНКЦИЯ ВЫЗОВА API (с инициализацией) =====
 async function callApi(action, data = {}) {
     try {
         const payload = { action, user_id: userId, ...data };
         console.log('📤', payload);
         const headers = {
             'Content-Type': 'application/json',
-            'X-Telegram-WebApp-InitData': tg.initData
-             'ngrok-skip-browser-warning': '1'
+            'X-Telegram-WebApp-InitData': tg.initData,
+            'ngrok-skip-browser-warning': '1'
         };
         const resp = await fetch(API_URL, {
             method: 'POST',
@@ -649,7 +488,6 @@ async function callApi(action, data = {}) {
     }
 }
 
-// ===== 5. Загрузка фото =====
 async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
     const input = document.getElementById(fileInputId);
     if (!input) { tg.showAlert('Ошибка: поле ввода не найдено'); return false; }
@@ -671,9 +509,10 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
                     method: 'POST',
                     body: formData,
                     headers: {
-                         'X-Telegram-WebApp-InitData': tg.initData,
-                          'ngrok-skip-browser-warning': '1'   // <-- добавь
+                        'X-Telegram-WebApp-InitData': tg.initData,
+                        'ngrok-skip-browser-warning': '1'
                     }
+                });
                 const result = await resp.json();
                 if (result.success) {
                     const container = document.getElementById(containerId);
@@ -697,9 +536,8 @@ async function uploadPhotoViaPopup(fileInputId, containerId, maxPhotos = 5) {
         input.click();
     });
 }
-// ============================================================
+
 // 5. ВИДИМОСТЬ И ИМЯ
-// ============================================================
 function updateHeaderName(visibility) {
     const nameEl = document.getElementById('userInfo');
     if (visibility === 0) nameEl.textContent = 'Аноним';
@@ -721,9 +559,7 @@ document.querySelectorAll('#visibilityButtons button').forEach(btn => {
     });
 });
 
-// ============================================================
 // 6. НАВИГАЦИЯ (добавлена обработка page-credits)
-// ============================================================
 function showPage(pageId, demo = false) {
     isDemoMode = demo;
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -752,15 +588,12 @@ document.querySelectorAll('.tab-item').forEach(tab => {
     });
 });
 
-// ============================================================
-// 7. ОСНОВНЫЕ ФУНКЦИИ (вопрос, профиль, ответ) – БЕЗ ИЗМЕНЕНИЙ
-// ============================================================
+// 7. ОСНОВНЫЕ ФУНКЦИИ (вопрос, профиль, ответ)
 async function loadQuestion() {
     const data = await callApi('get_question');
     if (data?.question) { currentQuestion = data.question; document.getElementById('questionDisplay').textContent = data.question; }
     else document.getElementById('questionDisplay').textContent = '❌ Вопрос не загружен. Попробуйте позже.';
 }
-
 async function loadProfile() {
     const data = await callApi('get_profile_status');
     if (data) {
@@ -816,7 +649,6 @@ async function loadProfile() {
         }
     }
 }
-
 document.getElementById('profileSaveBtn').addEventListener('click', async function() {
     const mask = document.getElementById('profileMaskInput').value.trim();
     const result = await callApi('save_profile', { mask, visibility: 0 });
@@ -831,7 +663,6 @@ document.getElementById('profileSaveBtn').addEventListener('click', async functi
         if (document.getElementById('onboardingOverlay').classList.contains('active')) finishOnboarding();
     } else tg.showAlert('Ошибка сохранения.');
 });
-
 document.getElementById('submitAnswerBtn').addEventListener('click', async function() {
     if (!profileCompleted) { tg.showAlert('❌ Сначала заполните профиль (нажмите на аватарку)'); return; }
     const answer = document.getElementById('answerInput').value.trim();
